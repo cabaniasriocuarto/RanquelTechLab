@@ -53,6 +53,27 @@ function pickGuestEmail_(event, hostEmail) {
   }
 }
 
+function extractFirstEmail_(text) {
+  if (!text) return '';
+  var m = String(text).match(/[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}/i);
+  return m ? m[0].trim() : '';
+}
+
+function pickGuestEmailFallback_(event, hostEmail) {
+  var candidates = [
+    extractFirstEmail_(event.getDescription && event.getDescription()),
+    extractFirstEmail_(event.getTitle && event.getTitle()),
+    extractFirstEmail_(event.getLocation && event.getLocation()),
+  ];
+  for (var i = 0; i < candidates.length; i++) {
+    var email = (candidates[i] || '').trim();
+    if (!email) continue;
+    if (hostEmail && email.toLowerCase() === hostEmail.toLowerCase()) continue;
+    return email;
+  }
+  return '';
+}
+
 function createAccess_(payload) {
   var siteUrl = getProp_('SITE_URL');
   var adminKey = getProp_('ADMIN_KEY');
@@ -140,6 +161,9 @@ function processNewAppointments() {
 
     // Solo eventos con invitados (turnos)
     var attendeeEmail = pickGuestEmail_(ev, hostEmail);
+    if (!attendeeEmail) {
+      attendeeEmail = pickGuestEmailFallback_(ev, hostEmail);
+    }
     if (!attendeeEmail) continue;
 
     var startDate = ev.getStartTime();

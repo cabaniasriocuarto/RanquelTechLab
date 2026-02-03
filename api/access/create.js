@@ -123,8 +123,8 @@ module.exports = async (req, res) => {
     // Si ya existe, Daily devuelve 409; lo tratamos como OK.
     const roomBody = {
       name: room,
+      privacy: 'private',
       properties: {
-        privacy: 'private',
         enable_prejoin_ui: true,
         // exp de la sala: 24h después del fin del turno
         exp: end + 24 * 60 * 60,
