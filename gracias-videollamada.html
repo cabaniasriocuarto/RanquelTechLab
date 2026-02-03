@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JY9JDYZB52"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JY9JDYZB52');
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+<meta
+  http-equiv="Content-Security-Policy"
+  content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline'
+      https://www.googletagmanager.com
+      https://www.google-analytics.com
+      https://www.google.com
+      https://www.googleadservices.com
+      https://googleads.g.doubleclick.net
+      https://cdn.emailjs.com;
+    connect-src 'self'
+      https://www.googletagmanager.com
+      https://www.google-analytics.com
+      https://region1.google-analytics.com
+      https://www.google.com
+      https://www.googleadservices.com
+      https://googleads.g.doubleclick.net
+      https://formsubmit.co;
+    img-src 'self' data:
+      https://www.google-analytics.com
+      https://www.googletagmanager.com
+      https://www.google.com
+      https://www.googleadservices.com
+      https://googleads.g.doubleclick.net;
+    style-src 'self' 'unsafe-inline';
+    object-src 'none';
+    frame-ancestors 'self';
+    form-action 'self' https://formsubmit.co;
+    base-uri 'self';
+    upgrade-insecure-requests;
+  "
+>
+  <title>Videollamada Agendada | Ranquel Tech Lab</title>
+  <link rel="stylesheet" href="./styles.css">
+  
+  <!-- GA4 + Google Ads base tags -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JY9JDYZB52"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);} 
+    gtag('js', new Date());
+
+    // GA4
+    gtag('config', 'G-JY9JDYZB52');
+
+    // Google Ads
+    gtag('config', 'AW-958141767');
+  </script>
+</head>
+<body class="thankyou-page">
+  <main class="wrap section-padding" style="min-height: 60vh; text-align:center;">
+    <h1 class="section-title" style="margin-bottom: 12px;">✅ Videollamada Agendada</h1>
+    <p style="margin-bottom: 24px; font-size: 18px;">Recibiste el calendario por email. Te esperamos en la videollamada para explicarte el presupuesto.</p>
+    <p style="margin-bottom: 24px; color: var(--text-muted);">Revisá tu email para confirmar la reunión.</p>
+    <a href="/" class="btn btn-accent glow">Volver al Inicio</a>
+  </main>
+
+  <script>
+    // Conversión para videollamada
+    gtag('event', 'conversion', {
+      'send_to': 'AW-958141767/aqEJCMyjvccbEMeq8MgD',
+      'value': 1.0,
+      'currency': 'ARS',
+      'transaction_id': 'videollamada_' + Date.now()
+    });
+
+    // Evento para GA4
+    gtag('event', 'videollamada_agendada', {
+      event_category: 'lead',
+      event_label: 'videollamada_chatbot',
+      value: 1
+    });
+  </script>
+  <!-- Event snippet for gracias videollamada conversion page -->
+<script>
+  gtag('event', 'conversion', {
+      'send_to': 'AW-958141767/NQ89COK_69UbEMeq8MgD',
+      'value': 1.0,
+      'currency': 'ARS'
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,35 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="675" viewBox="0 0 1200 675" role="img" aria-label="Hotelería">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#fff6ee"/>
+      <stop offset="1" stop-color="#ffffff"/>
+    </linearGradient>
+    <linearGradient id="acc" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#005f8f"/>
+      <stop offset="1" stop-color="#6cc24a"/>
+    </linearGradient>
+    <filter id="shadow" x="-20%" y="-20%" width="140%" height="140%">
+      <feDropShadow dx="0" dy="10" stdDeviation="18" flood-color="#0e1e3a" flood-opacity="0.18"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="675" fill="url(#bg)"/>
+  <path d="M0 520 C 250 455, 380 600, 650 520 C 920 440, 1010 560, 1200 505 L 1200 675 L 0 675 Z" fill="#f7efe7"/>
+  <g filter="url(#shadow)">
+    <circle cx="600" cy="305" r="130" fill="url(#acc)"/>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-width="18" stroke-linecap="round" stroke-linejoin="round">
+    <path d="M520 410v-160h160v160"/>
+    <path d="M520 290h160"/>
+    <path d="M560 260v20"/>
+    <path d="M610 260v20"/>
+    <path d="M660 260v20"/>
+    <path d="M560 325v25"/>
+    <path d="M610 325v25"/>
+    <path d="M660 325v25"/>
+    <path d="M560 390v20"/>
+    <path d="M610 390v20"/>
+    <path d="M660 390v20"/>
+  </g>
+  <text x="600" y="575" text-anchor="middle" font-family="Segoe UI, Arial" font-size="44" font-weight="700" fill="#182236">Hotelería</text>
+  <text x="600" y="620" text-anchor="middle" font-family="Segoe UI, Arial" font-size="26" fill="#5b6472">Reservas • Revenue • Chatbot</text>
+</svg>

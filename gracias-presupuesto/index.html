@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-JY9JDYZB52"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-JY9JDYZB52');
+</script>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="robots" content="index, follow">
+  <meta name="referrer" content="strict-origin-when-cross-origin">
+ <meta
+  http-equiv="Content-Security-Policy"
+  content="
+    default-src 'self';
+    script-src 'self' 'unsafe-inline'
+      https://www.googletagmanager.com
+      https://www.google-analytics.com
+      https://www.google.com
+      https://www.googleadservices.com
+      https://googleads.g.doubleclick.net
+      https://cdn.emailjs.com;
+    connect-src 'self'
+      https://www.googletagmanager.com
+      https://www.google-analytics.com
+      https://region1.google-analytics.com
+      https://www.google.com
+      https://www.googleadservices.com
+      https://googleads.g.doubleclick.net
+      https://formsubmit.co;
+    img-src 'self' data:
+      https://www.google-analytics.com
+      https://www.googletagmanager.com
+      https://www.google.com
+      https://www.googleadservices.com
+      https://googleads.g.doubleclick.net;
+    style-src 'self' 'unsafe-inline';
+    object-src 'none';
+    frame-ancestors 'self';
+    form-action 'self' https://formsubmit.co;
+    base-uri 'self';
+    upgrade-insecure-requests;
+  "
+>
+  <title>Gracias por tu solicitud de presupuesto | Ranquel Tech Lab</title>
+  <link rel="stylesheet" href="../styles.css">
+  <!-- GA4 / Google Ads base tags -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-JY9JDYZB52"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-JY9JDYZB52');
+    gtag('config', 'AW-958141767');
+  </script>
+</head>
+<body class="thankyou-page">
+  <main class="wrap section-padding" style="min-height: 60vh; text-align:center;">
+    <h1 class="section-title" style="margin-bottom: 12px;">¡Gracias por tu solicitud de presupuesto!</h1>
+    <p style="margin-bottom: 24px;">En breve te voy a contactar por WhatsApp o correo para continuar con tu proyecto.</p>
+    <a href="/" class="btn btn-accent glow">Volver al inicio</a>
+  </main>
+
+  <script>
+    // Evento para marcar la conversión de envío de presupuesto
+    gtag('event', 'presupuesto_enviado', {
+      event_category: 'lead',
+      event_label: 'presupuesto_web',
+      value: 1
+    });
+
+    gtag('event', 'conversion', {
+      'send_to': 'AW-958141767/hgzHCNfH9dUbEMeq8MgD',
+      'value': 350.0,
+      'currency': 'ARS'
+    });
+  </script>
+</body>
+</html>
