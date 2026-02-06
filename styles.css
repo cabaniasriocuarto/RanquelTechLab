@@ -1737,3 +1737,52 @@ header.backdrop.header .nav-actions{
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
+
+/* MOBILE HERO FIX v1 */
+@media (max-width: 480px){
+  .header-whatsapp{
+    padding: 8px 10px !important;
+    width: auto !important;
+    min-width: auto !important;
+    justify-content: center !important;
+    gap: 0 !important;
+  }
+  .header-whatsapp .label-text{
+    display: none !important;
+  }
+  .header-whatsapp .icon{
+    margin-right: 0 !important;
+  }
+
+  #hero{
+    padding-bottom: 140px !important;
+  }
+
+  #hero .hero-bottom-actions{
+    position: static !important;
+    transform: none !important;
+    left: auto !important;
+    bottom: auto !important;
+    margin-top: 16px !important;
+    width: 100% !important;
+    max-width: 100% !important;
+  }
+
+  #hero .hero-bottom-actions .hero-cta{
+    display: flex !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    gap: 12px !important;
+  }
+
+  #hero .hero-bottom-actions .btn-chatbot,
+  #hero .hero-bottom-actions .btn-marketing-hero{
+    flex: 1 1 140px !important;
+    max-width: 180px !important;
+  }
+
+  #hero .hero-bottom-actions .btn-dev{
+    flex: 1 1 100% !important;
+    max-width: 420px !important;
+  }
+}
