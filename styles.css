@@ -1738,19 +1738,52 @@ header.backdrop.header .nav-actions{
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-/* MOBILE HERO FIX v1 */
-@media (max-width: 480px){
-  .header-whatsapp{
+/* MOBILE HERO BG TUNING */
+@media (max-width: 520px){
+  #hero .hero-carousel.hero-carousel-bg .hero-img,
+  #hero .hero-carousel.hero-carousel-bg img,
+  #hero .hero-carousel.hero-carousel-bg video{
+    width: 100% !important;
+    height: 100% !important;
+    object-fit: cover !important;
+    object-position: center center !important;
+  }
+}
+
+/* MOBILE HEADER TUNING */
+@media (max-width: 520px){
+  header.backdrop.header .nav-actions{
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 12px !important;
+    flex-wrap: wrap !important;
+  }
+
+  header.backdrop.header .nav-booking-cta{
+    order: 1;
+    flex: 1 1 100%;
+    text-align: center;
+  }
+
+  header.backdrop.header .lang-select{
+    order: 2;
+  }
+
+  header.backdrop.header .header-whatsapp{
+    order: 3;
     padding: 8px 10px !important;
     width: auto !important;
     min-width: auto !important;
     justify-content: center !important;
     gap: 0 !important;
   }
-  .header-whatsapp .label-text{
+
+  header.backdrop.header .header-whatsapp .label-text{
     display: none !important;
   }
-  .header-whatsapp .icon{
-    margin-right: 0 !important;
+
+  header.backdrop.header #menuToggle{
+    order: 4;
   }
 }
