@@ -1753,36 +1753,4 @@ header.backdrop.header .nav-actions{
   .header-whatsapp .icon{
     margin-right: 0 !important;
   }
-
-  #hero{
-    padding-bottom: 140px !important;
-  }
-
-  #hero .hero-bottom-actions{
-    position: static !important;
-    transform: none !important;
-    left: auto !important;
-    bottom: auto !important;
-    margin-top: 16px !important;
-    width: 100% !important;
-    max-width: 100% !important;
-  }
-
-  #hero .hero-bottom-actions .hero-cta{
-    display: flex !important;
-    flex-wrap: wrap !important;
-    justify-content: center !important;
-    gap: 12px !important;
-  }
-
-  #hero .hero-bottom-actions .btn-chatbot,
-  #hero .hero-bottom-actions .btn-marketing-hero{
-    flex: 1 1 140px !important;
-    max-width: 180px !important;
-  }
-
-  #hero .hero-bottom-actions .btn-dev{
-    flex: 1 1 100% !important;
-    max-width: 420px !important;
-  }
 }
