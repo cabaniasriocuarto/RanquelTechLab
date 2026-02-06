@@ -1,0 +1,62 @@
+.header {
+  background-color: #f8e530;
+  background-image: url("../img/maps.png");
+  background-repeat: no-repeat;
+  background-size: 90%;
+  background-position: center bottom 60%;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    background-size: 75%;
+    background-position: center top 70%;
+  }
+  @media (min-width: 992px) {
+    background-size: 85%;
+    background-position: center center;
+  }
+
+  @media (min-width: 1200px) {
+    background-size: 95%;
+    background-position: center center;
+  }
+  @media (min-width: 1700px) {
+    background-size: 1623px 771px;
+    background-position: left 70% bottom 45%;
+  }
+}
+
+.logo {
+  font-family: "Thinking_of_Betty";
+  color: #fff;
+  margin: 0;
+  line-height: 0.8;
+  text-align: left;
+  margin-left: 5px;
+
+  @media (min-width: 1200px) {
+    padding-left: 65px;
+  }
+
+  @media (min-width: 1600px) {
+    padding-left: 115px;
+  }
+
+  a {
+    text-decoration: none;
+    color: #fff;
+    display: inline-block;
+  }
+
+  &__element {
+    font-size: 28px;
+    margin: 0;
+
+    @media (min-width: 768px) {
+      font-size: 35px;
+    }
+
+    @media (min-width: 992px) {
+      font-size: 38px;
+    }
+  }
+}

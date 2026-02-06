@@ -1,0 +1,14 @@
+.owl-dots {
+  display: inline-block;
+  position: absolute;
+  transform: translate(-50%, 400%);
+  text-align: center;
+}
+.owl-dots button.owl-dot {
+  width: 17px;
+  height: 17px;
+  background-color: #0c0c0c;
+  margin: 10px;
+  border-radius: 50%;
+  outline: none;
+}

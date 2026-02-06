@@ -1,0 +1,104 @@
+.footer {
+  padding-top: 50px;
+  padding-bottom: 40px;
+  background-color: #0b0b0b;
+
+  @media (mni-width: 992px) {
+    padding-top: 80px;
+    padding-bottom: 100px;
+  }
+  @media (min-width: 1200px) {
+    padding-top: 100px;
+    padding-bottom: 130px;
+  }
+
+  &__flex-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+
+    @media (min-width: 768px) {
+      flex-direction: row;
+      justify-content: space-between;
+    }
+  }
+
+  &__group {
+    max-width: 290px;
+    text-align: left;
+  }
+
+  &__logo {
+    font-family: "Thinking_of_Betty";
+    color: #fff;
+    margin: 0;
+    line-height: 0.8;
+    text-align: left;
+
+    a {
+      text-decoration: none;
+      color: #fff;
+      display: inline-block;
+    }
+  }
+  &__text {
+    font-family: "Montserrat-Regular";
+    font-size: 15px;
+    color: #a5a5a5;
+    margin-top: 30px;
+    line-height: 1.4;
+    @media (min-width: 992px) {
+      margin-top: 45px;
+      font-size: 17px;
+    }
+  }
+
+  &__title {
+    font-family: "Montserrat-Bold";
+    font-size: 19px;
+    color: #fff;
+    text-transform: uppercase;
+    margin-top: 20px;
+    margin-bottom: 25px;
+    @media (min-width: 992px) {
+      margin-top: 35px;
+      margin-bottom: 55px;
+    }
+  }
+
+  &__list {
+    list-style-type: none;
+    padding: 0;
+  }
+  &__list-item {
+    font-family: "Montserrat-Regular";
+    font-size: 19px;
+
+    margin-bottom: 18px;
+    @media (mni-width: 992px) {
+      margin-bottom: 22px;
+    }
+    a {
+      text-decoration: none;
+      color: #ffffff;
+      transition: 0.3s ease-in-out;
+    }
+    a:hover {
+      color: #f8e530;
+      transition: 0.3s ease-in-out;
+    }
+  }
+
+  &__social-icons {
+    a {
+      margin-right: 20px;
+      &:last-child {
+        margin-right: 0;
+      }
+    }
+  }
+}
+.fa {
+  font-size: 20px;
+  color: yellow;
+}

@@ -1,0 +1,226 @@
+.blog {
+  background-color: #0c0c0c;
+  padding-top: 40px;
+  padding-bottom: 40px;
+  text-align: center;
+
+  @media (min-width: 768px) {
+    padding-top: 70px;
+    padding-bottom: 70px;
+  }
+  @media (min-width: 992px) {
+    padding-top: 100px;
+    padding-bottom: 100px;
+  }
+  @media (min-width: 1200px) {
+    padding-top: 120px;
+    padding-bottom: 100px;
+  }
+
+  &__title {
+    font-family: "Montserrat-Black";
+    font-weight: 900;
+    font-size: 30px;
+    color: #fff;
+    margin-top: 0;
+    text-align: center;
+    margin-bottom: 35px;
+    letter-spacing: -4px;
+
+    @media (min-width: 768px) {
+      font-size: 45px;
+    }
+    @media (min-width: 992px) {
+      font-size: 55px;
+    }
+
+    &--color {
+      color: #f8e530;
+    }
+  }
+
+  &__subtitle {
+    font-family: "Montserrat-Regular";
+    font-weight: 400;
+    font-size: 14px;
+    color: #a6a6a6;
+    text-align: center;
+    max-width: 990px;
+    margin: 0 auto;
+    padding-bottom: 25px;
+
+    @media (min-width: 992px) {
+      font-size: 17px;
+      padding-bottom: 50px;
+    }
+  }
+  position: relative;
+}
+.blog:after {
+  position: absolute;
+  content: "";
+  background-image: url("../img/bg.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 532px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+
+.blog-flex-container {
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 30px;
+
+  @media (min-width: 1100px) {
+    flex-direction: row;
+    justify-content: space-between;
+  }
+  @media (min-width: 768px) {
+    padding-bottom: 60px;
+  }
+}
+
+.blog-card {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  z-index: 3;
+
+  &__name {
+    font-family: "Montserrat-Bold";
+    font-size: 25px;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 14px 0;
+
+    @media (min-width: 992px) {
+      font-size: 30px;
+    }
+  }
+
+  &__desc {
+    font-family: "Montserrat-Regular";
+    font-size: 14px;
+    color: #8e8e8e;
+    max-width: 320px;
+    text-align: center;
+    margin: 14px;
+
+    @media (min-width: 992px) {
+      font-size: 17px;
+      margin: 17px;
+    }
+  }
+}
+
+.button {
+  &--color {
+    background-color: rgb(248, 211, 2);
+    display: inline-block;
+    text-align: center;
+    margin-top: 23 0px;
+    padding: 13px 15px;
+    padding-bottom: 10px;
+    cursor: pointer;
+    position: relative;
+    z-index: 3;
+    text-align: center;
+  }
+  @media (min-width: 992px) {
+    margin-top: 40px;
+  }
+
+  &--color:before {
+    position: absolute;
+    background-color: rgb(248, 211, 2);
+    top: 0;
+    bottom: 0;
+    width: 27px;
+    left: -16px;
+    border-radius: 5px 0 0 5px;
+    content: "";
+    transform: skewX(25deg);
+  }
+  &--color:after {
+    position: absolute;
+    background-color: rgb(248, 211, 2);
+    top: 0;
+    bottom: 0;
+    width: 27px;
+    right: -16px;
+    border-radius: 0 5px 5px 0;
+    content: "";
+    transform: skewX(25deg);
+  }
+  &--color a {
+    font-family: "Montserrat-Black";
+    font-size: 14px;
+    color: #000;
+    text-transform: uppercase;
+    text-decoration: none;
+
+    @media (min-width: 992px) {
+      font-size: 19px;
+    }
+  }
+}
+
+.branding {
+  border-style: solid;
+  border-width: 16px;
+  border-color: rgb(255, 255, 255);
+  border-radius: 50%;
+  background-color: rgb(228, 228, 228);
+  overflow: hidden;
+  height: 242px;
+  width: 242px;
+  margin-bottom: 23px;
+  background: url("../img/branding.jpg");
+  background-position: center center;
+
+  @media (min-width: 768px) {
+    height: 332px;
+    width: 332px;
+  }
+}
+
+.design {
+  border-style: solid;
+  border-width: 16px;
+  border-color: rgb(255, 255, 255);
+  border-radius: 50%;
+  background-color: rgb(228, 228, 228);
+  overflow: hidden;
+  height: 242px;
+  width: 242px;
+  margin-bottom: 23px;
+  background: url("../img/design.jpg");
+  background-position: center center;
+
+  @media (min-width: 768px) {
+    height: 332px;
+    width: 332px;
+  }
+}
+.creative {
+  border-style: solid;
+  border-width: 16px;
+  border-color: rgb(255, 255, 255);
+  border-radius: 50%;
+  background-color: rgb(228, 228, 228);
+  overflow: hidden;
+  height: 242px;
+  width: 242px;
+  margin-bottom: 23px;
+  background: url("../img/creative.jpg");
+  background-position: center 71%;
+
+  @media (min-width: 768px) {
+    height: 332px;
+    width: 332px;
+  }
+}

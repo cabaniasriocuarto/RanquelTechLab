@@ -1,0 +1,39 @@
+.owl-dots {
+  display: inline-block;
+  margin-top: 20px;
+}
+@media (min-width: 768px) {
+  .owl-dots {
+    margin-top: 40px;
+  }
+}
+@media (min-width: 992px) {
+  .owl-dots {
+    position: absolute;
+    transform: translate(-50%, 100%);
+  }
+}
+@media (min-width: 1200px) {
+  .owl-dots {
+    position: absolute;
+    transform: translate(-50%, 300%);
+  }
+}
+
+.owl-dots button.owl-dot {
+  width: 15px;
+  height: 15px;
+  background-color: #0c0c0c;
+  margin: 10px;
+  border-radius: 50%;
+  outline: none;
+}
+@media (min-width: 992px) {
+  .owl-dots button.owl-dot {
+    width: 17px;
+    height: 17px;
+  }
+}
+.owl-dots button.owl-dot.active {
+  background-color: #da003ea9;
+}

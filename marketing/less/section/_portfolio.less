@@ -1,0 +1,69 @@
+.portfolio {
+  padding-top: 40px;
+  padding-bottom: 40px;
+  background-color: rgb(248, 228, 48, 0.8);
+  text-align: center;
+
+  @media (min-width: 768px) {
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+  @media (min-width: 992px) {
+    padding-top: 90px;
+    padding-bottom: 80px;
+  }
+
+  &__title {
+    font-family: "Montserrat-Black";
+    font-size: 32px;
+    text-transform: uppercase;
+    letter-spacing: -4px;
+    line-height: 1;
+    margin: 0 0 28px 0;
+    @media (min-width: 768px) {
+      font-size: 45px;
+    }
+    @media (min-width: 992px) {
+      font-size: 55px;
+    }
+  }
+
+  &__subtitle {
+    font-family: "Montserrat-Regular";
+    font-size: 14px;
+    line-height: 1.2;
+    max-width: 998px;
+    margin: 0 auto;
+
+    @media (min-width: 768px) {
+      font-size: 17px;
+    }
+  }
+  position: relative;
+}
+
+.portfolio:after {
+  position: absolute;
+  content: "";
+  background-image: url("../img/city.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  height: 378px;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 1;
+}
+.gallery {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  padding-top: 50px;
+  padding-bottom: 40px;
+  position: relative;
+  z-index: 3;
+
+  @media (min-width: 992px) {
+    padding-bottom: 20px;
+  }
+}
