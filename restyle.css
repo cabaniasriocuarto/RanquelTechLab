@@ -596,7 +596,7 @@ header.backdrop.header .nav-actions{
 
 .about-grid{
   gap: clamp(28px, 5vw, 70px);
-  align-items: stretch;
+  align-items: center;
 }
 
 #about .about-card{
@@ -646,10 +646,18 @@ header.backdrop.header .nav-actions{
   font-weight: 900;
 }
 
-.about-media{
-  min-height: 100%;
+#about .about-media{
+  min-height: 0;
+  aspect-ratio: 16 / 10;
+  align-self: center;
   border-radius: 28px;
+  background: #05091a;
   box-shadow: var(--rtl-shadow-lg);
+}
+
+#about .about-media .thumb-img{
+  object-fit: contain;
+  background: #05091a;
 }
 
 .about-metrics{
@@ -917,9 +925,9 @@ header.backdrop.header .nav-actions{
 }
 
 .option-card .option-thumb img{
-  max-width: 90px;
-  margin: auto;
-  object-fit: contain;
+  max-width: none;
+  margin: 0;
+  object-fit: cover;
 }
 
 .cta-rail{
