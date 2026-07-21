@@ -131,6 +131,7 @@ const translations = {
     'hero.chatbot': 'Chatbot',
     'hero.whatsapp': 'WhatsApp',
     'hero.options': 'Development options',
+    'hero.booking': 'Book a video call',
 
     // ABOUT (EN) – MISMO FOCO
     'about.title': 'About us',

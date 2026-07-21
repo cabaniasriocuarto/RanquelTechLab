@@ -53,6 +53,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   
   <!-- Styles -->
   <link rel="stylesheet" href="./styles.css">
+  <link rel="stylesheet" href="./restyle.css">
 <script async src="https://www.googletagmanager.com/gtag/js?id=AW-958141767"></script><script>window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}gtag('js',new Date());gtag('config','AW-958141767');</script>
 <link rel="canonical" href="https://www.ranquel.com.ar/" />
   <meta name="msvalidate.01" content="00DE2115FC620736E7EE40338539231F" />
@@ -265,6 +266,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <header id="header" class="backdrop header">
     <nav class="wrap">
       <a href="#" class="logo neon" data-nav="inicio">Ranquel Tech Lab</a>
+      <div class="desktop-nav" aria-label="Navegación principal">
+        <a href="#about" data-anchor="about" data-i18n="nav.about">Sobre</a>
+        <a href="#services" data-anchor="services" data-i18n="nav.services">Servicios</a>
+        <a href="#ia" data-anchor="ia" data-i18n="nav.ai">IA aplicada</a>
+        <a href="#metodo" data-anchor="metodo" data-i18n="nav.method">Método</a>
+      </div>
       <div class="nav-actions">
         <a href="https://wa.me/5493584118722" class="nav-whatsapp header-whatsapp" data-whatsapp-location="wsp_head"><img src="./images/whatsapp.svg" alt="WhatsApp" class="icon" width="18" height="18" loading="eager">
           <span class="label-text">WhatsApp</span>
@@ -320,20 +327,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <span class="badge" data-reveal data-i18n="hero.badge">Desarrollo web, apps e IA en Río Cuarto</span>
             <h1 class="neon" data-reveal data-i18n="hero.title">Creamos software inteligente en Río Cuarto que<br>impulsa tu negocio.</h1>
             <p class="hero-subtitle" data-reveal data-i18n="hero.subtitle">Desarrollo web, tiendas online, apps Android/iOS y software con IA para empresas, agro y supermercados de Córdoba y toda Argentina.</p>
+            <div class="hero-capabilities" data-reveal aria-label="Capacidades principales">
+              <span>Web</span>
+              <span>Apps</span>
+              <span>Software</span>
+              <span>IA</span>
+            </div>
           </div>
         </div>
 
         <div class="wrap hero-bottom-actions" data-reveal>
           <div class="hero-buttons">
-            <a href="./marketing/index.html" class="btn btn-marketing">Marketing</a>
+            <a href="#" id="btnReservas" class="btn btn-primary btn-reservas" data-nav="reservas">
+              <span data-i18n="hero.booking">Reservar videollamada</span>
+            </a>
             <button id="btnOpciones" class="btn btn-ghost">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
                 <path d="M3 7h14v2H3V7Zm0 4h18v2H3v-2Zm0 4h10v2H3v-2Z"/>
               </svg>
               <span data-i18n="hero.options">Opciones de Desarrollo</span>
             </button>
+            <a href="./marketing/index.html" class="hero-text-link" data-i18n="nav.marketing">Marketing</a>
           </div>
         </div>
+        <div class="hero-scroll-cue" aria-hidden="true"><span></span></div>
       </section>
 
       <!-- About Section -->
