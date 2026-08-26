@@ -55,8 +55,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta property="og:image:height" content="906">
   <meta property="og:image:alt" content="Paisaje digital abstracto en coral y violeta de Ranquel Tech Lab">
   
-  <!-- Favicon -->
-  <link rel="icon" type="image/x-icon" href="./Favicon.ico">
+  <!-- Identidad de marca para navegadores y buscadores -->
+  <link rel="icon" type="image/png" sizes="512x512" href="/favicon.png">
+  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png">
+  <link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png">
+  <link rel="shortcut icon" href="/favicon.ico">
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   
   <!-- Styles -->
   <link rel="stylesheet" href="./styles.css">
@@ -71,12 +75,27 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       "@type": "LocalBusiness",
       "@id": "https://www.ranquel.com.ar/#organization",
       "name": "Ranquel Tech Lab",
+      "alternateName": "Ranquel",
       "url": "https://www.ranquel.com.ar/",
-      "logo": "https://www.ranquel.com.ar/images/Logo.webp",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://www.ranquel.com.ar/favicon.png",
+        "contentUrl": "https://www.ranquel.com.ar/favicon.png",
+        "width": 512,
+        "height": 512
+      },
       "image": "https://www.ranquel.com.ar/media/territorio/og-territorio.png",
       "description": "Desarrollo web, tiendas online, apps Android/iOS y software con IA en Río Cuarto, Córdoba. Soluciones digitales para empresas de Argentina.",
       "email": "ranqueltechlab@gmail.com",
-      "telephone": "+54 9 358 4118722",
+      "telephone": "+54 358 411 8722",
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "customer service",
+        "telephone": "+54 358 411 8722",
+        "email": "ranqueltechlab@gmail.com",
+        "url": "https://www.ranquel.com.ar/contacto/",
+        "availableLanguage": ["Spanish", "English"]
+      },
       "address": {
         "@type": "PostalAddress",
         "streetAddress": "Sobremonte 548, 1.er piso, local 84",
@@ -112,6 +131,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       "@id": "https://www.ranquel.com.ar/#website",
       "url": "https://www.ranquel.com.ar/",
       "name": "Ranquel Tech Lab",
+      "alternateName": "Ranquel",
       "inLanguage": "es-AR",
       "publisher": {
         "@id": "https://www.ranquel.com.ar/#organization"
@@ -144,11 +164,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
       </a>
 
       <div class="tl-nav-links">
-        <a href="#services" data-anchor="services" data-i18n="nav.services">Soluciones</a>
-        <a href="/?view=opciones" class="tl-nav-sector" data-nav="opciones"><span data-i18n="nav.sectors">Sectores</span><b aria-hidden="true">↗</b></a>
+        <a href="/soluciones/" data-anchor="services" data-i18n="nav.services">Soluciones</a>
+        <a href="/sectores/" class="tl-nav-sector" data-nav="opciones"><span data-i18n="nav.sectors">Sectores</span><b aria-hidden="true">↗</b></a>
         <a href="#metodo" data-anchor="metodo" data-i18n="nav.method">Método</a>
         <a href="#marketing" data-anchor="marketing" data-i18n="nav.marketing">Lab</a>
-        <a href="#contact" data-anchor="contact" data-i18n="nav.contact">Contacto</a>
+        <a href="/contacto/" data-anchor="contact" data-i18n="nav.contact">Contacto</a>
       </div>
 
       <div class="tl-nav-actions">
@@ -173,11 +193,11 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     <div id="mobileMenu" class="tl-mobile-menu" style="display: none;">
       <ul>
         <li><a href="#" data-nav="inicio" data-i18n="nav.home">Inicio</a></li>
-        <li><a href="#services" data-anchor="services" data-i18n="nav.services">Soluciones</a></li>
-        <li><a href="/?view=opciones" class="tl-mobile-sector-link" data-nav="opciones" data-i18n="nav.options">Ideas por sector</a></li>
+        <li><a href="/soluciones/" data-anchor="services" data-i18n="nav.services">Soluciones</a></li>
+        <li><a href="/sectores/" class="tl-mobile-sector-link" data-nav="opciones" data-i18n="nav.options">Ideas por sector</a></li>
         <li><a href="#metodo" data-anchor="metodo" data-i18n="nav.method">Método</a></li>
         <li><a href="#marketing" data-anchor="marketing" data-i18n="nav.marketing">Lab</a></li>
-        <li><a href="#contact" data-anchor="contact" data-i18n="nav.contact">Contacto</a></li>
+        <li><a href="/contacto/" data-anchor="contact" data-i18n="nav.contact">Contacto</a></li>
         <li><a href="#" data-nav="reservas" data-i18n="nav.booking">Agendá videollamada online</a></li>
       </ul>
     </div>
@@ -202,7 +222,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
           <h1 data-i18n="hero.title"><span class="tl-hero-line">Tecnología actual</span> <span class="tl-hero-line">para</span> <em class="tl-hero-line">negocios Rentables.</em></h1>
           <p class="tl-hero-lead" data-i18n="hero.subtitle">Creamos productos digitales, automatizaciones e IA para mejorar procesos, ventas y decisiones.</p>
           <div class="tl-hero-actions">
-            <a href="#services" class="tl-primary-cta" data-anchor="services" data-i18n="hero.primary">Explorar soluciones</a>
+            <a href="/soluciones/" class="tl-primary-cta" data-anchor="services" data-i18n="hero.primary">Explorar soluciones</a>
             <a href="#" class="tl-secondary-cta" data-nav="reservas" data-i18n="hero.secondary">Contanos tu desafío <span aria-hidden="true">↗</span></a>
           </div>
         </div>
@@ -284,7 +304,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
               <h3 data-i18n="sectors.title">Distintos sectores. Problemas diferentes.</h3>
               <p data-i18n="sectors.body">Explorá ideas para industria, finanzas, hotelería, gastronomía, agro, minería y sector público.</p>
             </div>
-            <a href="/?view=opciones" class="tl-round-link btn-opciones" data-nav="opciones" data-i18n="sectors.cta">Ver ideas por sector <span aria-hidden="true">↗</span></a>
+            <a href="/sectores/" class="tl-round-link btn-opciones" data-nav="opciones" data-i18n="sectors.cta">Ver ideas por sector <span aria-hidden="true">↗</span></a>
           </div>
         </div>
       </section>
@@ -368,7 +388,7 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <p class="tl-section-label" data-i18n="lab.eyebrow">05 / RANQUEL LAB</p>
             <h2 class="tl-display" data-i18n="lab.title">Probar en pequeño antes de construir en grande.</h2>
             <p class="tl-lab-body" data-i18n="lab.body">Prototipamos usos de IA, automatización y visión por computadora para evaluar su utilidad antes de una implementación mayor.</p>
-            <a href="/?view=opciones" class="tl-lab-sector-link" data-nav="opciones" data-i18n="sectors.cta">Ver ideas por sector <span aria-hidden="true">↗</span></a>
+            <a href="/sectores/" class="tl-lab-sector-link" data-nav="opciones" data-i18n="sectors.cta">Ver ideas por sector <span aria-hidden="true">↗</span></a>
           </div>
           <div class="tl-lab-stack" aria-hidden="true" data-reveal data-ambient-visual>
             <img class="tl-lab-image" src="./media/territorio/lab-prototype-v1.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async" fetchpriority="low">
@@ -633,11 +653,12 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
         <span class="tl-brand-word">Ranquel <small>Tech Lab</small></span>
       </a>
       <nav class="tl-footer-nav" aria-label="Navegación secundaria">
-        <a href="#services" data-anchor="services" data-i18n="nav.services">Soluciones</a>
-        <a href="/?view=opciones" class="tl-footer-sector" data-nav="opciones"><span data-i18n="nav.sectors">Sectores</span><b aria-hidden="true">↗</b></a>
+        <a href="/soluciones/" data-anchor="services" data-i18n="nav.services">Soluciones</a>
+        <a href="/sectores/" class="tl-footer-sector" data-nav="opciones"><span data-i18n="nav.sectors">Sectores</span><b aria-hidden="true">↗</b></a>
         <a href="#metodo" data-anchor="metodo" data-i18n="nav.method">Método</a>
         <a href="#marketing" data-anchor="marketing" data-i18n="nav.marketing">Lab</a>
-        <a href="#contact" data-anchor="contact" data-i18n="nav.contact">Contacto</a>
+        <a href="/contacto/" data-anchor="contact" data-i18n="nav.contact">Contacto</a>
+        <a href="/contacto/whatsapp/">WhatsApp</a>
       </nav>
       <div class="tl-footer-social">
         <a href="https://www.instagram.com/ranqueltechlab" target="_blank" rel="noopener noreferrer" aria-label="Instagram">IG</a>

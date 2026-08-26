@@ -1,4 +1,16 @@
 {
+  "redirects": [
+    {
+      "source": "/Favicon.ico",
+      "destination": "/favicon.ico",
+      "permanent": true
+    },
+    {
+      "source": "/index.html",
+      "destination": "/",
+      "permanent": true
+    }
+  ],
   "headers": [
     {
       "source": "/(.*)",
