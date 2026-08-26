@@ -19,7 +19,7 @@ const translations = {
 
     // HERO + LOCAL SEO
     'hero.badge': 'Río Cuarto · Argentina',
-    'hero.title': '<span class="tl-hero-line">Tecnología actual</span> <span class="tl-hero-line">para</span> <em class="tl-hero-line">negocios rentables.</em>',
+    'hero.title': '<span class="tl-hero-line">Tecnología actual</span> <span class="tl-hero-line">para</span> <em class="tl-hero-line">negocios Rentables.</em>',
     'hero.subtitle': 'Creamos productos digitales, automatizaciones e IA para mejorar procesos, ventas y decisiones.',
     'hero.primary': 'Explorar soluciones',
     'hero.secondary': 'Contanos tu desafío <span aria-hidden="true">↗</span>',
@@ -171,7 +171,7 @@ const translations = {
     'lab.card3.title': 'VISIÓN',
     'lab.card3.body': 'prototipos visuales',
     'contact.eyebrow': '06 / ¿TENÉS UN DESAFÍO?',
-    'contact.title': 'Hagamos que funcione.',
+    'contact.title': 'Hagamos que Funcione.',
     'contact.body': 'Contanos qué querés mejorar y vemos juntos por dónde conviene empezar.',
     'contact.primary': 'Agendá una videollamada',
     'contact.secondary': 'Escribinos por WhatsApp',
