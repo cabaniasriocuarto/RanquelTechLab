@@ -7,6 +7,7 @@
  */
 
 const DESTINATION_EMAIL = 'ranqueltechlab@gmail.com';
+const SOURCE_URL = 'https://www.ranquel.com.ar/';
 const REQUEST_TIMEOUT_MS = 12000;
 
 function sendJson(res, statusCode, payload) {
@@ -108,15 +109,17 @@ module.exports = async (req, res) => {
   }
 
   const observations = `${lead.message} | Canal: ${lead.channel || 'N/A'} | Calendario: ${lead.calendarLink || 'N/A'}`;
-  const formData = new FormData();
-  formData.append('nombre', lead.name);
-  formData.append('whatsapp', lead.phone);
-  formData.append('email', lead.email);
-  formData.append('presupuesto', lead.projectType);
-  formData.append('observaciones', observations);
-  formData.append('_subject', 'Nuevo presupuesto desde el asistente web');
-  formData.append('_captcha', 'false');
-  formData.append('_template', 'table');
+  const upstreamPayload = {
+    nombre: lead.name,
+    whatsapp: lead.phone,
+    email: lead.email,
+    presupuesto: lead.projectType,
+    observaciones: observations,
+    _subject: 'Nuevo presupuesto desde el asistente web',
+    _captcha: 'false',
+    _template: 'table',
+    _url: SOURCE_URL,
+  };
 
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
@@ -124,8 +127,12 @@ module.exports = async (req, res) => {
   try {
     const upstream = await fetch(`https://formsubmit.co/ajax/${DESTINATION_EMAIL}`, {
       method: 'POST',
-      headers: { Accept: 'application/json' },
-      body: formData,
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Referer: SOURCE_URL,
+      },
+      body: JSON.stringify(upstreamPayload),
       signal: controller.signal,
     });
 
