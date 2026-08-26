@@ -124,15 +124,6 @@ body.territorio-site section[id] {
   font-weight: 400;
 }
 
-.tl-footer-brand-logo {
-  width: 150px;
-  height: 75px;
-  display: block;
-  object-fit: cover;
-  object-position: center;
-  filter: saturate(1.08) brightness(1.08);
-}
-
 .tl-nav-links {
   display: flex;
   align-items: center;
@@ -499,7 +490,6 @@ body.territorio-site section[id] {
 
   .tl-brand-orb { width: 46px; height: 46px; }
   .tl-brand-word { display: none; }
-  .tl-footer-brand-logo { width: 120px; height: 60px; }
   .tl-whatsapp span,
   .tl-nav-cta { display: none; }
   .tl-whatsapp { width: 40px; min-height: 40px; padding: 0; }
