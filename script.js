@@ -302,19 +302,19 @@ const translations = {
     'method.step6.desc': 'We finalize details, collect the remaining 50%, deliver the website and run monthly follow-ups to add new technology.',
     'options.title': 'Ideas by sector',
     'options.subtitle': 'Every sector has its own challenges. These are conversation starters, not off-the-shelf solutions.',
-    'options.industry.title': 'Industry (manufacturing)',
+    'options.industry.title': 'Manufacturing',
     'options.industry.list': '<li>Dashboards for production, quality, and maintenance.</li><li>Data integration across equipment and existing systems.</li><li>Alerts and traceability to support operational decisions.</li>',
-    'options.finance.title': 'Finance (SMEs)',
-    'options.finance.list': '<li>Workflows for documents, reconciliation, and collections.</li><li>Dashboards that connect financial and commercial information.</li><li>Rules and alerts for reviewing unusual movements.</li>',
+    'options.finance.title': 'Finance for SMEs',
+    'options.finance.list': '<li>Workflows for invoices, reconciliation, and collections.</li><li>Dashboards that connect financial and commercial information.</li><li>Rules and alerts to flag unusual transactions.</li>',
     'options.hotel.title': 'Hospitality',
     'options.hotel.list': '<li>Booking and guest communication experiences.</li><li>Integrations that centralize availability and operations.</li><li>Dashboards for tasks, occupancy, and follow-up.</li>',
     'options.restaurant.title': 'Restaurants',
     'options.restaurant.list': '<li>Connected menus, ordering, and digital channels.</li><li>Tools for inventory, purchasing, and daily organization.</li><li>Analytics for demand, hours, and product mix.</li>',
-    'options.agro.title': 'Agro',
+    'options.agro.title': 'Agriculture',
     'options.agro.list': '<li>Field records and applications adapted to mobile work.</li><li>Dashboards that bring production and operations together.</li><li>Integrations that simplify follow-up and logistics.</li>',
     'options.mining.title': 'Mining',
     'options.mining.list': '<li>Maintenance and operational information in one place.</li><li>Workflows for incidents, safety, and follow-up.</li><li>Dashboards adapted to equipment, shifts, and processes.</li>',
-    'options.gov.title': 'Government (public sector)',
+    'options.gov.title': 'Public sector',
     'options.gov.list': '<li>Forms, appointments, and case tracking.</li><li>Dashboards for information and citizen services.</li><li>Internal tools for teams and public services.</li>',
     
 
@@ -595,6 +595,7 @@ document.addEventListener('DOMContentLoaded', () => {
   const menuIcon = document.getElementById('menuIcon');
   const vistaInicio = document.getElementById('vistaInicio');
   const vistaOpciones = document.getElementById('vistaOpciones');
+  const optionsTitle = document.getElementById('optionsTitle');
   const vistaReservas = document.getElementById('vistaReservas');
   const langSelector = document.getElementById('langSelector');
 
@@ -663,6 +664,7 @@ document.addEventListener('DOMContentLoaded', () => {
       if (vistaOpciones) vistaOpciones.style.display = 'block';
       if (vistaReservas) vistaReservas.style.display = 'none';
       window.scrollTo({ top: 0, behavior: 'smooth' });
+      setTimeout(() => optionsTitle?.focus({ preventScroll: true }), 50);
     } else if (vista === 'reservas') {
       if (vistaInicio) vistaInicio.style.display = 'none';
       if (vistaOpciones) vistaOpciones.style.display = 'none';

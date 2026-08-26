@@ -491,99 +491,127 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
     </div>
     <!-- Vista Opciones de Desarrollo -->
     <div id="vistaOpciones" style="display: none;">
-      <section class="wrap" style="padding-top: 80px; padding-bottom: 80px;">
-        <div class="panel glow" style="padding: 20px;" data-reveal>
-          <a href="#" class="tl-view-back" data-nav="inicio" data-i18n="common.back">← Volver al inicio</a>
-          <h2 class="neon" style="font-size: clamp(26px,4vw,40px); font-weight: 800;" data-i18n="options.title">Ideas por sector</h2>
-          <p style="margin-top: 8px; color: var(--text-muted);" data-i18n="options.subtitle">Cada sector tiene desafíos propios. Estas son posibilidades para iniciar una conversación, no soluciones cerradas.</p>
-        </div>
-        <div class="grid grid-2" style="margin-top: 24px;">
+      <section class="wrap tl-options-shell">
+        <header class="tl-options-hero" data-reveal>
+          <div class="tl-options-hero-copy">
+            <a href="./" class="tl-view-back" data-nav="inicio" data-i18n="common.back">← Volver al inicio</a>
+            <span class="tl-options-eyebrow" aria-hidden="true">07 / RANQUEL TECH LAB</span>
+            <h1 id="optionsTitle" class="neon" tabindex="-1" data-i18n="options.title">Ideas por sector</h1>
+            <p data-i18n="options.subtitle">Cada sector tiene desafíos propios. Estas son posibilidades para iniciar una conversación, no soluciones cerradas.</p>
+          </div>
+          <div class="tl-options-hero-media" aria-hidden="true">
+            <img class="tl-options-atlas" src="./media/territorio/sector-atlas-v1.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async">
+            <span class="tl-options-hero-caption"><b>RANQUEL</b><b>01—07</b></span>
+          </div>
+        </header>
+        <div class="tl-options-grid">
           
-          <article class="panel glow option-card" data-reveal>
-            <div class="thumb thumb-contain option-thumb">
-              <img class="thumb-img" alt="Industria (manufactura)" src="./images/option-industry.svg" loading="lazy">
+          <article class="option-card" data-reveal>
+            <div class="option-thumb tl-sector-visual tl-sector-visual--industry" aria-hidden="true">
+              <img class="thumb-img" src="./media/territorio/sectors/industry.webp" alt="" width="1200" height="437" loading="lazy" decoding="async">
             </div>
-            <h3 data-i18n="options.industry.title">Industria (manufactura)</h3>
-            <ul data-i18n="options.industry.list">
-              <li>Tableros para ordenar producción, calidad y mantenimiento.</li>
-              <li>Integración de datos entre equipos y sistemas existentes.</li>
-              <li>Alertas y trazabilidad para acompañar decisiones operativas.</li>
-            </ul>
+            <div class="option-copy">
+              <h2 data-i18n="options.industry.title">Industria (manufactura)</h2>
+              <ul data-i18n="options.industry.list">
+                <li>Tableros para ordenar producción, calidad y mantenimiento.</li>
+                <li>Integración de datos entre equipos y sistemas existentes.</li>
+                <li>Alertas y trazabilidad para acompañar decisiones operativas.</li>
+              </ul>
+            </div>
           </article>
 
-          <article class="panel glow option-card" data-reveal>
-            <div class="thumb thumb-contain option-thumb">
-              <img class="thumb-img" alt="Finanzas (PyMEs)" src="./images/option-finance.svg" loading="lazy">
+          <article class="option-card" data-reveal>
+            <div class="option-thumb tl-sector-visual tl-sector-visual--finance" aria-hidden="true">
+              <img class="thumb-img" src="./media/territorio/sectors/finance.webp" alt="" width="1200" height="438" loading="lazy" decoding="async">
             </div>
-            <h3 data-i18n="options.finance.title">Finanzas (PyMEs)</h3>
-            <ul data-i18n="options.finance.list">
-              <li>Flujos para ordenar comprobantes, conciliaciones y cobranzas.</li>
-              <li>Paneles que reúnen información financiera y comercial.</li>
-              <li>Reglas y alertas para revisar movimientos fuera de lo habitual.</li>
-            </ul>
+            <div class="option-copy">
+              <h2 data-i18n="options.finance.title">Finanzas (PyMEs)</h2>
+              <ul data-i18n="options.finance.list">
+                <li>Flujos para ordenar comprobantes, conciliaciones y cobranzas.</li>
+                <li>Paneles que reúnen información financiera y comercial.</li>
+                <li>Reglas y alertas para revisar movimientos fuera de lo habitual.</li>
+              </ul>
+            </div>
           </article>
 
-          <article class="panel glow option-card" data-reveal>
-            <div class="thumb thumb-contain option-thumb">
-              <img class="thumb-img" alt="Hotelería" src="./images/option-hotel.svg" loading="lazy">
+          <article class="option-card" data-reveal>
+            <div class="option-thumb tl-sector-visual tl-sector-visual--hotel" aria-hidden="true">
+              <img class="thumb-img" src="./media/territorio/sectors/hospitality.webp" alt="" width="1200" height="387" loading="lazy" decoding="async">
             </div>
-            <h3 data-i18n="options.hotel.title">Hotelería</h3>
-            <ul data-i18n="options.hotel.list">
-              <li>Experiencias de reserva y comunicación con huéspedes.</li>
-              <li>Integraciones para centralizar disponibilidad y operación.</li>
-              <li>Paneles para organizar tareas, ocupación y seguimiento.</li>
-            </ul>
+            <div class="option-copy">
+              <h2 data-i18n="options.hotel.title">Hotelería</h2>
+              <ul data-i18n="options.hotel.list">
+                <li>Experiencias de reserva y comunicación con huéspedes.</li>
+                <li>Integraciones para centralizar disponibilidad y operación.</li>
+                <li>Paneles para organizar tareas, ocupación y seguimiento.</li>
+              </ul>
+            </div>
           </article>
 
-          <article class="panel glow option-card" data-reveal>
-            <div class="thumb thumb-contain option-thumb">
-              <img class="thumb-img" alt="Restaurantes" src="./images/option-restaurant.svg" loading="lazy">
+          <article class="option-card" data-reveal>
+            <div class="option-thumb tl-sector-visual tl-sector-visual--restaurant" aria-hidden="true">
+              <img class="thumb-img" src="./media/territorio/sectors/restaurants.webp" alt="" width="1200" height="388" loading="lazy" decoding="async">
             </div>
-            <h3 data-i18n="options.restaurant.title">Restaurantes</h3>
-            <ul data-i18n="options.restaurant.list">
-              <li>Menús, pedidos y canales digitales conectados.</li>
-              <li>Herramientas para inventario, compras y organización diaria.</li>
-              <li>Analítica para entender demanda, horarios y productos.</li>
-            </ul>
+            <div class="option-copy">
+              <h2 data-i18n="options.restaurant.title">Restaurantes</h2>
+              <ul data-i18n="options.restaurant.list">
+                <li>Menús, pedidos y canales digitales conectados.</li>
+                <li>Herramientas para inventario, compras y organización diaria.</li>
+                <li>Analítica para entender demanda, horarios y productos.</li>
+              </ul>
+            </div>
           </article>
 
-          <article class="panel glow option-card" data-reveal>
-            <div class="thumb thumb-contain option-thumb">
-              <img class="thumb-img" alt="Agro" src="./images/option-agro.svg" loading="lazy">
+          <article class="option-card" data-reveal>
+            <div class="option-thumb tl-sector-visual tl-sector-visual--agro" aria-hidden="true">
+              <img class="thumb-img" src="./media/territorio/sectors/agriculture.webp" alt="" width="1200" height="352" loading="lazy" decoding="async">
             </div>
-            <h3 data-i18n="options.agro.title">Agro</h3>
-            <ul data-i18n="options.agro.list">
-              <li>Registros de campo y aplicaciones adaptadas al trabajo móvil.</li>
-              <li>Paneles que reúnen información productiva y operativa.</li>
-              <li>Integraciones para simplificar seguimiento y logística.</li>
-            </ul>
+            <div class="option-copy">
+              <h2 data-i18n="options.agro.title">Agro</h2>
+              <ul data-i18n="options.agro.list">
+                <li>Registros de campo y aplicaciones adaptadas al trabajo móvil.</li>
+                <li>Paneles que reúnen información productiva y operativa.</li>
+                <li>Integraciones para simplificar seguimiento y logística.</li>
+              </ul>
+            </div>
           </article>
 
-          <article class="panel glow option-card" data-reveal>
-            <div class="thumb thumb-contain option-thumb">
-              <img class="thumb-img" alt="Minería" src="./images/option-mining.svg" loading="lazy">
+          <article class="option-card" data-reveal>
+            <div class="option-thumb tl-sector-visual tl-sector-visual--mining" aria-hidden="true">
+              <img class="thumb-img" src="./media/territorio/sectors/mining.webp" alt="" width="1200" height="353" loading="lazy" decoding="async">
             </div>
-            <h3 data-i18n="options.mining.title">Minería</h3>
-            <ul data-i18n="options.mining.list">
-              <li>Información de mantenimiento y operación en un mismo lugar.</li>
-              <li>Flujos para registrar novedades, seguridad y seguimiento.</li>
-              <li>Tableros adaptados a equipos, turnos y procesos.</li>
-            </ul>
+            <div class="option-copy">
+              <h2 data-i18n="options.mining.title">Minería</h2>
+              <ul data-i18n="options.mining.list">
+                <li>Información de mantenimiento y operación en un mismo lugar.</li>
+                <li>Flujos para registrar novedades, seguridad y seguimiento.</li>
+                <li>Tableros adaptados a equipos, turnos y procesos.</li>
+              </ul>
+            </div>
           </article>
 
-          <article class="panel glow option-card" data-reveal>
-            <div class="thumb thumb-contain option-thumb">
-              <img class="thumb-img" alt="Gobierno" src="./images/option-gov.svg" loading="lazy">
+          <article class="option-card" data-reveal>
+            <div class="option-thumb tl-sector-visual tl-sector-visual--government" aria-hidden="true">
+              <img class="thumb-img" src="./media/territorio/sectors/public-sector.webp" alt="" width="1200" height="383" loading="lazy" decoding="async">
             </div>
-            <h3 data-i18n="options.gov.title">Gobierno (sector público)</h3>
-            <ul data-i18n="options.gov.list">
-              <li>Formularios, turnos y seguimiento de trámites.</li>
-              <li>Paneles para organizar información y atención ciudadana.</li>
-              <li>Herramientas internas para equipos y servicios públicos.</li>
-            </ul>
+            <div class="option-copy">
+              <h2 data-i18n="options.gov.title">Gobierno (sector público)</h2>
+              <ul data-i18n="options.gov.list">
+                <li>Formularios, turnos y seguimiento de trámites.</li>
+                <li>Paneles para organizar información y atención ciudadana.</li>
+                <li>Herramientas internas para equipos y servicios públicos.</li>
+              </ul>
+            </div>
           </article>
 
         </div>
+        <aside class="tl-options-cta" data-reveal>
+          <div>
+            <span class="tl-section-label" data-i18n="cta.title">¿Tenés un desafío?</span>
+            <h2 data-i18n="cta.subtitle">Contanos qué necesitás resolver y vemos por dónde empezar.</h2>
+          </div>
+          <a href="#" class="tl-button tl-button-dark" data-nav="reservas" data-i18n="nav.booking">Agendá videollamada online</a>
+        </aside>
       </section>
     </div>
 
