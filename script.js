@@ -1538,13 +1538,24 @@ function redirectToVideollamadaThankYou() {
     const toggle = document.getElementById("chatbot-toggle");
     const panel = document.getElementById("chatbot-panel");
 
-    const openPanel = () => {
+    const AUTO_OPEN_DELAY_MS = 7000;
+    let autoOpenTimer = null;
+
+    const cancelAutoOpen = () => {
+      if (autoOpenTimer === null) return;
+      window.clearTimeout(autoOpenTimer);
+      autoOpenTimer = null;
+    };
+
+    const openPanel = (automatic = false) => {
+      if (!automatic) cancelAutoOpen();
       panel.classList.remove("chatbot-hidden");
       toggle.setAttribute('aria-expanded', 'true');
       render();
     };
 
     const togglePanel = () => {
+      cancelAutoOpen();
       panel.classList.toggle("chatbot-hidden");
       toggle.setAttribute('aria-expanded', String(!panel.classList.contains('chatbot-hidden')));
       render();
@@ -1559,13 +1570,18 @@ function redirectToVideollamadaThankYou() {
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && !panel.classList.contains('chatbot-hidden')) {
+        cancelAutoOpen();
         panel.classList.add('chatbot-hidden');
         toggle.setAttribute('aria-expanded', 'false');
         toggle.focus();
       }
     });
 
-    // Mantener el asistente cerrado hasta que la persona decida abrirlo.
+    // Presentar el asistente una vez que la persona tuvo tiempo de recorrer la portada.
+    autoOpenTimer = window.setTimeout(() => {
+      autoOpenTimer = null;
+      if (panel.classList.contains('chatbot-hidden')) openPanel(true);
+    }, AUTO_OPEN_DELAY_MS);
   });
 })();
 
