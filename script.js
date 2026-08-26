@@ -12,7 +12,8 @@ const translations = {
     'nav.marketing': 'Lab',
     'nav.contact': 'Contacto',
     'nav.method': 'Método',
-    'nav.options': 'Opciones de Desarrollo',
+    'nav.options': 'Ideas por sector',
+    'nav.sectors': 'Sectores',
     'nav.booking': 'Agendá videollamada online',
     'lang.label': 'Selector de idioma',
     'common.back': '← Volver al inicio',
@@ -193,7 +194,8 @@ const translations = {
     'nav.marketing': 'Lab',
     'nav.contact': 'Contact',
     'nav.method': 'Method',
-    'nav.options': 'Development options',
+    'nav.options': 'Ideas by sector',
+    'nav.sectors': 'Sectors',
     'nav.booking': 'Book an online video call',
     'lang.label': 'Language selector',
     'common.back': '← Back to home',
@@ -610,8 +612,35 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
   
+  function syncNavigationUrl(vista, anchor = null) {
+    if (!window.history?.pushState) return;
+
+    const url = new URL(window.location.href);
+    const currentView = url.searchParams.get('view');
+
+    if (vista === 'opciones') {
+      url.searchParams.set('view', 'opciones');
+      url.searchParams.delete('access');
+      url.hash = '';
+    } else if (vista === 'reservas') {
+      url.searchParams.set('view', 'reservas');
+      if (currentView !== 'reservas') url.searchParams.delete('access');
+      url.hash = '';
+    } else {
+      url.searchParams.delete('view');
+      url.searchParams.delete('access');
+      url.hash = anchor || '';
+    }
+
+    const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+    const currentUrl = `${window.location.pathname}${window.location.search}${window.location.hash}`;
+    if (nextUrl !== currentUrl) {
+      window.history.pushState({ vista, anchor }, '', nextUrl);
+    }
+  }
+
   // Navegación entre vistas
-  function navegarA(vista, anchor = null) {
+  function navegarA(vista, anchor = null, { updateHistory = true } = {}) {
     menuOpen = false;
     document.body.classList.remove('tl-menu-open');
     if (mobileMenu) mobileMenu.style.display = 'none';
@@ -625,13 +654,15 @@ document.addEventListener('DOMContentLoaded', () => {
       return;
     }
     if (vista === 'opciones' && !vistaOpciones) {
-      window.location.href = '/#services';
+      window.location.href = '/?view=opciones';
       return;
     }
     if (vista === 'inicio' && !vistaInicio) {
       window.location.href = anchor ? `/${anchor}` : '/';
       return;
     }
+
+    if (updateHistory) syncNavigationUrl(vista, anchor);
     
     if (vista === 'inicio') {
       if (vistaInicio) vistaInicio.style.display = 'block';
@@ -811,19 +842,27 @@ document.addEventListener('DOMContentLoaded', () => {
     }
   });
 
-  // Deep link: /?view=reservas&access=xxx
-  try {
-    const params = new URLSearchParams(window.location.search);
-    const view = params.get('view');
-    const access = params.get('access');
-    if (view === 'reservas') {
-      navegarA('reservas');
-      if (access) {
-        if (dailyRoomInput) dailyRoomInput.value = access;
-        renderDailyFromAccess(access);
+  function applyLocationView() {
+    try {
+      const params = new URLSearchParams(window.location.search);
+      const view = params.get('view');
+      const access = params.get('access');
+
+      if (view === 'reservas') {
+        navegarA('reservas', null, { updateHistory: false });
+        if (dailyRoomInput) dailyRoomInput.value = access || '';
+        if (access) renderDailyFromAccess(access);
+      } else if (view === 'opciones') {
+        navegarA('opciones', null, { updateHistory: false });
+      } else if (vistaInicio) {
+        navegarA('inicio', window.location.hash || null, { updateHistory: false });
       }
-    }
-  } catch (_) {}
+    } catch (_) {}
+  }
+
+  // Deep links + Back/Forward: /?view=opciones y /?view=reservas&access=xxx
+  applyLocationView();
+  window.addEventListener('popstate', applyLocationView);
 
   
   
