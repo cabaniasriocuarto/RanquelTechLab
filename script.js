@@ -13,7 +13,7 @@ const translations = {
     'nav.contact': 'Contacto',
     'nav.method': 'Método',
     'nav.options': 'Opciones de Desarrollo',
-    'nav.booking': 'Hablemos',
+    'nav.booking': 'Agendá videollamada online',
     'lang.label': 'Selector de idioma',
     'common.back': '← Volver al inicio',
 
@@ -193,7 +193,7 @@ const translations = {
     'nav.contact': 'Contact',
     'nav.method': 'Method',
     'nav.options': 'Development options',
-    'nav.booking': 'Let\'s talk',
+    'nav.booking': 'Book an online video call',
     'lang.label': 'Language selector',
     'common.back': '← Back to home',
 
