@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JY9JDYZB52"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-JY9JDYZB52');
-</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="noindex, follow">
   <meta name="referrer" content="strict-origin-when-cross-origin">
  <meta
   http-equiv="Content-Security-Policy"
@@ -67,18 +58,19 @@
   </main>
 
   <script>
-    // Evento para marcar la conversión de envío de presupuesto
-    gtag('event', 'presupuesto_enviado', {
-      event_category: 'lead',
-      event_label: 'presupuesto_web',
-      value: 1
-    });
-
-    gtag('event', 'conversion', {
-      'send_to': 'AW-958141767/hgzHCNfH9dUbEMeq8MgD',
-      'value': 350.0,
-      'currency': 'ARS'
-    });
+    if (!sessionStorage.getItem('rtl-presupuesto-conversion-sent')) {
+      sessionStorage.setItem('rtl-presupuesto-conversion-sent', '1');
+      gtag('event', 'presupuesto_enviado', {
+        event_category: 'lead',
+        event_label: 'presupuesto_web',
+        value: 1
+      });
+      gtag('event', 'conversion', {
+        send_to: 'AW-958141767/hgzHCNfH9dUbEMeq8MgD',
+        value: 350,
+        currency: 'ARS'
+      });
+    }
   </script>
 </body>
 </html>

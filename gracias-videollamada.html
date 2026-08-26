@@ -1,18 +1,9 @@
 <!DOCTYPE html>
 <html lang="es" class="dark">
 <head>
-  <!-- Google tag (gtag.js) -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-JY9JDYZB52"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-
-  gtag('config', 'G-JY9JDYZB52');
-</script>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="robots" content="index, follow">
+  <meta name="robots" content="noindex, follow">
   <meta name="referrer" content="strict-origin-when-cross-origin">
 <meta
   http-equiv="Content-Security-Policy"
@@ -73,28 +64,27 @@
   </main>
 
   <script>
-    // Conversión para videollamada
-    gtag('event', 'conversion', {
-      'send_to': 'AW-958141767/aqEJCMyjvccbEMeq8MgD',
-      'value': 1.0,
-      'currency': 'ARS',
-      'transaction_id': 'videollamada_' + Date.now()
-    });
-
-    // Evento para GA4
-    gtag('event', 'videollamada_agendada', {
-      event_category: 'lead',
-      event_label: 'videollamada_chatbot',
-      value: 1
-    });
+    if (!sessionStorage.getItem('rtl-videollamada-conversion-sent')) {
+      sessionStorage.setItem('rtl-videollamada-conversion-sent', '1');
+      const transactionId = `videollamada_${Date.now()}`;
+      gtag('event', 'conversion', {
+        send_to: 'AW-958141767/aqEJCMyjvccbEMeq8MgD',
+        value: 1,
+        currency: 'ARS',
+        transaction_id: transactionId
+      });
+      gtag('event', 'videollamada_agendada', {
+        event_category: 'lead',
+        event_label: 'videollamada_chatbot',
+        value: 1
+      });
+      gtag('event', 'conversion', {
+        send_to: 'AW-958141767/NQ89COK_69UbEMeq8MgD',
+        value: 1,
+        currency: 'ARS',
+        transaction_id: transactionId
+      });
+    }
   </script>
-  <!-- Event snippet for gracias videollamada conversion page -->
-<script>
-  gtag('event', 'conversion', {
-      'send_to': 'AW-958141767/NQ89COK_69UbEMeq8MgD',
-      'value': 1.0,
-      'currency': 'ARS'
-  });
-</script>
 </body>
 </html>
