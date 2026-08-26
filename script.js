@@ -176,10 +176,15 @@ const translations = {
     'contact.body': 'Contanos qué querés mejorar y vemos juntos por dónde conviene empezar.',
     'contact.primary': 'Agendá una videollamada',
     'contact.secondary': 'Escribinos por WhatsApp',
-    'contact.base': 'BASE',
+    'contact.base': 'DIRECCIÓN',
+    'contact.address': 'Sobremonte 548 · 1.er piso · local 84 · Río Cuarto · Córdoba · Argentina',
+    'contact.map.eyebrow': 'DÓNDE ENCONTRARNOS',
+    'contact.map.title': 'Sobremonte 548',
+    'contact.map.body': '1.er piso · local 84 · Río Cuarto · Córdoba · Argentina',
+    'contact.map.open': 'Abrir en Google Maps',
     'contact.email': 'EMAIL',
     'contact.phone': 'TELÉFONO',
-    'footer.location': 'Río Cuarto · Córdoba · Argentina',
+    'footer.location': 'Sobremonte 548 · 1.er piso · local 84 · Río Cuarto · Córdoba · Argentina',
     'footer.copy': '© 2026 Ranquel Tech Lab',
     'chat.toggle': 'Consulta rápida <span aria-hidden="true">↗</span>',
     'cta.title': '¿Tenés un desafío?',
@@ -354,10 +359,15 @@ const translations = {
     'contact.body': 'Tell us what you want to improve, and let’s figure out where to start.',
     'contact.primary': 'Book a video call',
     'contact.secondary': 'Message us on WhatsApp',
-    'contact.base': 'BASE',
+    'contact.base': 'ADDRESS',
+    'contact.address': 'Sobremonte 548 · 1st floor · unit 84 · Río Cuarto · Córdoba · Argentina',
+    'contact.map.eyebrow': 'FIND US',
+    'contact.map.title': 'Sobremonte 548',
+    'contact.map.body': '1st floor · unit 84 · Río Cuarto · Córdoba · Argentina',
+    'contact.map.open': 'Open in Google Maps',
     'contact.email': 'EMAIL',
     'contact.phone': 'PHONE',
-    'footer.location': 'Río Cuarto · Córdoba · Argentina',
+    'footer.location': 'Sobremonte 548 · 1st floor · unit 84 · Río Cuarto · Córdoba · Argentina',
     'footer.copy': '© 2026 Ranquel Tech Lab',
     'chat.toggle': 'Quick question <span aria-hidden="true">↗</span>',
     'cta.title': 'Have a challenge?',
@@ -379,6 +389,9 @@ function applyTranslations(lang = 'es') {
     brand.setAttribute('aria-label', isEnglish ? 'Ranquel Tech Lab, home' : 'Ranquel Tech Lab, inicio');
   });
   document.querySelector('.tl-whatsapp')?.setAttribute('aria-label', isEnglish ? 'Message us on WhatsApp' : 'Escribir por WhatsApp');
+  document.querySelector('.tl-contact-map iframe')?.setAttribute('title', isEnglish
+    ? 'Google Maps — Sobremonte 548, Río Cuarto'
+    : 'Mapa de Google — Sobremonte 548, Río Cuarto');
   document.getElementById('langSelector')?.setAttribute('aria-label', isEnglish ? 'Language' : 'Idioma');
   document.getElementById('chatbot-toggle')?.setAttribute('aria-label', isEnglish ? 'Quick question' : 'Consulta rápida');
   document.getElementById('chatbot-panel')?.setAttribute('aria-label', isEnglish ? 'Ranquel Tech Lab assistant' : 'Asistente de Ranquel Tech Lab');
