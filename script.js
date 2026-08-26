@@ -19,8 +19,8 @@ const translations = {
 
     // HERO + LOCAL SEO
     'hero.badge': 'Río Cuarto · Argentina',
-    'hero.title': 'Tecnología que mueve<br><em>negocios reales.</em>',
-    'hero.subtitle': 'Diseñamos productos digitales, automatizaciones e IA según las necesidades de cada proyecto.',
+    'hero.title': '<span class="tl-hero-line">Tecnología actual</span> <span class="tl-hero-line">para</span> <em class="tl-hero-line">negocios rentables.</em>',
+    'hero.subtitle': 'Creamos productos digitales, automatizaciones e IA para mejorar procesos, ventas y decisiones.',
     'hero.primary': 'Explorar soluciones',
     'hero.secondary': 'Contanos tu desafío <span aria-hidden="true">↗</span>',
     'hero.area1': 'Estrategia',
@@ -199,8 +199,8 @@ const translations = {
 
     // HERO + LOCAL SEO (EN)
     'hero.badge': 'Río Cuarto · Argentina',
-    'hero.title': 'Technology for<br><em>real-world business.</em>',
-    'hero.subtitle': 'We design digital products, automations, and AI around each project’s needs.',
+    'hero.title': '<span class="tl-hero-line">Modern technology</span> <span class="tl-hero-line">for</span> <em class="tl-hero-line">profitable businesses.</em>',
+    'hero.subtitle': 'We build digital products, automations, and AI to improve processes, sales, and decision-making.',
     'hero.primary': 'Explore solutions',
     'hero.secondary': 'Tell us your challenge <span aria-hidden="true">↗</span>',
     'hero.area1': 'Strategy',
@@ -369,6 +369,7 @@ function applyTranslations(lang = 'es') {
 
   document.querySelector('.tl-nav')?.setAttribute('aria-label', isEnglish ? 'Main navigation' : 'Navegación principal');
   document.querySelector('.tl-footer-nav')?.setAttribute('aria-label', isEnglish ? 'Secondary navigation' : 'Navegación secundaria');
+  document.querySelector('.tl-hero-index')?.setAttribute('aria-label', isEnglish ? 'Areas of expertise' : 'Áreas de trabajo');
   document.querySelectorAll('.tl-brand').forEach((brand) => {
     brand.setAttribute('aria-label', isEnglish ? 'Ranquel Tech Lab, home' : 'Ranquel Tech Lab, inicio');
   });
