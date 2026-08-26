@@ -7,6 +7,9 @@
   --seo-line: rgba(247, 244, 240, 0.16);
   --seo-coral: #ff7b86;
   --seo-coral-dark: #130c11;
+  --seo-coral-glass: linear-gradient(135deg, rgba(255, 123, 134, 0.22), rgba(255, 123, 134, 0.08));
+  --seo-coral-glass-hover: linear-gradient(135deg, rgba(255, 123, 134, 0.32), rgba(255, 123, 134, 0.13));
+  --seo-coral-glass-border: rgba(255, 123, 134, 0.62);
   --seo-blue: #55c8ff;
   --seo-violet: #9c72ff;
   --seo-green: #25d366;
@@ -126,9 +129,26 @@ body.seo-detail-page img {
 }
 
 .seo-nav-booking {
-  background: var(--seo-coral);
-  color: var(--seo-coral-dark) !important;
-  border-color: var(--seo-coral);
+  background: var(--seo-coral-glass);
+  color: var(--seo-text) !important;
+  border-color: var(--seo-coral-glass-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 10px 28px rgba(255, 123, 134, 0.1);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.seo-nav-booking:hover,
+.seo-nav-booking:focus-visible {
+  border-color: rgba(255, 154, 165, 0.82);
+  background: var(--seo-coral-glass-hover);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 13px 34px rgba(255, 123, 134, 0.16);
+  transform: translateY(-1px);
+  text-decoration: none;
 }
 
 .seo-breadcrumbs {
@@ -216,9 +236,26 @@ body.seo-detail-page img {
 }
 
 .seo-button-primary {
-  background: var(--seo-coral);
-  color: var(--seo-coral-dark) !important;
-  border-color: var(--seo-coral);
+  background: var(--seo-coral-glass);
+  color: var(--seo-text) !important;
+  border-color: var(--seo-coral-glass-border);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.1),
+    0 16px 42px rgba(255, 123, 134, 0.13);
+  backdrop-filter: blur(12px) saturate(130%);
+  -webkit-backdrop-filter: blur(12px) saturate(130%);
+  transition: transform 180ms ease, border-color 180ms ease, box-shadow 180ms ease;
+}
+
+.seo-button-primary:hover,
+.seo-button-primary:focus-visible {
+  border-color: rgba(255, 154, 165, 0.82);
+  background: var(--seo-coral-glass-hover);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.14),
+    0 20px 48px rgba(255, 123, 134, 0.19);
+  transform: translateY(-2px);
+  text-decoration: none;
 }
 
 .seo-button-whatsapp {
@@ -650,5 +687,17 @@ body.seo-detail-page button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  .seo-nav-booking,
+  .seo-button-primary {
+    transition: none;
+  }
+
+  .seo-nav-booking:hover,
+  .seo-nav-booking:focus-visible,
+  .seo-button-primary:hover,
+  .seo-button-primary:focus-visible {
+    transform: none;
   }
 }
