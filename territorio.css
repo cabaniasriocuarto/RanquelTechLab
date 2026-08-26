@@ -510,7 +510,7 @@ body.territorio-site section[id] {
   place-items: center;
   border-right: 1px solid var(--tl-line);
   color: var(--tl-muted);
-  font-size: 9px;
+  font-size: clamp(10px, 0.85vw, 12px);
   font-weight: 600;
   letter-spacing: 0.16em;
   text-transform: uppercase;
