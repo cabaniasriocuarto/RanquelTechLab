@@ -163,6 +163,7 @@ const translations = {
     'lab.eyebrow': '05 / RANQUEL LAB',
     'lab.title': 'Probar en pequeño antes de construir en grande.',
     'lab.body': 'Prototipamos usos de IA, automatización y visión por computadora para evaluar su utilidad antes de una implementación mayor.',
+    'lab.status': 'PROTOTIPO ACTIVO',
     'lab.card1.title': 'IA',
     'lab.card1.body': 'asistentes con contexto',
     'lab.card2.title': 'AUTO',
@@ -339,6 +340,7 @@ const translations = {
     'lab.eyebrow': '05 / RANQUEL LAB',
     'lab.title': 'Test on a small scale before a larger build.',
     'lab.body': 'We prototype uses of AI, automation, and computer vision to evaluate their usefulness before a larger implementation.',
+    'lab.status': 'ACTIVE PROTOTYPE',
     'lab.card1.title': 'AI',
     'lab.card1.body': 'context-aware assistants',
     'lab.card2.title': 'AUTO',
@@ -370,6 +372,7 @@ function applyTranslations(lang = 'es') {
   document.querySelector('.tl-nav')?.setAttribute('aria-label', isEnglish ? 'Main navigation' : 'Navegación principal');
   document.querySelector('.tl-footer-nav')?.setAttribute('aria-label', isEnglish ? 'Secondary navigation' : 'Navegación secundaria');
   document.querySelector('.tl-hero-index')?.setAttribute('aria-label', isEnglish ? 'Areas of expertise' : 'Áreas de trabajo');
+  document.querySelector('.tl-system-map')?.setAttribute('aria-label', isEnglish ? 'Connected business system visualization' : 'Visualización de un sistema conectado');
   document.querySelectorAll('.tl-brand').forEach((brand) => {
     brand.setAttribute('aria-label', isEnglish ? 'Ranquel Tech Lab, home' : 'Ranquel Tech Lab, inicio');
   });
@@ -847,6 +850,25 @@ document.addEventListener('DOMContentLoaded', () => {
   // Observar todos los elementos con data-reveal
   document.querySelectorAll('[data-reveal]').forEach(el => {
     observer.observe(el);
+  });
+
+  // Pausamos las escenas ambientales cuando están fuera de pantalla o la pestaña no está visible.
+  const ambientVisuals = document.querySelectorAll('[data-ambient-visual]');
+  const syncAmbientVisual = (visual) => {
+    const canAnimate = visual.dataset.inViewport === 'true' && !document.hidden;
+    visual.classList.toggle('is-visual-active', canAnimate);
+  };
+
+  const ambientObserver = new IntersectionObserver((entries) => {
+    entries.forEach((entry) => {
+      entry.target.dataset.inViewport = String(entry.isIntersecting);
+      syncAmbientVisual(entry.target);
+    });
+  }, { threshold: 0.15 });
+
+  ambientVisuals.forEach((visual) => ambientObserver.observe(visual));
+  document.addEventListener('visibilitychange', () => {
+    ambientVisuals.forEach(syncAmbientVisual);
   });
 
   // Vinculamos medición de clics de WhatsApp en todos los enlaces estáticos

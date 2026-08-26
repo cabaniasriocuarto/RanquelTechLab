@@ -343,17 +343,30 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <a href="#" class="tl-text-link" data-nav="reservas" data-i18n="ia.cta">Evaluemos un caso de uso <span aria-hidden="true">↗</span></a>
           </div>
 
-          <div class="tl-system-map" data-reveal role="img" aria-label="Ejemplo de un sistema conectado">
-            <div class="tl-system-top">
-              <span data-i18n="system.input">ENTRADA / CONTEXTO</span><span class="tl-live-dot" data-i18n="system.active">SISTEMA ACTIVO</span>
-            </div>
-            <div class="tl-system-core">
-              <div class="tl-orbit" aria-hidden="true"><span>R</span></div>
-              <p data-i18n="system.operation">Tu operación</p>
-              <small data-i18n="system.context">datos + reglas + procesos</small>
-            </div>
-            <div class="tl-system-output">
-              <span data-i18n="system.output1">Automatización</span><span data-i18n="system.output2">Asistencia</span><span data-i18n="system.output3">Medición</span>
+          <div class="tl-system-map" data-reveal data-ambient-visual role="img" aria-label="Visualización de un sistema conectado">
+            <img class="tl-system-image" src="./media/territorio/ai-system-v1.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async" fetchpriority="low" aria-hidden="true">
+            <div class="tl-system-surface" aria-hidden="true">
+              <div class="tl-system-top">
+                <span data-i18n="system.input">ENTRADA / CONTEXTO</span><span class="tl-live-dot" data-i18n="system.active">SISTEMA ACTIVO</span>
+              </div>
+              <div class="tl-system-signals">
+                <span class="tl-signal tl-signal-a"></span>
+                <span class="tl-signal tl-signal-b"></span>
+                <span class="tl-signal tl-signal-c"></span>
+                <span class="tl-data-node tl-data-node-a"></span>
+                <span class="tl-data-node tl-data-node-b"></span>
+                <span class="tl-data-node tl-data-node-c"></span>
+              </div>
+              <div class="tl-system-core">
+                <div class="tl-core-shell"><span>R</span></div>
+                <p data-i18n="system.operation">Tu operación</p>
+                <small data-i18n="system.context">datos + reglas + procesos</small>
+              </div>
+              <div class="tl-system-output">
+                <div><i></i><span data-i18n="system.output1">Automatización</span></div>
+                <div><i></i><span data-i18n="system.output2">Asistencia</span></div>
+                <div><i></i><span data-i18n="system.output3">Medición</span></div>
+              </div>
             </div>
           </div>
         </div>
@@ -401,10 +414,14 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <h2 class="tl-display" data-i18n="lab.title">Probar en pequeño antes de construir en grande.</h2>
             <p data-i18n="lab.body">Prototipamos usos de IA, automatización y visión por computadora para evaluar su utilidad antes de una implementación mayor.</p>
           </div>
-          <div class="tl-lab-stack" aria-hidden="true" data-reveal>
-            <div class="tl-lab-card"><span>EXP / 01</span><strong data-i18n="lab.card1.title">IA</strong><small data-i18n="lab.card1.body">asistentes con contexto</small></div>
-            <div class="tl-lab-card"><span>EXP / 02</span><strong data-i18n="lab.card2.title">AUTO</strong><small data-i18n="lab.card2.body">flujos conectados</small></div>
-            <div class="tl-lab-card"><span>EXP / 03</span><strong data-i18n="lab.card3.title">VISIÓN</strong><small data-i18n="lab.card3.body">prototipos visuales</small></div>
+          <div class="tl-lab-stack" aria-hidden="true" data-reveal data-ambient-visual>
+            <img class="tl-lab-image" src="./media/territorio/lab-prototype-v1.webp" alt="" width="1536" height="1024" loading="lazy" decoding="async" fetchpriority="low">
+            <div class="tl-lab-scan"></div>
+            <div class="tl-lab-reticle"><i></i><i></i><i></i><i></i></div>
+            <div class="tl-lab-status"><i></i><span data-i18n="lab.status">PROTOTIPO ACTIVO</span></div>
+            <div class="tl-lab-card tl-lab-card-ai"><span>EXP / 01</span><strong data-i18n="lab.card1.title">IA</strong><small data-i18n="lab.card1.body">asistentes con contexto</small></div>
+            <div class="tl-lab-card tl-lab-card-auto"><span>EXP / 02</span><strong data-i18n="lab.card2.title">AUTO</strong><small data-i18n="lab.card2.body">flujos conectados</small></div>
+            <div class="tl-lab-card tl-lab-card-vision"><span>EXP / 03</span><strong data-i18n="lab.card3.title">VISIÓN</strong><small data-i18n="lab.card3.body">prototipos visuales</small></div>
           </div>
         </div>
       </section>
