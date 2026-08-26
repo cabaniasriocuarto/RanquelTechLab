@@ -25,15 +25,15 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
   <meta name="referrer" content="strict-origin-when-cross-origin">
  <meta http-equiv="Content-Security-Policy" content="
   default-src 'self';
-  script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://cdn.emailjs.com https://use.fontawesome.com https://unpkg.com;
-  connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://www.googleadservices.com https://formsubmit.co https://api.emailjs.com;
+  script-src 'self' 'unsafe-inline' https://www.googletagmanager.com https://www.google-analytics.com https://use.fontawesome.com https://unpkg.com;
+  connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com https://www.googleadservices.com;
   img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com https://www.googleadservices.com https://googleads.g.doubleclick.net https://www.google.com https://www.gstatic.com;
   style-src 'self' 'unsafe-inline' https://unpkg.com https://use.fontawesome.com;
   font-src 'self' data: https://use.fontawesome.com;
   frame-src 'self' https://www.google.com https://www.google.com/maps https://www.google.com/maps/embed https://calendar.google.com https://calendar.app.google https://www.googletagmanager.com https://ranquel.daily.co https://*.daily.co;
   object-src 'none';
   frame-ancestors 'self';
-  form-action 'self' https://formsubmit.co;
+  form-action 'self';
   base-uri 'self';
   upgrade-insecure-requests">
 
@@ -132,40 +132,6 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
 <body class="territorio-site">
   <!-- Google Tag Manager (noscript) -->
   <noscript><iframe class="tl-gtm-frame" title="Google Tag Manager" src="https://www.googletagmanager.com/ns.html?id=GTM-5KXJQC2L"></iframe></noscript>
-
-  <!-- Formulario oculto para leads (FormSubmit) -->
-  <form
-    id="leadForm"
-    action="https://formsubmit.co/ajax/ranqueltechlab@gmail.com"
-    method="POST"
-    style="display:none;"
-  >
-    <input type="hidden" name="nombre">
-    <input type="hidden" name="whatsapp">
-    <input type="hidden" name="email">
-    <input type="hidden" name="presupuesto">
-    <input type="hidden" name="observaciones">
-    <input type="hidden" name="_next" value="https://www.ranquel.com.ar/gracias-presupuesto/">
-    <input type="hidden" name="_subject" value="Nuevo presupuesto desde el chatbot">
-    <button type="submit" hidden>Enviar</button>
-  </form>
-
-  <!-- EmailJS SDK + configuración de plantillas -->
-  <script src="https://cdn.emailjs.com/sdk/3.11.0/email.min.js"></script>
-  <script>
-    window.EMAILJS_CONFIG = {
-      publicKey: 'TU_PUBLIC_KEY',
-      serviceId: 'service_xxxxxx',
-      templateLead: 'template_presupuesto',
-      templateVideollamada: 'template_videollamada'
-    };
-
-    (function () {
-      if (window.emailjs && window.EMAILJS_CONFIG.publicKey && !window.EMAILJS_CONFIG.publicKey.startsWith('TU_')) {
-        emailjs.init(window.EMAILJS_CONFIG.publicKey);
-      }
-    })();
-  </script>
 
   <!-- Header -->
   <header id="header" class="tl-header">

@@ -394,7 +394,8 @@ function applyTranslations(lang = 'es') {
     : 'Mapa de Google — Sobremonte 548, Río Cuarto');
   document.getElementById('langSelector')?.setAttribute('aria-label', isEnglish ? 'Language' : 'Idioma');
   document.getElementById('chatbot-toggle')?.setAttribute('aria-label', isEnglish ? 'Quick question' : 'Consulta rápida');
-  document.getElementById('chatbot-panel')?.setAttribute('aria-label', isEnglish ? 'Ranquel Tech Lab assistant' : 'Asistente de Ranquel Tech Lab');
+  const chatbotTitle = document.getElementById('chatbot-panel-title');
+  if (chatbotTitle) chatbotTitle.textContent = isEnglish ? 'Ranquel Assistant' : 'Asistente Ranquel';
   const menuButton = document.getElementById('menuToggle');
   if (menuButton) {
     const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
@@ -414,6 +415,8 @@ function applyTranslations(lang = 'es') {
       el.innerHTML = value;
     }
   });
+
+  window.ranquelChatbot?.refresh?.();
 }
 
 function ensureNoopener(link) {
@@ -430,34 +433,10 @@ function hardenExternalLinks(root = document) {
   root.querySelectorAll('a[target="_blank"]').forEach(ensureNoopener);
 }
 
-// --- EmailJS + Google Ads helpers ---
-const EMAILJS_DEFAULTS = {
-  publicKey: 'TU_PUBLIC_KEY',
-  serviceId: 'service_xxxxxx',
-  templateLead: 'template_presupuesto',
-  templateVideollamada: 'template_videollamada',
-};
-
-function getEmailJsConfig() {
-  return {
-    ...EMAILJS_DEFAULTS,
-    ...(window.EMAILJS_CONFIG || {}),
-  };
-}
-
-function isEmailJsReady(config) {
-  const cfg = config || getEmailJsConfig();
-  const hasRealCredentials = cfg.publicKey
-    && cfg.serviceId
-    && !String(cfg.publicKey).startsWith('TU_')
-    && !String(cfg.serviceId).includes('xxxx');
-  return typeof emailjs !== 'undefined' && hasRealCredentials && cfg.templateLead;
-}
-
+// --- Google Ads helpers ---
 const GOOGLE_ADS_ID = 'AW-958141767';
 const CONVERSION_LABEL_WHATSAPP = 'wsp_click';
 const CONVERSION_LABEL_PRESUPUESTO_EMAIL = 'bgv6CNz5mcUbEMeq8MgD';
-const CONVERSION_LABEL_VIDEOLLAMADA = 'videollamada_agendada';
 const CONVERSION_LABEL_LLAMADA = 'llamada_click';
 
 function trackGoogleAdsConversion(label, value = 1) {
@@ -481,7 +460,6 @@ function trackContactChannel(channel = 'email', origin = 'desconocido') {
   const labelMap = {
     whatsapp: CONVERSION_LABEL_WHATSAPP,
     email: CONVERSION_LABEL_PRESUPUESTO_EMAIL,
-    videollamada: CONVERSION_LABEL_VIDEOLLAMADA,
     llamada: CONVERSION_LABEL_LLAMADA,
   };
 
@@ -958,9 +936,15 @@ function redirectToVideollamadaThankYou() {
 (function () {
   const CALENDAR_LINK = "https://calendar.app.google/LvSPMzEtUA8SKyRk6";
   const WHATSAPP_OWNER = "5493584118722";
+  const WHATSAPP_DISPLAY = "+54 9 358 411 8722";
   const EMAIL_OWNER = "ranqueltechlab@gmail.com";
+  const PHONE_OWNER = "+543584118722";
+  const PHONE_DISPLAY = "+54 358 411 8722";
+  const MAX_CONVERSATION_TURNS = 4;
   let state = {
     step: "intro",
+    teaser: false,
+    conversation: [],
     budget: {
       name: "",
       email: "",
@@ -970,6 +954,8 @@ function redirectToVideollamadaThankYou() {
       budgetAmount: "",
       budgetDetails: "",
       contact: "whatsapp",
+      submitting: false,
+      submissionFailed: false,
     },
   };
 
@@ -981,168 +967,46 @@ function redirectToVideollamadaThankYou() {
         value: 1,
       });
     }
-
-    const labelMap = {
-      whatsapp: CONVERSION_LABEL_WHATSAPP,
-      email: CONVERSION_LABEL_PRESUPUESTO_EMAIL,
-      videollamada: CONVERSION_LABEL_VIDEOLLAMADA,
-    };
-
-    trackGoogleAdsConversion(labelMap[contactType] || CONVERSION_LABEL_PRESUPUESTO_EMAIL, 1);
   }
 
-  async function enviarLeadPorFormSubmit(datos) {
-    const observaciones = `${datos.message} | Canal: ${datos.channel} | Calendario: ${datos.calendar_link || 'N/A'}`;
-
-    const formData = new FormData();
-    formData.append('nombre', datos.name || '');
-    formData.append('whatsapp', datos.phone || '');
-    formData.append('email', datos.email || '');
-    formData.append('presupuesto', datos.projectType || '');
-    formData.append('observaciones', observaciones);
-    formData.append('_subject', 'Nuevo presupuesto desde el chatbot');
-    formData.append('_next', 'https://www.ranquel.com.ar/gracias-presupuesto/');
-    formData.append('_captcha', 'false');
-    formData.append('_template', 'table');
-
-    const urlencodedPayload = new URLSearchParams({
-      nombre: datos.name || '',
-      whatsapp: datos.phone || '',
-      email: datos.email || '',
-      presupuesto: datos.projectType || '',
-      observaciones,
-      _subject: 'Nuevo presupuesto desde el chatbot',
-      _next: 'https://www.ranquel.com.ar/gracias-presupuesto/',
-      _captcha: 'false',
-      _template: 'table',
+  function trackVideoCallOpen(origin = 'chatbot') {
+    if (typeof gtag !== 'function') return;
+    gtag('event', 'agenda_abierta', {
+      event_category: 'engagement',
+      event_label: origin,
+      value: 1,
     });
-
-    const primaryRequest = fetch('https://formsubmit.co/ajax/ranqueltechlab@gmail.com', {
-      method: 'POST',
-      headers: { Accept: 'application/json' },
-      body: formData,
-    });
-
-    // Enviamos un respaldo adicional en modo no-cors para evitar bloqueos por CORS u orígenes no permitidos.
-    const fallbackRequest = fetch('https://formsubmit.co/ranqueltechlab@gmail.com', {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: urlencodedPayload,
-    });
-
-    return Promise.allSettled([
-      primaryRequest.catch((error) => {
-        console.error('No se pudo enviar el lead por FormSubmit (AJAX)', error);
-      }),
-      fallbackRequest.catch((error) => {
-        console.error('No se pudo enviar el lead por FormSubmit (no-cors)', error);
-      }),
-    ]);
   }
 
   async function enviarLeadAlAdmin(datos) {
-    const config = getEmailJsConfig();
-    const params = {
-      name: datos.name,
-      email: datos.email,
-      phone: datos.phone,
-      project_type: datos.projectType,
-      message: datos.message,
-      channel: datos.channel,
-      calendar_link: datos.calendar_link,
-    };
+    const controller = new AbortController();
+    const timeout = window.setTimeout(() => controller.abort(), 15000);
 
-    // Siempre enviamos por FormSubmit para garantizar recepción en ranqueltechlab@gmail.com
-    const formSubmitPromise = enviarLeadPorFormSubmit({
-      ...datos,
-      message: `${datos.message} | Copia enviada automáticamente`,
-    });
-
-    if (!isEmailJsReady(config)) {
-      console.warn('EmailJS no está configurado correctamente. Solo se usará FormSubmit.');
-      return formSubmitPromise;
-    }
-
-    // EmailJS se envía en paralelo y no bloquea el fallback
-    const emailJsPromise = emailjs
-      .send(config.serviceId, config.templateLead, params, config.publicKey)
-      .catch((error) => {
-        console.error('No se pudo enviar el lead por EmailJS, se mantiene FormSubmit como respaldo.', error);
+    try {
+      const response = await fetch('/api/contact', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ ...datos, website: '' }),
+        signal: controller.signal,
       });
 
-    return Promise.allSettled([formSubmitPromise, emailJsPromise]);
-  }
-
-  async function enviarMailVideollamadaAlUsuario(datos) {
-    const config = getEmailJsConfig();
-
-    const calendarLink = datos.calendar_link || CALENDAR_LINK;
-
-    const observaciones =
-      `${datos.message || ''} | Canal: ${datos.channel || 'videollamada'} | ` +
-      `Calendario: ${calendarLink}`;
-
-    const formData = new FormData();
-    formData.append('nombre', datos.name || '');
-    formData.append('whatsapp', datos.phone || '');
-    formData.append('email', datos.email || '');
-    formData.append('presupuesto', datos.projectType || 'Videollamada');
-    formData.append('observaciones', observaciones);
-    formData.append('_subject', 'Tu videollamada con Ranquel Tech Lab');
-    formData.append('_template', 'table');
-    formData.append('_captcha', 'false');
-
-    const urlencodedPayload = new URLSearchParams({
-      nombre: datos.name || '',
-      whatsapp: datos.phone || '',
-      email: datos.email || '',
-      presupuesto: datos.projectType || 'Videollamada',
-      observaciones,
-      _subject: 'Tu videollamada con Ranquel Tech Lab',
-      _template: 'table',
-      _captcha: 'false',
-    });
-
-    const primaryRequest = fetch(`https://formsubmit.co/ajax/${encodeURIComponent(datos.email)}`, {
-      method: 'POST',
-      headers: { Accept: 'application/json' },
-      body: formData,
-    });
-
-    const fallbackRequest = fetch(`https://formsubmit.co/${encodeURIComponent(datos.email)}`, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-      body: urlencodedPayload,
-    });
-
-    const emailJsPromise =
-      isEmailJsReady(config) && config.templateVideollamada
-        ? emailjs.send(
-            config.serviceId,
-            config.templateVideollamada,
-            { ...datos, calendar_link: calendarLink },
-            config.publicKey,
-          )
-        : Promise.resolve();
-
-    return Promise.allSettled([
-      primaryRequest.catch((error) => {
-        console.error('No se pudo enviar recordatorio de videollamada por FormSubmit (AJAX)', error);
-      }),
-      fallbackRequest.catch((error) => {
-        console.error('No se pudo enviar recordatorio de videollamada por FormSubmit (no-cors)', error);
-      }),
-      emailJsPromise.catch((error) => {
-        console.error('No se pudo enviar recordatorio de videollamada por EmailJS', error);
-      }),
-    ]);
+      const result = await response.json().catch(() => null);
+      return response.ok && result?.ok === true;
+    } catch (error) {
+      console.error('No se pudo entregar la solicitud de presupuesto.', error);
+      return false;
+    } finally {
+      window.clearTimeout(timeout);
+    }
   }
 
   async function submitLeadForm() {
-    const { name, email, phone, projectType, details, contact, budgetAmount, budgetDetails } = state.budget;
-    const observations = `${details} | Preferencia de contacto: ${contact} | Estimado: ${budgetAmount || 'N/A'} (${budgetDetails || 'Precio orientativo'})`;
+    const { name, email, phone, projectType, details, contact } = state.budget;
+    const currentBudget = projectType ? calculateBudget(projectType, details) : { display: 'N/A', details: 'Precio orientativo' };
+    const observations = `${details} | Preferencia de contacto: ${contact} | Estimado: ${currentBudget.display} (${currentBudget.details})`;
 
     const leadPayload = {
       name,
@@ -1155,17 +1019,10 @@ function redirectToVideollamadaThankYou() {
     };
 
     try {
-      await enviarLeadAlAdmin(leadPayload);
-
-      if (contact === 'videollamada') {
-        await enviarMailVideollamadaAlUsuario(leadPayload);
-      }
-
-      return true;
+      return await enviarLeadAlAdmin(leadPayload);
     } catch (error) {
       console.error('No se pudo enviar el lead', error);
-      // No bloqueamos la experiencia de usuario si el envío falla.
-      return true;
+      return false;
     }
   }
 
@@ -1181,7 +1038,12 @@ function redirectToVideollamadaThankYou() {
 
   function isBudgetInfoValid() {
     const { name, email, phone } = state.budget;
-    return name.trim().length > 1 && email.trim().length > 3 && phone.trim().length > 5;
+    const emailIsValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim());
+    const phoneDigits = phone.replace(/\D/g, '');
+    const phoneIsValid = /^[+()0-9\s.-]+$/.test(phone.trim())
+      && phoneDigits.length >= 7
+      && phoneDigits.length <= 18;
+    return name.trim().length > 1 && emailIsValid && phoneIsValid;
   }
 
   function isBudgetProjectValid() {
@@ -1198,32 +1060,32 @@ function redirectToVideollamadaThankYou() {
     const pricesES = {
       'Landing Page': {
         amount: 350000,
-        display: '$350.000',
+        display: 'ARS 350.000',
         details: 'Landing Page de 1 página - Precio orientativo',
       },
       'Página Web 2 páginas': {
         amount: 650000,
-        display: '$650.000',
-        details: 'Página Web de 2 páginas + $50.000 por página extra - Precio orientativo',
+        display: 'ARS 650.000',
+        details: 'Página Web de 2 páginas + ARS 50.000 por página extra - Precio orientativo',
       },
       'Página Web con Pagos': {
         amount: 950000,
-        display: '$950.000',
-        details: 'Página Web con 2 páginas y sistema de pagos + $75.000 por página extra - Precio orientativo',
+        display: 'ARS 950.000',
+        details: 'Página Web con 2 páginas y sistema de pagos + ARS 75.000 por página extra - Precio orientativo',
       },
       'Tienda E-commerce': {
         amount: 1350000,
-        display: '$1.350.000',
+        display: 'ARS 1.350.000',
         details: 'Tienda E-commerce completa - Precio orientativo',
       },
       'App Android/iOS': {
         amount: 2500000,
-        display: '$2.500.000',
+        display: 'ARS 2.500.000',
         details: 'App móvil para Android e iOS - Precio orientativo',
       },
       'App empresarial con IA': {
         amount: 3000000,
-        display: '$3.000.000',
+        display: 'ARS 3.000.000',
         details: 'App empresarial con integración de IA - Precio orientativo',
       },
       'Desarrollo a medida': {
@@ -1237,32 +1099,32 @@ function redirectToVideollamadaThankYou() {
     const pricesEN = {
       'Landing Page': {
         amount: 300,
-        display: '$300',
+        display: 'USD 300',
         details: '1 Page Landing Page - Indicative price',
       },
       'Página Web 2 páginas': {
         amount: 500,
-        display: '$500',
-        details: 'Website with 2 pages + $50 per extra page - Indicative price',
+        display: 'USD 500',
+        details: 'Website with 2 pages + USD 50 per extra page - Indicative price',
       },
       'Página Web con Pagos': {
         amount: 700,
-        display: '$700',
-        details: 'Website with 2 pages and payments + $75 per extra page - Indicative price',
+        display: 'USD 700',
+        details: 'Website with 2 pages and payments + USD 75 per extra page - Indicative price',
       },
       'Tienda E-commerce': {
         amount: 950,
-        display: '$950',
+        display: 'USD 950',
         details: 'Complete E-commerce Store - Indicative price',
       },
       'App Android/iOS': {
         amount: 1800,
-        display: '$1,800',
+        display: 'USD 1,800',
         details: 'Android/iOS App - Indicative price',
       },
       'App empresarial con IA': {
         amount: 2000,
-        display: '$2,000',
+        display: 'USD 2,000',
         details: 'Business App with AI integration - Indicative price',
       },
       'Desarrollo a medida': {
@@ -1291,8 +1153,8 @@ function redirectToVideollamadaThankYou() {
 
           finalAmount += extraCost;
           finalDisplay = isEnglish
-            ? `$${(priceInfo.amount + extraCost).toLocaleString('en-US')}`
-            : `$${(priceInfo.amount + extraCost).toLocaleString('es-AR')}`;
+            ? `USD ${(priceInfo.amount + extraCost).toLocaleString('en-US')}`
+            : `ARS ${(priceInfo.amount + extraCost).toLocaleString('es-AR')}`;
 
           finalDetails = isEnglish
             ? `${priceInfo.details.split(' - ')[0]} (${pages} pages total) - Indicative price`
@@ -1308,54 +1170,383 @@ function redirectToVideollamadaThankYou() {
     };
   }
 
-  function buildBudgetMessage() {
-    const { name, email, phone, projectType, details, contact, budgetAmount, budgetDetails } = state.budget;
-    return `Hola, soy ${name}. Quiero un presupuesto para: ${projectType}. Detalles: ${details}. Estimado: ${budgetAmount || 'N/A'} (${budgetDetails || 'Precio orientativo'}). Mis datos de contacto son ${email} / ${phone}. Prefiero que me contacten por ${contact}.`;
-  }
-
   async function handleBudgetConfirmation(contactType) {
+    if (state.budget.submitting) return;
+
     updateBudget('contact', contactType);
+    updateBudget('submissionFailed', false);
+    updateBudget('submitting', true);
+    render();
+
+    const panelInner = document.getElementById('chatbot-panel-inner');
+    panelInner?.setAttribute('aria-busy', 'true');
 
     const sent = await submitLeadForm();
-    if (!sent) return;
+    panelInner?.removeAttribute('aria-busy');
+    updateBudget('submitting', false);
+    if (!sent) {
+      updateBudget('submissionFailed', true);
+      render();
+      return;
+    }
 
     trackBudgetRequest('chatbot', contactType);
 
     if (contactType === 'whatsapp') {
       redirectToWhatsAppThankYou();
     } else if (contactType === 'videollamada') {
-      redirectToVideollamadaThankYou();
+      trackVideoCallOpen('chatbot_presupuesto');
+      window.ranquelChatbot?.close?.({ focusToggle: false });
+      if (typeof window.navegarA === 'function') {
+        window.navegarA('reservas');
+      } else {
+        window.location.href = '/?view=reservas';
+      }
     } else {
       redirectToBudgetThankYou();
     }
   }
 
-  function render() {
+  function escapeHTML(value = '') {
+    return String(value)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#039;');
+  }
+
+  function normalizeChatText(value = '') {
+    return String(value)
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase()
+      .trim();
+  }
+
+  function detectChatIntent(value = '') {
+    const text = normalizeChatText(value);
+
+    if (/whats|wsp/.test(text)) return 'whatsapp';
+    if (/video.?llamada|video.?call|agenda|turno|reunion|meeting|book/.test(text)) return 'booking';
+    if (/telefono|celular|llamar|numero|phone|call|number/.test(text)) return 'phone';
+    if (/correo|e-?mail|mail/.test(text)) return 'email';
+    if (/precio|presup|costo|cuanto|valor|cotiz|price|pricing|quote|cost|how much|landing|pagina|sitio|web|tienda|e-?commerce|app|software/.test(text)) return 'prices';
+    if (/servicio|solucion|hacen|desarroll|automatiza|inteligencia|service|solution|develop|automation|artificial intelligence|\bia\b|\bai\b/.test(text)) return 'services';
+    if (/contact|hablar|comunicar/.test(text)) return 'contact';
+    if (/hola|buen dia|buenas|hello|\bhi\b|hey/.test(text)) return 'greeting';
+
+    return 'fallback';
+  }
+
+  function trackChatIntent(intent) {
+    if (typeof gtag !== 'function') return;
+    gtag('event', 'chatbot_intent', {
+      event_category: 'engagement',
+      event_label: intent,
+    });
+  }
+
+  function getPriceListMarkup(isEnglish) {
+    const projects = [
+      ['Landing Page', 'Landing page'],
+      ['Página Web 2 páginas', isEnglish ? 'Website' : 'Sitio web'],
+      ['Página Web con Pagos', isEnglish ? 'Website with payments' : 'Web con pagos'],
+      ['Tienda E-commerce', 'E-commerce'],
+      ['App Android/iOS', isEnglish ? 'Mobile app' : 'App móvil'],
+      ['App empresarial con IA', isEnglish ? 'Business app with AI' : 'App empresarial con IA'],
+    ];
+
+    return `
+      <ul class="chatbot-price-list" aria-label="${isEnglish ? 'Indicative prices' : 'Precios orientativos'}">
+        ${projects.map(([value, label]) => {
+          const price = calculateBudget(value, '');
+          const currency = isEnglish ? 'USD ' : 'ARS ';
+          const display = /^\$/.test(price.display) ? `${currency}${price.display.slice(1)}` : price.display;
+          return `<li><span>${label}</span><strong>${isEnglish ? 'from ' : 'desde '}${display}</strong></li>`;
+        }).join('')}
+      </ul>
+    `;
+  }
+
+  function getContactActionsMarkup(isEnglish, compact = false) {
+    return `
+      <div class="chatbot-inline-actions${compact ? ' chatbot-inline-actions-compact' : ''}">
+        <a class="chatbot-inline-action chatbot-inline-action-whatsapp" href="https://wa.me/${WHATSAPP_OWNER}" target="_blank" rel="noopener noreferrer" data-whatsapp-location="chatbot_conversation">
+          ${isEnglish ? 'Open WhatsApp' : 'Abrir WhatsApp'}
+        </a>
+        <a class="chatbot-inline-action" href="tel:${PHONE_OWNER}" data-call-location="chatbot_conversation">
+          ${isEnglish ? 'Call' : 'Llamar'}
+        </a>
+        <a class="chatbot-inline-action" href="mailto:${EMAIL_OWNER}" data-email-location="chatbot_conversation">
+          Email
+        </a>
+        <button class="chatbot-inline-action" type="button" data-chat-action="booking">
+          ${isEnglish ? 'Video call' : 'Videollamada'}
+        </button>
+      </div>
+    `;
+  }
+
+  function getChatResponseMarkup(intent, isEnglish) {
+    switch (intent) {
+      case 'prices':
+        return `
+          <p><strong>${isEnglish ? 'Here are our current indicative prices.' : 'Estos son nuestros valores orientativos actuales.'}</strong></p>
+          ${getPriceListMarkup(isEnglish)}
+          <p class="chatbot-response-note">${isEnglish
+            ? 'The final quote depends on scope, integrations, and delivery time.'
+            : 'El valor final depende del alcance, las integraciones y los plazos.'}</p>
+          <button class="chatbot-conversation-cta" type="button" data-chat-action="budget">
+            ${isEnglish ? 'Estimate my project' : 'Calcular mi proyecto'}
+          </button>
+        `;
+      case 'booking':
+        return `
+          <p><strong>${isEnglish ? 'Let’s schedule a video call.' : 'Agendemos una videollamada.'}</strong></p>
+          <p>${isEnglish
+            ? 'Choose an available day and time in our scheduler. You can then join the call from this website.'
+            : 'Elegí un día y horario disponible en nuestro turnero. Después podés entrar a la llamada desde esta misma web.'}</p>
+          <button class="chatbot-conversation-cta" type="button" data-chat-action="booking">
+            ${isEnglish ? 'Open scheduler' : 'Abrir agenda online'}
+          </button>
+        `;
+      case 'whatsapp':
+        return `
+          <p><strong>WhatsApp</strong></p>
+          <p>${isEnglish ? 'Message us at' : 'Escribinos al'} <strong>${WHATSAPP_DISPLAY}</strong>.</p>
+          <a class="chatbot-conversation-cta chatbot-conversation-cta-whatsapp" href="https://wa.me/${WHATSAPP_OWNER}" target="_blank" rel="noopener noreferrer" data-whatsapp-location="chatbot_conversation">
+            ${isEnglish ? 'Start WhatsApp chat' : 'Iniciar chat por WhatsApp'}
+          </a>
+        `;
+      case 'phone':
+        return `
+          <p><strong>${isEnglish ? 'Phone' : 'Teléfono'}</strong></p>
+          <p>${isEnglish ? 'You can call us at' : 'Podés llamarnos al'} <strong>${PHONE_DISPLAY}</strong>.</p>
+          <a class="chatbot-conversation-cta" href="tel:${PHONE_OWNER}" data-call-location="chatbot_conversation">
+            ${isEnglish ? 'Call now' : 'Llamar ahora'}
+          </a>
+        `;
+      case 'email':
+        return `
+          <p><strong>Email</strong></p>
+          <p>${isEnglish ? 'Write to us at' : 'Escribinos a'} <strong>${EMAIL_OWNER}</strong>.</p>
+          <a class="chatbot-conversation-cta" href="mailto:${EMAIL_OWNER}" data-email-location="chatbot_conversation">
+            ${isEnglish ? 'Write an email' : 'Enviar un email'}
+          </a>
+        `;
+      case 'contact':
+        return `
+          <p><strong>${isEnglish ? 'Choose the easiest channel for you.' : 'Elegí el canal que te resulte más cómodo.'}</strong></p>
+          <p>WhatsApp: <strong>${WHATSAPP_DISPLAY}</strong><br>${isEnglish ? 'Phone' : 'Teléfono'}: <strong>${PHONE_DISPLAY}</strong><br>Email: <strong>${EMAIL_OWNER}</strong></p>
+          ${getContactActionsMarkup(isEnglish)}
+        `;
+      case 'services':
+        return `
+          <p><strong>${isEnglish ? 'We build technology around real business needs.' : 'Creamos tecnología alrededor de necesidades reales del negocio.'}</strong></p>
+          <p>${isEnglish
+            ? 'Web products, custom software, automation, applied AI, analytics, and digital growth.'
+            : 'Productos web, software a medida, automatización, IA aplicada, analítica y crecimiento digital.'}</p>
+          <a class="chatbot-conversation-cta" href="/#services">${isEnglish ? 'See solutions' : 'Ver soluciones'}</a>
+        `;
+      case 'greeting':
+        return `
+          <p><strong>${isEnglish ? 'Hello! I’m here to help.' : '¡Hola! Estoy para ayudarte.'}</strong></p>
+          <p>${isEnglish
+            ? 'Ask me about prices, services, or the best way to contact Ranquel Tech Lab.'
+            : 'Preguntame por precios, servicios o la mejor forma de contactar a Ranquel Tech Lab.'}</p>
+        `;
+      default:
+        return `
+          <p><strong>${isEnglish ? 'I can help with the most common questions.' : 'Puedo ayudarte con las consultas más frecuentes.'}</strong></p>
+          <p>${isEnglish
+            ? 'Try “website prices”, “book a video call”, “WhatsApp”, “phone”, or “email”.'
+            : 'Probá escribir “precios de una web”, “agendar videollamada”, “WhatsApp”, “teléfono” o “email”.'}</p>
+        `;
+    }
+  }
+
+  function getQuickReplies(isEnglish) {
+    return [
+      { intent: 'prices', label: isEnglish ? 'Prices' : 'Precios', id: 'cb-budget' },
+      { intent: 'booking', label: isEnglish ? 'Video call' : 'Videollamada' },
+      { intent: 'whatsapp', label: 'WhatsApp' },
+      { intent: 'phone', label: isEnglish ? 'Phone' : 'Teléfono' },
+      { intent: 'email', label: 'Email' },
+      { intent: 'contact', label: isEnglish ? 'Contact' : 'Contacto', id: 'cb-start' },
+    ];
+  }
+
+  function getChatResponseAnnouncement(intent, isEnglish) {
+    const announcements = {
+      prices: isEnglish ? 'Indicative prices are now displayed.' : 'Ya se muestran los precios orientativos.',
+      booking: isEnglish ? 'You can now open the online scheduler.' : 'Ya podés abrir la agenda online.',
+      whatsapp: `WhatsApp: ${WHATSAPP_DISPLAY}.`,
+      phone: isEnglish ? `Phone: ${PHONE_DISPLAY}.` : `Teléfono: ${PHONE_DISPLAY}.`,
+      email: `Email: ${EMAIL_OWNER}.`,
+      contact: isEnglish ? 'Direct contact options are now displayed.' : 'Ya se muestran las formas de contacto directo.',
+      services: isEnglish ? 'A link to our solutions is now displayed.' : 'Ya se muestra el acceso a nuestras soluciones.',
+      greeting: isEnglish ? 'Hello. Choose a quick option or write a question.' : 'Hola. Elegí una opción rápida o escribí una consulta.',
+      fallback: isEnglish ? 'Choose prices, video call, WhatsApp, phone, email, or contact.' : 'Elegí precios, videollamada, WhatsApp, teléfono, email o contacto.',
+    };
+    return announcements[intent] || announcements.fallback;
+  }
+
+  function addConversationTurn(query, intent) {
+    const nextTurn = {
+      query: String(query || '').trim().slice(0, 180),
+      intent,
+    };
+
+    state = {
+      ...state,
+      teaser: false,
+      conversation: [...state.conversation, nextTurn].slice(-MAX_CONVERSATION_TURNS),
+    };
+
+    trackChatIntent(intent);
+    render({ focusComposer: true });
+  }
+
+  function bindConversationEvents(container, isEnglish) {
+    const form = container.querySelector('#chatbot-chat-form');
+    const input = container.querySelector('#chatbot-chat-input');
+
+    form?.addEventListener('submit', (event) => {
+      event.preventDefault();
+      const query = input?.value.trim() || '';
+      if (!query) return;
+      addConversationTurn(query, detectChatIntent(query));
+    });
+
+    container.querySelectorAll('[data-chat-intent]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const intent = button.dataset.chatIntent || 'fallback';
+        addConversationTurn(button.textContent.trim(), intent);
+      });
+    });
+
+    container.querySelectorAll('[data-chat-action="budget"]').forEach((button) => {
+      button.addEventListener('click', () => {
+        state.step = 'budget-info';
+        render();
+        window.requestAnimationFrame(() => document.getElementById('cb-name')?.focus());
+      });
+    });
+
+    container.querySelectorAll('[data-chat-action="booking"]').forEach((button) => {
+      button.addEventListener('click', () => {
+        trackVideoCallOpen('chatbot_conversation');
+        window.ranquelChatbot?.close?.({ focusToggle: false });
+        if (typeof window.navegarA === 'function') {
+          window.navegarA('reservas');
+        } else {
+          window.location.href = '/?view=reservas';
+        }
+      });
+    });
+
+    hardenExternalLinks(container);
+    setupWhatsAppTracking(container);
+    container.querySelectorAll('a[href^="tel:"]').forEach((link) => {
+      attachContactTracking(link, 'llamada', link.dataset.callLocation || 'chatbot_conversation');
+    });
+    container.querySelectorAll('a[href^="mailto:"]').forEach((link) => {
+      attachContactTracking(link, 'email', link.dataset.emailLocation || 'chatbot_conversation');
+    });
+  }
+
+  function render({ focusComposer = false } = {}) {
     const container = document.getElementById("chatbot-panel-inner");
     if (!container) return;
 
     const s = state;
     const lang = document.documentElement.lang;
     const isEnglish = lang === 'en';
+    container.classList.toggle('chatbot-panel-inner-conversation', s.step === 'intro');
+    container.classList.toggle('chatbot-panel-inner-teaser', s.step === 'intro' && s.teaser);
 
     if (s.step === "intro") {
+      if (s.teaser) {
+        container.innerHTML = `
+          <div class="chatbot-teaser">
+            <div class="chatbot-message chatbot-message-assistant">
+              <span class="chatbot-message-avatar" aria-hidden="true">R</span>
+              <div class="chatbot-message-bubble">
+                <p><strong>${isEnglish ? 'How can I help?' : '¿En qué puedo ayudarte?'}</strong></p>
+                <p>${isEnglish ? 'I can answer questions about prices and contact options.' : 'Puedo responder sobre precios y formas de contacto.'}</p>
+              </div>
+            </div>
+            <div class="chatbot-teaser-actions">
+              <button class="chatbot-conversation-cta" type="button" data-chat-expand>
+                ${isEnglish ? 'Start a conversation' : 'Iniciar una consulta'}
+              </button>
+              <button class="chatbot-quick-reply" type="button" data-chat-intent="prices">
+                ${isEnglish ? 'See prices' : 'Ver precios'}
+              </button>
+            </div>
+          </div>
+        `;
+
+        container.querySelector('[data-chat-expand]')?.addEventListener('click', () => {
+          state = { ...state, teaser: false };
+          render({ focusComposer: true });
+        });
+        bindConversationEvents(container, isEnglish);
+        return;
+      }
+
+      const conversationMarkup = s.conversation.map((turn) => `
+        <div class="chatbot-message chatbot-message-user">
+          <div class="chatbot-message-bubble">${escapeHTML(turn.query)}</div>
+        </div>
+        <div class="chatbot-message chatbot-message-assistant">
+          <span class="chatbot-message-avatar" aria-hidden="true">R</span>
+          <div class="chatbot-message-bubble">${getChatResponseMarkup(turn.intent, isEnglish)}</div>
+        </div>
+      `).join('');
+      const quickRepliesMarkup = getQuickReplies(isEnglish).map(({ intent, label, id = '' }) => `
+        <button${id ? ` id="${id}"` : ''} class="chatbot-quick-reply" type="button" data-chat-intent="${intent}">${label}</button>
+      `).join('');
+      const latestTurn = s.conversation.at(-1);
+
       container.innerHTML = `
-        <div>
-          <p><strong>${isEnglish ? 'What do you need to solve?' : '¿Qué necesitás resolver?'}</strong></p>
-          <p>${isEnglish ? 'Tell us about your idea and choose how you would like to continue.' : 'Contanos tu idea y elegí cómo te gustaría continuar.'}</p>
-          <p class="chatbot-badge">${isEnglish ? 'A short first step, with no obligation.' : 'Un primer paso breve y sin compromiso.'}</p>
-          <button id="cb-budget" class="chatbot-btn-primary" style="margin-bottom:6px;">${isEnglish ? 'Request a quote' : 'Pedir presupuesto'}</button>
-          <button id="cb-start" class="chatbot-btn-primary">${isEnglish ? 'Contact options' : 'Formas de contacto'}</button>
+        <div class="chatbot-conversation-shell">
+          <div class="chatbot-conversation" tabindex="0" aria-label="${isEnglish ? 'Conversation with the Ranquel assistant' : 'Conversación con el asistente de Ranquel'}">
+            <div class="chatbot-message chatbot-message-assistant">
+              <span class="chatbot-message-avatar" aria-hidden="true">R</span>
+              <div class="chatbot-message-bubble">
+                <p><strong>${isEnglish ? 'Hi, I’m the Ranquel assistant.' : 'Hola, soy el asistente de Ranquel.'}</strong></p>
+                <p>${isEnglish
+                  ? 'Ask me about prices, services, or how you would like to contact us.'
+                  : 'Preguntame por precios, servicios o cómo preferís contactarnos.'}</p>
+              </div>
+            </div>
+            ${conversationMarkup}
+          </div>
+          <p class="visually-hidden" role="status">${latestTurn ? getChatResponseAnnouncement(latestTurn.intent, isEnglish) : ''}</p>
+
+          <div class="chatbot-quick-replies" aria-label="${isEnglish ? 'Quick questions' : 'Consultas rápidas'}">
+            ${quickRepliesMarkup}
+          </div>
+
+          <p class="chatbot-capability-note">${isEnglish
+            ? 'Quick assistant for prices and contact information.'
+            : 'Asistente rápido para precios y datos de contacto.'}</p>
+          <form id="chatbot-chat-form" class="chatbot-composer">
+            <label class="visually-hidden" for="chatbot-chat-input">${isEnglish ? 'Write your question' : 'Escribí tu consulta'}</label>
+            <input id="chatbot-chat-input" class="chatbot-composer-input" type="text" maxlength="180" autocomplete="off" placeholder="${isEnglish ? 'Type your question…' : 'Escribí tu consulta…'}">
+            <button class="chatbot-composer-send" type="submit">${isEnglish ? 'Send' : 'Enviar'}</button>
+          </form>
         </div>
       `;
-      document.getElementById("cb-start").onclick = () => {
-        state.step = "options";
-        render();
-      };
-      document.getElementById("cb-budget").onclick = () => {
-        state.step = "budget-info";
-        render();
-      };
+
+      bindConversationEvents(container, isEnglish);
+      window.requestAnimationFrame(() => {
+        const conversation = container.querySelector('.chatbot-conversation');
+        if (conversation) conversation.scrollTop = conversation.scrollHeight;
+        if (focusComposer) container.querySelector('#chatbot-chat-input')?.focus();
+      });
       return;
     }
 
@@ -1403,11 +1594,8 @@ function redirectToVideollamadaThankYou() {
       const bookingBtn = document.getElementById('cb-booking');
       if (bookingBtn) {
         bookingBtn.onclick = () => {
-          try { attachContactTracking(bookingBtn, 'videollamada', 'chatbot_opciones'); } catch (e) {}
-          // cerrar panel
-          document.getElementById('chatbot-panel')?.classList.add('chatbot-hidden');
-          document.getElementById('chatbot-toggle')?.setAttribute('aria-expanded', 'false');
-          // navegar a reservas
+          trackVideoCallOpen('chatbot_opciones');
+          window.ranquelChatbot?.close?.({ focusToggle: false });
           window.navegarA?.('reservas');
         };
       }
@@ -1420,14 +1608,17 @@ function redirectToVideollamadaThankYou() {
         <div>
           <p><strong>${isEnglish ? 'Details for your quote' : 'Datos para el presupuesto'}</strong></p>
           <label>${isEnglish ? 'Full name' : 'Nombre y apellido'}
-            <input id="cb-name" class="chatbot-input" type="text" placeholder="${isEnglish ? 'Your name' : 'Tu nombre'}" value="${s.budget.name}" />
+            <input id="cb-name" class="chatbot-input" type="text" required minlength="2" maxlength="120" autocomplete="name" placeholder="${isEnglish ? 'Your name' : 'Tu nombre'}" value="${escapeHTML(s.budget.name)}" />
           </label>
           <label>Email
-            <input id="cb-email" class="chatbot-input" type="email" placeholder="${isEnglish ? 'you@mail.com' : 'tu@mail.com'}" value="${s.budget.email}" />
+            <input id="cb-email" class="chatbot-input" type="email" required maxlength="254" autocomplete="email" placeholder="${isEnglish ? 'you@mail.com' : 'tu@mail.com'}" value="${escapeHTML(s.budget.email)}" />
           </label>
           <label>${isEnglish ? 'Phone / WhatsApp' : 'Teléfono / WhatsApp'}
-            <input id="cb-phone" class="chatbot-input" type="tel" placeholder="${isEnglish ? 'Country code and number' : 'Código de país y número'}" value="${s.budget.phone}" />
+            <input id="cb-phone" class="chatbot-input" type="tel" required maxlength="40" autocomplete="tel" inputmode="tel" placeholder="${isEnglish ? 'Country code and number' : 'Código de país y número'}" value="${escapeHTML(s.budget.phone)}" />
           </label>
+          <p class="chatbot-legal">${isEnglish
+            ? 'We use these details only to prepare and reply to your request.'
+            : 'Usamos estos datos únicamente para preparar y responder tu consulta.'}</p>
           <button id="cb-next-project" class="chatbot-btn-primary" ${isBudgetInfoValid() ? '' : 'disabled'}>${isEnglish ? 'Continue' : 'Continuar'}</button>
           <button id="cb-back-intro-2" class="chatbot-btn-link">${isEnglish ? 'Back' : 'Volver'}</button>
         </div>
@@ -1479,7 +1670,7 @@ function redirectToVideollamadaThankYou() {
             </select>
           </label>
           <label>${isEnglish ? 'Details and requirements' : 'Detalles y requerimientos'}
-            <textarea id="cb-details" class="chatbot-textarea" placeholder="${isEnglish ? 'Describe your project, features, timeline, number of pages, etc.' : 'Describí tu proyecto, funcionalidades, plazos, cantidad de páginas, etc.'}">${s.budget.details}</textarea>
+            <textarea id="cb-details" class="chatbot-textarea" maxlength="2000" placeholder="${isEnglish ? 'Describe your project, features, timeline, number of pages, etc.' : 'Describí tu proyecto, funcionalidades, plazos, cantidad de páginas, etc.'}">${escapeHTML(s.budget.details)}</textarea>
           </label>
           <button id="cb-calculate-budget" class="chatbot-btn-primary" ${isBudgetProjectValid() ? '' : 'disabled'}>${isEnglish ? 'Calculate Budget' : 'Calcular Presupuesto'}</button>
           <button id="cb-back-info" class="chatbot-btn-link">${isEnglish ? 'Back' : 'Volver'}</button>
@@ -1508,6 +1699,8 @@ function redirectToVideollamadaThankYou() {
         updateBudget('details', detailsInput.value);
         updateBudget('budgetAmount', budget.display);
         updateBudget('budgetDetails', budget.details);
+        updateBudget('submissionFailed', false);
+        updateBudget('submitting', false);
         state.step = "budget-result";
         render();
       };
@@ -1520,9 +1713,10 @@ function redirectToVideollamadaThankYou() {
     }
 
     if (s.step === "budget-result") {
-      const fallbackBudget = s.budget.projectType ? calculateBudget(s.budget.projectType, s.budget.details) : { display: '-', details: '' };
-      const budgetAmount = s.budget.budgetAmount || fallbackBudget.display;
-      const budgetDetails = s.budget.budgetDetails || fallbackBudget.details;
+      const currentBudget = s.budget.projectType ? calculateBudget(s.budget.projectType, s.budget.details) : { display: '-', details: '' };
+      const currency = isEnglish ? 'USD ' : 'ARS ';
+      const budgetAmount = /^\$/.test(currentBudget.display) ? `${currency}${currentBudget.display.slice(1)}` : currentBudget.display;
+      const budgetDetails = currentBudget.details;
 
       container.innerHTML = `
         <div>
@@ -1533,15 +1727,17 @@ function redirectToVideollamadaThankYou() {
           </div>
           <p><strong>${isEnglish ? 'Choose how to continue:' : 'Elegí cómo continuar:'}</strong></p>
 
-          <button id="cb-confirm-whatsapp" class="chatbot-btn-primary" style="background:#22c55e;">
-            ${isEnglish ? 'Receive quote by WhatsApp' : 'Recibir presupuesto por WhatsApp'}
+          <button id="cb-confirm-whatsapp" class="chatbot-btn-primary" style="background:#22c55e;" ${s.budget.submitting ? 'disabled' : ''}>
+            ${s.budget.submitting
+              ? (isEnglish ? 'Sending…' : 'Enviando…')
+              : (isEnglish ? 'Contact me on WhatsApp' : 'Quiero que me contacten por WhatsApp')}
           </button>
 
-          <button id="cb-confirm-email" class="chatbot-btn-primary" style="background:#0ea5e9;">
+          <button id="cb-confirm-email" class="chatbot-btn-primary" style="background:#0ea5e9;" ${s.budget.submitting ? 'disabled' : ''}>
             ${isEnglish ? 'Receive quote by Email' : 'Recibir presupuesto por Email'}
           </button>
 
-          <button id="cb-confirm-call" class="chatbot-btn-primary">
+          <button id="cb-confirm-call" class="chatbot-btn-primary" ${s.budget.submitting ? 'disabled' : ''}>
             ${isEnglish ? 'Schedule an explanatory video call' : 'Agendar videollamada explicativa'}
           </button>
 
@@ -1553,7 +1749,16 @@ function redirectToVideollamadaThankYou() {
             </p>
           </div>
 
-          <button id="cb-back-project" class="chatbot-btn-link">
+          ${s.budget.submissionFailed && !s.budget.submitting ? `
+            <div class="chatbot-submit-error" role="alert">
+              <p>${isEnglish
+                ? 'We could not send the request. Please try again or contact us on WhatsApp.'
+                : 'No pudimos enviar la solicitud. Probá nuevamente o escribinos por WhatsApp.'}</p>
+              <a href="https://wa.me/${WHATSAPP_OWNER}" target="_blank" rel="noopener noreferrer" data-whatsapp-location="chatbot_submit_error">WhatsApp</a>
+            </div>
+          ` : ''}
+
+          <button id="cb-back-project" class="chatbot-btn-link" ${s.budget.submitting ? 'disabled' : ''}>
             ${isEnglish ? 'Back to modify' : 'Volver a modificar'}
           </button>
         </div>
@@ -1563,9 +1768,12 @@ function redirectToVideollamadaThankYou() {
       document.getElementById('cb-confirm-email').onclick = () => handleBudgetConfirmation('email');
       document.getElementById('cb-confirm-call').onclick = () => handleBudgetConfirmation('videollamada');
       document.getElementById("cb-back-project").onclick = () => {
+        if (state.budget.submitting) return;
+        updateBudget('submissionFailed', false);
         state.step = "budget-project";
         render();
       };
+      setupWhatsAppTracking(container);
       return;
     }
   }
@@ -1576,12 +1784,24 @@ function redirectToVideollamadaThankYou() {
       ? 'Quick question <span aria-hidden="true">↗</span>'
       : 'Consulta rápida <span aria-hidden="true">↗</span>';
     const initialToggleAria = document.documentElement.lang === 'en' ? 'Quick question' : 'Consulta rápida';
-    const initialPanelAria = document.documentElement.lang === 'en'
-      ? 'Ranquel Tech Lab assistant'
-      : 'Asistente de Ranquel Tech Lab';
+    const initialMinimizeAria = document.documentElement.lang === 'en'
+      ? 'Minimize assistant'
+      : 'Minimizar asistente';
 
     container.innerHTML = `
-      <div id="chatbot-panel" class="chatbot-panel chatbot-hidden" role="dialog" aria-label="${initialPanelAria}">
+      <div id="chatbot-panel" class="chatbot-panel chatbot-hidden" role="dialog" aria-modal="false" aria-labelledby="chatbot-panel-title">
+        <header class="chatbot-panel-head">
+          <div class="chatbot-panel-identity">
+            <span class="chatbot-status-dot" aria-hidden="true"></span>
+            <div>
+              <strong id="chatbot-panel-title">${document.documentElement.lang === 'en' ? 'Ranquel Assistant' : 'Asistente Ranquel'}</strong>
+              <small id="chatbot-panel-subtitle">${document.documentElement.lang === 'en' ? 'Digital assistant' : 'Asistente digital'}</small>
+            </div>
+          </div>
+          <button id="chatbot-minimize" class="chatbot-minimize" type="button" aria-label="${initialMinimizeAria}" title="${initialMinimizeAria}">
+            <span aria-hidden="true">−</span>
+          </button>
+        </header>
         <div id="chatbot-panel-inner"></div>
       </div>
       <button id="chatbot-toggle" class="chatbot-toggle" type="button" aria-label="${initialToggleAria}" aria-controls="chatbot-panel" aria-expanded="false" data-i18n="chat.toggle">${initialToggleLabel}</button>
@@ -1589,9 +1809,11 @@ function redirectToVideollamadaThankYou() {
 
     const toggle = document.getElementById("chatbot-toggle");
     const panel = document.getElementById("chatbot-panel");
+    const minimize = document.getElementById("chatbot-minimize");
 
     const AUTO_OPEN_DELAY_MS = 7000;
     let autoOpenTimer = null;
+    let contactIsVisible = false;
 
     const cancelAutoOpen = () => {
       if (autoOpenTimer === null) return;
@@ -1599,35 +1821,82 @@ function redirectToVideollamadaThankYou() {
       autoOpenTimer = null;
     };
 
+    const syncChatbotLanguage = () => {
+      const isEnglish = document.documentElement.lang === 'en';
+      const minimizeLabel = isEnglish ? 'Minimize assistant' : 'Minimizar asistente';
+      document.getElementById('chatbot-panel-title').textContent = isEnglish ? 'Ranquel Assistant' : 'Asistente Ranquel';
+      document.getElementById('chatbot-panel-subtitle').textContent = isEnglish ? 'Digital assistant' : 'Asistente digital';
+      minimize.setAttribute('aria-label', minimizeLabel);
+      minimize.setAttribute('title', minimizeLabel);
+      toggle.setAttribute('aria-label', isEnglish ? 'Quick question' : 'Consulta rápida');
+    };
+
+    const closePanel = ({ focusToggle = true } = {}) => {
+      cancelAutoOpen();
+      panel.classList.add('chatbot-hidden');
+      toggle.setAttribute('aria-expanded', 'false');
+      if (focusToggle) toggle.focus();
+    };
+
     const openPanel = (automatic = false) => {
       if (!automatic) cancelAutoOpen();
+      if (automatic && state.step === 'intro' && state.conversation.length === 0) {
+        state = { ...state, teaser: true };
+      } else if (!automatic && state.teaser) {
+        state = { ...state, teaser: false };
+      }
+      syncChatbotLanguage();
       panel.classList.remove("chatbot-hidden");
       toggle.setAttribute('aria-expanded', 'true');
       render();
+      if (automatic && state.teaser && contactIsVisible) {
+        window.setTimeout(() => {
+          if (state.teaser && !panel.classList.contains('chatbot-hidden')) {
+            closePanel({ focusToggle: false });
+          }
+        }, 1800);
+      }
+      if (!automatic) window.requestAnimationFrame(() => minimize.focus());
     };
 
     const togglePanel = () => {
       cancelAutoOpen();
-      panel.classList.toggle("chatbot-hidden");
-      toggle.setAttribute('aria-expanded', String(!panel.classList.contains('chatbot-hidden')));
-      render();
+      if (panel.classList.contains('chatbot-hidden')) {
+        openPanel();
+      } else {
+        closePanel();
+      }
     };
 
-    toggle.onclick = togglePanel;
+    toggle.addEventListener('click', togglePanel);
+    minimize.addEventListener('click', () => closePanel());
 
     window.ranquelChatbot = {
       open: openPanel,
       toggle: togglePanel,
+      close: closePanel,
+      refresh: () => {
+        syncChatbotLanguage();
+        render();
+      },
     };
 
     document.addEventListener('keydown', (event) => {
       if (event.key === 'Escape' && !panel.classList.contains('chatbot-hidden')) {
-        cancelAutoOpen();
-        panel.classList.add('chatbot-hidden');
-        toggle.setAttribute('aria-expanded', 'false');
-        toggle.focus();
+        closePanel();
       }
     });
+
+    const contactSection = document.getElementById('contact');
+    if (contactSection && 'IntersectionObserver' in window) {
+      const contactObserver = new IntersectionObserver(([entry]) => {
+        contactIsVisible = Boolean(entry?.isIntersecting);
+        if (contactIsVisible && state.teaser && !panel.classList.contains('chatbot-hidden')) {
+          closePanel({ focusToggle: false });
+        }
+      }, { threshold: 0.18 });
+      contactObserver.observe(contactSection);
+    }
 
     // Presentar el asistente una vez que la persona tuvo tiempo de recorrer la portada.
     autoOpenTimer = window.setTimeout(() => {
