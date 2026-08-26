@@ -2172,6 +2172,7 @@ body.territorio-site #chatbot-container .chatbot-submit-error a {
   .tl-service-label {
     font-size: clamp(15px, 4.35vw, 17px);
     letter-spacing: 0.01em;
+    padding-inline-end: 36px;
   }
 
   .tl-service-card h3 { margin-top: 68px; }
