@@ -173,7 +173,7 @@ const translations = {
     'contact.title': 'Hagamos que funcione.',
     'contact.body': 'Contanos qué querés mejorar y vemos juntos por dónde conviene empezar.',
     'contact.primary': 'Agendá una videollamada',
-    'contact.secondary': 'Escribinos por WhatsApp <span aria-hidden="true">↗</span>',
+    'contact.secondary': 'Escribinos por WhatsApp',
     'contact.base': 'BASE',
     'contact.email': 'EMAIL',
     'contact.phone': 'TELÉFONO',
@@ -349,7 +349,7 @@ const translations = {
     'contact.title': 'Let’s make it work.',
     'contact.body': 'Tell us what you want to improve, and let’s figure out where to start.',
     'contact.primary': 'Book a video call',
-    'contact.secondary': 'Message us on WhatsApp <span aria-hidden="true">↗</span>',
+    'contact.secondary': 'Message us on WhatsApp',
     'contact.base': 'BASE',
     'contact.email': 'EMAIL',
     'contact.phone': 'PHONE',
@@ -490,16 +490,8 @@ function trackWhatsAppClick(location = 'desconocido') {
 function attachContactTracking(link, channel, origin = 'desconocido') {
   if (!link || link.dataset.contactTracked === 'true') return;
 
-  link.addEventListener('click', (event) => {
-    const href = link.href;
+  link.addEventListener('click', () => {
     trackContactChannel(channel, origin);
-
-    if (link.href.startsWith('mailto:') || link.href.startsWith('tel:') || link.target === '_blank') {
-      event.preventDefault();
-      setTimeout(() => {
-        window.open(href, link.target || '_self', link.target ? 'noopener' : undefined);
-      }, 120);
-    }
   });
 
   link.dataset.contactTracked = 'true';
@@ -511,16 +503,9 @@ function setupWhatsAppTracking(root = document) {
   whatsappLinks.forEach((link) => {
     if (link.dataset.whatsappTracked === 'true') return;
 
-    link.addEventListener('click', (event) => {
+    link.addEventListener('click', () => {
       const location = link.dataset.whatsappLocation || 'desconocido';
       trackWhatsAppClick(location);
-
-      // Abrimos WhatsApp en otra pestaña después de disparar el evento
-      event.preventDefault();
-      const href = link.href;
-      setTimeout(() => {
-        window.open(href, link.target || '_blank', 'noopener');
-      }, 120);
     });
 
     link.dataset.whatsappTracked = 'true';

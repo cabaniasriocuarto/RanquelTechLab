@@ -417,13 +417,26 @@ j=d.createElement(s),dl=l!='dataLayer'?'&l='+l:'';j.async=true;j.src=
             <p class="tl-contact-lead" data-i18n="contact.body">Contanos qué querés mejorar y vemos juntos por dónde conviene empezar.</p>
             <div class="tl-contact-actions">
               <a href="#" class="tl-primary-cta" data-nav="reservas" data-i18n="contact.primary">Agendá una videollamada</a>
-              <a href="https://wa.me/5493584118722" class="tl-secondary-cta" target="_blank" rel="noopener noreferrer" data-whatsapp-location="wsp_bot" data-i18n="contact.secondary">Escribinos por WhatsApp <span aria-hidden="true">↗</span></a>
+              <a href="https://wa.me/5493584118722" class="tl-contact-whatsapp" target="_blank" rel="noopener noreferrer" data-whatsapp-location="wsp_bot">
+                <span class="tl-wa-mark" aria-hidden="true"><img src="./images/whatsapp.svg" alt="" width="20" height="20" loading="lazy" decoding="async"></span>
+                <span data-i18n="contact.secondary">Escribinos por WhatsApp</span>
+                <span class="tl-contact-arrow" aria-hidden="true">↗</span>
+              </a>
             </div>
           </div>
           <aside class="tl-contact-details" data-reveal>
-            <div><span data-i18n="contact.base">BASE</span><strong id="mapa-title" data-i18n="footer.location">Río Cuarto · Córdoba · Argentina</strong></div>
-            <div><span data-i18n="contact.email">EMAIL</span><a href="mailto:ranqueltechlab@gmail.com">ranqueltechlab@gmail.com</a></div>
-            <div><span data-i18n="contact.phone">TELÉFONO</span><a href="tel:+543584118722" data-call-location="footer_phone">+54&nbsp;358&nbsp;411&nbsp;8722</a></div>
+            <div class="tl-contact-detail">
+              <span class="tl-contact-icon" aria-hidden="true">📍</span>
+              <div class="tl-contact-meta"><span data-i18n="contact.base">BASE</span><strong id="mapa-title" data-i18n="footer.location">Río Cuarto · Córdoba · Argentina</strong></div>
+            </div>
+            <div class="tl-contact-detail">
+              <span class="tl-contact-icon" aria-hidden="true">✉️</span>
+              <div class="tl-contact-meta"><span data-i18n="contact.email">EMAIL</span><a href="mailto:ranqueltechlab@gmail.com">ranqueltechlab@gmail.com</a></div>
+            </div>
+            <div class="tl-contact-detail">
+              <span class="tl-contact-icon" aria-hidden="true">📞</span>
+              <div class="tl-contact-meta"><span data-i18n="contact.phone">TELÉFONO</span><a href="tel:+543584118722" data-call-location="footer_phone">+54&nbsp;358&nbsp;411&nbsp;8722</a></div>
+            </div>
           </aside>
         </div>
       </section>
