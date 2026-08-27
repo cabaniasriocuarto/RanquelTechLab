@@ -588,6 +588,18 @@ function initHeroCarousel() {
   nextBtn?.addEventListener('click', () => bump(1));
 }
 document.addEventListener('DOMContentLoaded', () => {
+  // Compatibilidad con enlaces antiguos a secciones que ahora tienen página propia.
+  const legacySectionRoutes = {
+    '#metodo': '/metodo/',
+    '#contact': '/contacto/'
+  };
+  const legacySectionTarget = legacySectionRoutes[window.location.hash];
+  const legacySectionParams = new URLSearchParams(window.location.search);
+  if (legacySectionTarget && !legacySectionParams.has('view')) {
+    window.location.replace(`${legacySectionTarget}${window.location.search}`);
+    return;
+  }
+
   // ===== HERO (Video + Imágenes) =====
   // Inicializa el carrusel automático. Si no se llama, queda fija la primera slide.
   initHeroCarousel();
