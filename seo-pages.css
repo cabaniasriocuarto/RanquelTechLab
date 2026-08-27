@@ -790,7 +790,7 @@ body.seo-detail-page button:focus-visible {
 
   body:has(#chatbot-panel:not(.chatbot-hidden) #chatbot-panel-inner:not(.chatbot-panel-inner-teaser))
     .seo-footer {
-    padding-bottom: calc(min(680px, calc(100dvh - 72px)) - 28px + env(safe-area-inset-bottom));
+    padding-bottom: calc(min(680px, calc(100dvh - 72px)) - 48px + env(safe-area-inset-bottom));
   }
 }
 
