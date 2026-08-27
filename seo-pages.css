@@ -772,6 +772,22 @@ body.seo-detail-page button:focus-visible {
   }
 }
 
+/* Keep the shared footer readable while a full chatbot conversation is open.
+   The compact automatic teaser does not reserve this extra space. */
+@media (min-width: 901px) {
+  body:has(#chatbot-panel:not(.chatbot-hidden) #chatbot-panel-inner:not(.chatbot-panel-inner-teaser))
+    .seo-footer .seo-shell {
+    padding-right: 420px;
+  }
+}
+
+@media (max-width: 900px) {
+  body:has(#chatbot-panel:not(.chatbot-hidden) #chatbot-panel-inner:not(.chatbot-panel-inner-teaser))
+    .seo-footer {
+    padding-bottom: calc(min(680px, calc(100dvh - 72px)) + 82px + env(safe-area-inset-bottom));
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
