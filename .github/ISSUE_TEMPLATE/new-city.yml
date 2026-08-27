@@ -1,0 +1,226 @@
+name: New city candidate
+description: Propose research and publication evidence for one Geo-SEO city.
+title: "[Ciudad] "
+labels:
+  - area:seo
+  - area:content
+  - needs-evidence
+body:
+  - type: markdown
+    attributes:
+      value: |
+        One city per issue. A city is not publishable by changing only a name and
+        image. Never claim an office, team, client, or local presence without proof.
+
+  - type: input
+    id: parent_issue
+    attributes:
+      label: Parent issue
+      placeholder: "#13"
+    validations:
+      required: true
+
+  - type: input
+    id: milestone
+    attributes:
+      label: Milestone
+      description: Use M2 for the approved pilot or M4 for later governed expansion.
+      placeholder: "M2 — Piloto 5 ciudades"
+    validations:
+      required: true
+
+  - type: input
+    id: city
+    attributes:
+      label: City
+    validations:
+      required: true
+
+  - type: input
+    id: province
+    attributes:
+      label: Province
+    validations:
+      required: true
+
+  - type: input
+    id: location_id
+    attributes:
+      label: locationId
+      description: Stable machine identifier using the approved locality contract.
+      placeholder: cordoba-capital
+    validations:
+      required: true
+
+  - type: input
+    id: proposed_url
+    attributes:
+      label: Proposed canonical URL
+      placeholder: /argentina/cordoba/cordoba-capital/
+    validations:
+      required: true
+
+  - type: textarea
+    id: intent_audience
+    attributes:
+      label: Search intent and audience
+      description: Define user need, audience, offer fit, and why a dedicated page is useful.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sources
+    attributes:
+      label: Sources
+      description: List authoritative URLs, what each supports, and review date.
+    validations:
+      required: true
+
+  - type: textarea
+    id: original_content
+    attributes:
+      label: Locally differentiated content
+      description: Explain unique evidence, sections, facts, and value beyond token replacement.
+    validations:
+      required: true
+
+  - type: textarea
+    id: sectors_problems
+    attributes:
+      label: Relevant sectors and problems
+      description: Connect verified local context to actual Ranquel capabilities.
+    validations:
+      required: true
+
+  - type: textarea
+    id: image_provenance
+    attributes:
+      label: Image, source, and license
+      description: Include intended use, rights, owner, alt intent, dimensions, and weight budget.
+    validations:
+      required: true
+
+  - type: textarea
+    id: seo_indexation
+    attributes:
+      label: SEO and indexation plan
+      description: Cover title/H1, canonical, schema, links, sitemap, noindex preview, and anti-doorway review.
+    validations:
+      required: true
+
+  - type: input
+    id: seoArchetype
+    attributes:
+      label: seoArchetype
+      description: Use the page archetype approved by #26.
+      placeholder: location-remote-service
+    validations:
+      required: true
+
+  - type: input
+    id: goldenBaselineVersion
+    attributes:
+      label: goldenBaselineVersion
+      description: Identify the approved #26 baseline; use NOT_AVAILABLE until it exists.
+      placeholder: NOT_AVAILABLE
+    validations:
+      required: true
+
+  - type: dropdown
+    id: SEO_GOLDEN_PARITY
+    attributes:
+      label: SEO_GOLDEN_PARITY
+      options:
+        - NOT_RUN
+        - BLOCKED
+        - PARTIAL
+        - PASS
+        - FAIL
+    validations:
+      required: true
+
+  - type: dropdown
+    id: HOME_SEO_REGRESSION
+    attributes:
+      label: HOME_SEO_REGRESSION
+      options:
+        - NOT_RUN
+        - BLOCKED
+        - PASS
+        - FAIL
+    validations:
+      required: true
+
+  - type: dropdown
+    id: LOCAL_CONTENT_UTILITY
+    attributes:
+      label: LOCAL_CONTENT_UTILITY
+      options:
+        - NOT_RUN
+        - BLOCKED
+        - PASS
+        - FAIL
+    validations:
+      required: true
+
+  - type: dropdown
+    id: MOBILE_SEO_PARITY
+    attributes:
+      label: MOBILE_SEO_PARITY
+      options:
+        - NOT_RUN
+        - BLOCKED
+        - PASS
+        - FAIL
+    validations:
+      required: true
+
+  - type: dropdown
+    id: MULTILINGUAL_SEO
+    attributes:
+      label: MULTILINGUAL_SEO
+      description: Use NOT_APPLICABLE only when the approved archetype has no multilingual pair.
+      options:
+        - NOT_RUN
+        - BLOCKED
+        - NOT_APPLICABLE
+        - PASS
+        - FAIL
+    validations:
+      required: true
+
+  - type: textarea
+    id: measurement_cta
+    attributes:
+      label: Measurement and CTA
+      description: Define location_id, CTA, funnel, deduplication, and zero-PII requirements.
+    validations:
+      required: true
+
+  - type: textarea
+    id: human_review
+    attributes:
+      label: Human review owners
+      description: Name required content, business, legal/privacy, and publication decisions.
+    validations:
+      required: true
+
+  - type: textarea
+    id: publication_gates
+    attributes:
+      label: Publication gates
+      description: Define evidence needed to move from draft/noindex to published/indexable.
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: city_contract
+    attributes:
+      label: City integrity contract
+      options:
+        - label: The proposal does not invent a physical presence, client, testimonial, statistic, or source.
+          required: true
+        - label: Draft and preview remain noindex and outside public sitemap/navigation until authorized.
+          required: true
+        - label: The Río Cuarto Home and canonical `/` remain unchanged by this proposal.
+          required: true
