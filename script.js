@@ -590,8 +590,6 @@ document.addEventListener('DOMContentLoaded', () => {
   const mobileMenu = document.getElementById('mobileMenu');
   const menuIcon = document.getElementById('menuIcon');
   const vistaInicio = document.getElementById('vistaInicio');
-  const vistaOpciones = document.getElementById('vistaOpciones');
-  const optionsTitle = document.getElementById('optionsTitle');
   const vistaReservas = document.getElementById('vistaReservas');
   const langSelector = document.getElementById('langSelector');
 
@@ -624,11 +622,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const url = new URL(window.location.href);
     const currentView = url.searchParams.get('view');
 
-    if (vista === 'opciones') {
-      url.searchParams.set('view', 'opciones');
-      url.searchParams.delete('access');
-      url.hash = '';
-    } else if (vista === 'reservas') {
+    if (vista === 'reservas') {
       url.searchParams.set('view', 'reservas');
       if (currentView !== 'reservas') url.searchParams.delete('access');
       url.hash = '';
@@ -659,10 +653,6 @@ document.addEventListener('DOMContentLoaded', () => {
       window.location.href = '/?view=reservas';
       return;
     }
-    if (vista === 'opciones' && !vistaOpciones) {
-      window.location.href = '/?view=opciones';
-      return;
-    }
     if (vista === 'inicio' && !vistaInicio) {
       window.location.href = anchor ? `/${anchor}` : '/';
       return;
@@ -672,7 +662,6 @@ document.addEventListener('DOMContentLoaded', () => {
     
     if (vista === 'inicio') {
       if (vistaInicio) vistaInicio.style.display = 'block';
-      if (vistaOpciones) vistaOpciones.style.display = 'none';
       if (vistaReservas) vistaReservas.style.display = 'none';
       window.scrollTo({ top: 0, behavior: 'smooth' });
       
@@ -684,15 +673,8 @@ document.addEventListener('DOMContentLoaded', () => {
           }
         }, 100);
       }
-    } else if (vista === 'opciones') {
-      if (vistaInicio) vistaInicio.style.display = 'none';
-      if (vistaOpciones) vistaOpciones.style.display = 'block';
-      if (vistaReservas) vistaReservas.style.display = 'none';
-      window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(() => optionsTitle?.focus({ preventScroll: true }), 50);
     } else if (vista === 'reservas') {
       if (vistaInicio) vistaInicio.style.display = 'none';
-      if (vistaOpciones) vistaOpciones.style.display = 'none';
       if (vistaReservas) vistaReservas.style.display = 'block';
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
@@ -709,13 +691,6 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  document.querySelectorAll('[data-nav="opciones"]').forEach(el => {
-    el.addEventListener('click', (e) => {
-      e.preventDefault();
-      navegarA('opciones');
-    });
-  });
-
   document.querySelectorAll('[data-nav="reservas"], .btn-reservas').forEach(el => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
@@ -749,11 +724,6 @@ document.addEventListener('DOMContentLoaded', () => {
     applyTranslations(nextLang);
   });
   
-  // Botones específicos
-  document.getElementById('btnOpciones')?.addEventListener('click', () => {
-    navegarA('opciones');
-  });
-
   // Botón reservas
   document.getElementById('btnReservas')?.addEventListener('click', () => {
     navegarA('reservas');
@@ -858,15 +828,13 @@ document.addEventListener('DOMContentLoaded', () => {
         navegarA('reservas', null, { updateHistory: false });
         if (dailyRoomInput) dailyRoomInput.value = access || '';
         if (access) renderDailyFromAccess(access);
-      } else if (view === 'opciones') {
-        navegarA('opciones', null, { updateHistory: false });
       } else if (vistaInicio) {
         navegarA('inicio', window.location.hash || null, { updateHistory: false });
       }
     } catch (_) {}
   }
 
-  // Deep links + Back/Forward: /?view=opciones y /?view=reservas&access=xxx
+  // Deep links + Back/Forward: /?view=reservas&access=xxx
   applyLocationView();
   window.addEventListener('popstate', applyLocationView);
 

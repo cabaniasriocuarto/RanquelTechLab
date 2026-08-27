@@ -1,6 +1,18 @@
 {
   "redirects": [
     {
+      "source": "/",
+      "has": [
+        {
+          "type": "query",
+          "key": "view",
+          "value": "opciones"
+        }
+      ],
+      "destination": "/sectores/",
+      "permanent": true
+    },
+    {
       "source": "/Favicon.ico",
       "destination": "/favicon.ico",
       "permanent": true

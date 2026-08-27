@@ -35,7 +35,8 @@
   <meta name="twitter:title" content="Soluciones tecnológicas por sector | Ranquel Tech Lab">
   <meta name="twitter:description" content="Posibilidades de software, automatización, datos e IA para siete sectores.">
   <meta name="twitter:image" content="https://www.ranquel.com.ar/media/territorio/og-territorio.png">
-  <link rel="stylesheet" href="/seo-pages.css?v=20260826-marketing2">
+  <link rel="stylesheet" href="/seo-pages.css?v=20260827-shell">
+  <link rel="stylesheet" href="/site-runtime.css?v=20260827-unified">
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -71,16 +72,29 @@
   }
   </script>
 </head>
-<body class="seo-detail-page">
+<body class="seo-detail-page" data-page="sectores">
   <header class="seo-header">
     <nav class="seo-shell seo-nav" aria-label="Navegación principal">
       <a class="seo-brand" href="/" aria-label="Ranquel Tech Lab, inicio">
         <img src="/favicon-96.png" alt="" width="96" height="96">
         <span>Ranquel <small>Tech Lab</small></span>
       </a>
+      <details class="seo-mobile-menu">
+        <summary><span>Menú</span><b aria-hidden="true">+</b></summary>
+        <div class="seo-mobile-menu-panel">
+          <a href="/soluciones/">Soluciones</a>
+          <a href="/sectores/" aria-current="page">Sectores</a>
+          <a href="/#metodo">Método</a>
+          <a href="/marketing/">Marketing</a>
+          <a href="/contacto/">Contacto</a>
+          <a href="https://wa.me/5493584118722" target="_blank" rel="noopener noreferrer">WhatsApp</a>
+          <a href="/?view=reservas">Agendá videollamada</a>
+        </div>
+      </details>
       <div class="seo-links">
         <a href="/soluciones/">Soluciones</a>
         <a href="/sectores/" aria-current="page">Sectores</a>
+        <a href="/#metodo">Método</a>
         <a href="/marketing/">Marketing</a>
         <a href="/contacto/">Contacto</a>
         <a class="seo-nav-whatsapp" href="https://wa.me/5493584118722" target="_blank" rel="noopener noreferrer">
@@ -225,9 +239,11 @@
         <nav class="seo-footer-links" aria-label="Navegación secundaria">
           <a href="/soluciones/">Soluciones</a>
           <a href="/sectores/">Sectores</a>
+          <a href="/#metodo">Método</a>
           <a href="/marketing/">Marketing</a>
           <a href="/contacto/">Contacto</a>
           <a href="/contacto/whatsapp/">WhatsApp</a>
+          <a href="/?view=reservas">Agendá videollamada</a>
         </nav>
       </div>
       <div class="seo-footer-meta">
@@ -236,5 +252,7 @@
       </div>
     </div>
   </footer>
+  <div id="chatbot-container"></div>
+  <script defer src="/site-runtime.js?v=20260827-unified"></script>
 </body>
 </html>

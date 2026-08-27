@@ -27,7 +27,7 @@ html {
 
 body.seo-detail-page {
   margin: 0;
-  min-width: 320px;
+  min-width: 0;
   overflow-x: hidden;
   background:
     radial-gradient(circle at 78% 12%, rgba(85, 200, 255, 0.11), transparent 28rem),
@@ -656,24 +656,23 @@ body.seo-detail-page button:focus-visible {
   outline-offset: 4px;
 }
 
-@media (max-width: 920px) {
+@media (max-width: 1040px) {
   .seo-nav {
-    flex-wrap: wrap;
-    gap: 12px 20px;
-    padding-block: 10px;
+    min-height: 68px;
+    flex-wrap: nowrap;
+    padding-block: 8px;
   }
 
   .seo-links {
-    order: 3;
-    width: 100%;
-    margin-left: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-  }
-
-  .seo-links::-webkit-scrollbar {
     display: none;
   }
+
+  .seo-mobile-menu {
+    display: block;
+  }
+}
+
+@media (max-width: 920px) {
 
   .seo-hero {
     min-height: 0;
@@ -689,20 +688,6 @@ body.seo-detail-page button:focus-visible {
     width: min(420px, 86%);
     transform: translateX(-50%);
   }
-
-  .seo-marketing-page .seo-nav {
-    min-height: 68px;
-    flex-wrap: nowrap;
-    padding-block: 8px;
-  }
-
-  .seo-marketing-page .seo-links {
-    display: none;
-  }
-
-  .seo-marketing-page .seo-mobile-menu {
-    display: block;
-  }
 }
 
 @media (max-width: 700px) {
@@ -710,30 +695,9 @@ body.seo-detail-page button:focus-visible {
     width: min(100% - 28px, 1180px);
   }
 
-  .seo-links > .seo-nav-booking {
-    display: none;
-  }
-
   .seo-brand img {
     width: 46px;
     height: 46px;
-  }
-
-  .seo-links {
-    display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 6px 10px;
-    overflow: visible;
-  }
-
-  .seo-links > a {
-    min-width: 0;
-    justify-content: center;
-    padding-inline: 6px;
-  }
-
-  .seo-links > .seo-nav-whatsapp {
-    padding-inline: 12px;
   }
 
   .seo-hero {
