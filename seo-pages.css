@@ -484,6 +484,208 @@ body.seo-detail-page img {
   text-decoration: none;
 }
 
+/* Soluciones: recupera los acentos y arcos editoriales de la home sin
+   convertir las tarjetas en bloques de color. */
+body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card {
+  --solution-accent: #ff7b86;
+  --solution-border: rgba(255, 123, 134, 0.26);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--solution-border);
+  border-color: color-mix(in srgb, var(--solution-accent) 26%, transparent);
+  background:
+    linear-gradient(145deg, rgba(21, 24, 39, 0.98), rgba(10, 11, 18, 0.94));
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--solution-accent) 6%, rgba(21, 24, 39, 0.98)),
+      rgba(10, 11, 18, 0.94) 72%
+    );
+  transform: translateZ(0);
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease;
+}
+
+body.seo-detail-page[data-page="soluciones"] #software-automatizacion {
+  --solution-accent: #a685ff;
+  --solution-border: rgba(166, 133, 255, 0.26);
+}
+
+body.seo-detail-page[data-page="soluciones"] #inteligencia-artificial {
+  --solution-accent: #73b7ff;
+  --solution-border: rgba(115, 183, 255, 0.26);
+}
+
+body.seo-detail-page[data-page="soluciones"] #marketing-analitica {
+  --solution-accent: #d8f477;
+  --solution-border: rgba(216, 244, 119, 0.26);
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card > * {
+  position: relative;
+  z-index: 2;
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card::before {
+  content: "";
+  width: 260px;
+  height: 260px;
+  position: absolute;
+  right: -74px;
+  bottom: -88px;
+  z-index: 0;
+  border-radius: 50%;
+  background:
+    radial-gradient(
+      circle,
+      color-mix(in srgb, var(--solution-accent) 14%, transparent) 0,
+      color-mix(in srgb, var(--solution-accent) 5%, transparent) 42%,
+      transparent 70%
+    );
+  filter: blur(8px);
+  opacity: 0.62;
+  pointer-events: none;
+  animation: seo-solution-ambient 8s ease-in-out infinite alternate;
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card::after {
+  content: "";
+  width: 190px;
+  height: 190px;
+  position: absolute;
+  right: -70px;
+  bottom: -70px;
+  z-index: 1;
+  border: 1px solid var(--solution-accent);
+  border-color: color-mix(in srgb, var(--solution-accent) 58%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 72px color-mix(in srgb, var(--solution-accent) 12%, transparent);
+  opacity: 0.72;
+  pointer-events: none;
+  animation: seo-solution-ring-breathe 6.5s ease-in-out infinite alternate;
+  transition: transform 360ms ease, opacity 260ms ease;
+}
+
+body.seo-detail-page[data-page="soluciones"] #software-automatizacion::before,
+body.seo-detail-page[data-page="soluciones"] #software-automatizacion::after {
+  animation-delay: -1.7s;
+}
+
+body.seo-detail-page[data-page="soluciones"] #inteligencia-artificial::before,
+body.seo-detail-page[data-page="soluciones"] #inteligencia-artificial::after {
+  animation-delay: -3.4s;
+}
+
+body.seo-detail-page[data-page="soluciones"] #marketing-analitica::before,
+body.seo-detail-page[data-page="soluciones"] #marketing-analitica::after {
+  animation-delay: -5.1s;
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-card-no {
+  color: var(--solution-accent);
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-card h2 {
+  color: var(--seo-text);
+  color: color-mix(in srgb, var(--solution-accent) 34%, var(--seo-text));
+  text-shadow: 0 0 30px color-mix(in srgb, var(--solution-accent) 8%, transparent);
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-card li::marker {
+  color: var(--solution-accent);
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-card-link {
+  border-bottom-color: var(--solution-accent);
+  border-bottom-color: color-mix(in srgb, var(--solution-accent) 58%, transparent);
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-card-link span {
+  color: var(--solution-accent);
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card:focus-within {
+  border-color: var(--solution-accent);
+  border-color: color-mix(in srgb, var(--solution-accent) 58%, transparent);
+  box-shadow:
+    0 32px 86px rgba(0, 0, 0, 0.38),
+    0 0 38px color-mix(in srgb, var(--solution-accent) 8%, transparent);
+}
+
+body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card:focus-within::after {
+  opacity: 1;
+  transform: translate3d(-7px, -7px, 0) scale(1.2);
+}
+
+@keyframes seo-solution-ambient {
+  from {
+    opacity: 0.48;
+    transform: translate3d(8px, 8px, 0) scale(0.96);
+  }
+  to {
+    opacity: 0.78;
+    transform: translate3d(-10px, -8px, 0) scale(1.08);
+  }
+}
+
+@keyframes seo-solution-ring-breathe {
+  from { opacity: 0.56; }
+  to { opacity: 0.9; }
+}
+
+@supports (animation-timeline: view()) {
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card {
+    animation: seo-solution-card-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 3% cover 26%;
+  }
+}
+
+@keyframes seo-solution-card-reveal {
+  from {
+    opacity: 0.46;
+    filter: saturate(0.72) blur(3px);
+  }
+  to {
+    opacity: 1;
+    filter: saturate(1) blur(0);
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card:hover {
+    border-color: color-mix(in srgb, var(--solution-accent) 58%, transparent);
+    box-shadow:
+      0 32px 86px rgba(0, 0, 0, 0.38),
+      0 0 38px color-mix(in srgb, var(--solution-accent) 8%, transparent);
+    transform: translateY(-5px);
+  }
+
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card:hover::after {
+    opacity: 1;
+    transform: translate3d(-7px, -7px, 0) scale(1.2);
+  }
+}
+
+@media (max-width: 700px) {
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card::before {
+    width: 210px;
+    height: 210px;
+    right: -66px;
+    bottom: -72px;
+  }
+
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card::after {
+    width: 150px;
+    height: 150px;
+    right: -54px;
+    bottom: -54px;
+  }
+}
+
 .seo-cta {
   display: grid;
   grid-template-columns: minmax(0, 1fr) auto;
@@ -797,6 +999,19 @@ body.seo-detail-page button:focus-visible {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card,
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card::before,
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card::after {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    filter: none !important;
+  }
+
+  body.seo-detail-page[data-page="soluciones"] .seo-grid > .seo-card {
+    opacity: 1 !important;
   }
 
   .seo-nav-booking,
