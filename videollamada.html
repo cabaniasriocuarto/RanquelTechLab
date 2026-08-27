@@ -1,16 +1,13 @@
 <!DOCTYPE html>
-<html lang="es-AR">
+<html lang="es">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="robots" content="noindex, follow" />
+  <meta name="robots" content="index, follow" />
   <meta name="referrer" content="strict-origin-when-cross-origin" />
 
-  <title>Reserva online y videollamada | Ranquel Tech Lab</title>
-  <meta name="description" content="Reservá una videollamada con Ranquel Tech Lab y accedé de forma segura a la reunión desde la misma página." />
-  <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96.png" />
-  <link rel="shortcut icon" href="/favicon.ico" />
-  <link rel="stylesheet" href="/seo-pages.css?v=20260826-agenda" />
+  <title>Videollamada | Ranquel Tech Lab</title>
+  <link rel="stylesheet" href="./styles.css" />
 
   <!-- CSP (mantiene Daily en iframe) -->
   <meta http-equiv="Content-Security-Policy" content="
@@ -19,7 +16,7 @@
     connect-src 'self' https://www.google-analytics.com https://region1.google-analytics.com https://www.googletagmanager.com;
     img-src 'self' data: https://www.google-analytics.com https://www.googletagmanager.com;
     style-src 'self' 'unsafe-inline';
-    frame-src 'self' https://calendar.google.com https://calendar.app.google https://ranquel.daily.co https://*.daily.co;
+    frame-src 'self' https://*.daily.co;
     object-src 'none';
     frame-ancestors 'self';
     base-uri 'self';
@@ -33,124 +30,47 @@
     gtag('js', new Date());
     gtag('config', 'G-JY9JDYZB52');
   </script>
-  <style>
-    .agenda-main { padding: 34px 0 80px; }
-    .agenda-intro {
-      margin: 34px 0 24px;
-      border: 1px solid var(--seo-line);
-      border-radius: 24px;
-      padding: clamp(26px, 4vw, 52px);
-      background: linear-gradient(135deg, rgba(255,123,134,.14), rgba(156,114,255,.08));
-    }
-    .agenda-intro h1 { margin: 8px 0 10px; font-size: clamp(2.25rem, 5vw, 4.7rem); line-height: .98; letter-spacing: -.055em; }
-    .agenda-intro p { max-width: 760px; margin: 0; color: var(--seo-muted); font-size: clamp(1rem, 1.6vw, 1.15rem); }
-    .agenda-grid { display: grid; grid-template-columns: minmax(0, 1fr) minmax(340px, .92fr); gap: 18px; align-items: start; }
-    .agenda-card { min-width: 0; border: 1px solid var(--seo-line); border-radius: 22px; padding: clamp(18px, 2.5vw, 28px); background: rgba(16,18,28,.9); }
-    .agenda-step { display: inline-flex; align-items: center; min-height: 30px; border: 1px solid rgba(255,123,134,.5); border-radius: 999px; padding: 0 11px; color: var(--seo-coral); font-size: .76rem; font-weight: 850; letter-spacing: .08em; }
-    .agenda-card h2 { margin: 18px 0 8px; font-size: clamp(1.55rem, 2.8vw, 2.35rem); line-height: 1.05; }
-    .agenda-card > p { color: var(--seo-muted); }
-    .agenda-calendar { width: 100%; height: 680px; margin-top: 18px; border: 0; border-radius: 14px; background: #fff; }
-    .agenda-field { display: grid; gap: 8px; margin-top: 22px; }
-    .agenda-field label { font-size: .86rem; font-weight: 800; }
-    .agenda-join-row { display: grid; grid-template-columns: minmax(0,1fr) auto; gap: 10px; }
-    .agenda-input { min-width: 0; min-height: 50px; border: 1px solid var(--seo-line); border-radius: 13px; padding: 0 14px; background: #08090f; color: var(--seo-text); font: inherit; }
-    .agenda-input:focus-visible { outline: 2px solid var(--seo-coral); outline-offset: 2px; }
-    .agenda-button { min-height: 50px; border: 1px solid rgba(255,123,134,.62); border-radius: 999px; padding: 0 22px; background: rgba(255,123,134,.1); color: var(--seo-text); font: inherit; font-weight: 800; cursor: pointer; }
-    .agenda-button:hover, .agenda-button:focus-visible { background: rgba(255,123,134,.18); border-color: var(--seo-coral); }
-    .agenda-help, #status { color: var(--seo-muted); font-size: .9rem; }
-    .agenda-call { min-height: 300px; margin-top: 16px; display: grid; place-items: center; border: 1px dashed rgba(247,244,240,.22); border-radius: 16px; padding: 18px; background: rgba(8,9,15,.6); text-align: center; }
-    .agenda-call iframe { width: 100%; height: 640px; border: 0; border-radius: 12px; }
-    .agenda-links { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 16px; }
-    .agenda-links a { min-height: 46px; display: inline-flex; align-items: center; border: 1px solid var(--seo-line); border-radius: 999px; padding: 0 17px; text-decoration: none; font-weight: 750; }
-    .agenda-links a:hover, .agenda-links a:focus-visible { border-color: var(--seo-coral); }
-    @media (max-width: 880px) { .agenda-grid { grid-template-columns: 1fr; } .agenda-calendar { height: 640px; } }
-    @media (max-width: 560px) { .agenda-main { padding-top: 18px; } .agenda-join-row { grid-template-columns: 1fr; } .agenda-calendar { height: 600px; } .agenda-links a { width: 100%; justify-content: center; } }
-  </style>
 </head>
 
-<body class="seo-detail-page">
-  <header class="seo-header">
-    <nav class="seo-shell seo-nav" aria-label="Navegación principal">
-      <a class="seo-brand" href="/" aria-label="Ranquel Tech Lab, inicio">
-        <img src="/favicon-96.png" alt="" width="96" height="96">
-        <span>Ranquel <small>Tech Lab</small></span>
-      </a>
-      <details class="seo-mobile-menu">
-        <summary><span>Menú</span><b aria-hidden="true">+</b></summary>
-        <div class="seo-mobile-menu-panel">
-          <a href="/soluciones/">Soluciones</a>
-          <a href="/sectores/">Sectores</a>
-          <a href="/">Marketing</a>
-          <a href="/contacto/">Contacto</a>
-          <a href="https://wa.me/5493584118722" target="_blank" rel="noopener noreferrer">WhatsApp</a>
-          <a href="/videollamada.html" aria-current="page">Agendá videollamada</a>
-        </div>
-      </details>
-      <div class="seo-links">
-        <a href="/soluciones/">Soluciones</a>
-        <a href="/sectores/">Sectores</a>
-        <a href="/">Marketing</a>
-        <a href="/contacto/">Contacto</a>
-        <a class="seo-nav-whatsapp" href="https://wa.me/5493584118722" target="_blank" rel="noopener noreferrer">
-          <img src="/images/whatsapp.svg" alt="" width="18" height="18">WhatsApp
-        </a>
-        <a class="seo-nav-booking" href="/videollamada.html" aria-current="page">Agenda online</a>
-      </div>
+<body>
+  <header id="header" class="backdrop">
+    <nav class="wrap" style="display:flex; justify-content:space-between; align-items:center;">
+      <a href="/" class="logo neon">Ranquel Tech Lab</a>
+      <a href="/" class="btn btn-ghost">Volver al inicio</a>
     </nav>
   </header>
 
-  <main class="seo-shell agenda-main">
-    <nav class="seo-breadcrumbs" aria-label="Migas de pan">
-      <ol><li><a href="/">Inicio</a></li><li aria-current="page">Agenda y videollamada</li></ol>
-    </nav>
+  <main class="wrap section-padding" style="padding-top: 96px;">
+    <div class="panel glow" style="padding: 20px;">
+      <h1 class="neon" style="margin:0; font-size: clamp(26px,4vw,40px); font-weight: 800;">Videollamada</h1>
+      <p style="margin-top: 8px; color: var(--text-muted);">
+        Por seguridad, la sala se habilita con un <strong>link/código de acceso</strong>.
+        Ese link te llega por email después de reservar.
+      </p>
 
-    <section class="agenda-intro">
-      <p class="seo-eyebrow">Agenda online</p>
-      <h1>Reserva + videollamada.</h1>
-      <p>Elegí un horario disponible. Después de reservar, vas a recibir por email el acceso seguro para entrar a la reunión desde esta misma página.</p>
-    </section>
-
-    <div class="agenda-grid">
-      <section id="turnero" class="agenda-card" aria-labelledby="turnero-title">
-        <span class="agenda-step">PASO 1</span>
-        <h2 id="turnero-title">Reservá tu turno</h2>
-        <p>Elegí día y hora en el calendario. Si preferís, también podés abrir la agenda en otra pestaña.</p>
-        <iframe
-          class="agenda-calendar"
-          src="https://calendar.google.com/calendar/appointments/AcZssZ0ObUVq5PorsxenJbu6QMCrU-DiikPN8yG7k0E=?gv=true"
-          title="Agenda online de Ranquel Tech Lab"
-          loading="lazy"></iframe>
-        <div class="agenda-links">
-          <a target="_blank" rel="noopener noreferrer" href="https://calendar.app.google/LvSPMzEtUA8SKyRk6">Abrir agenda en otra pestaña</a>
+      <div class="booking-join" style="margin-top: 12px;">
+        <label class="small-label" for="accessInput">Link / Código de acceso</label>
+        <div class="booking-join-row">
+          <input id="accessInput" class="input" type="text" placeholder="Pegá acá el link o el código que te llegó por email" />
+          <button id="btnJoin" class="btn btn-accent glow" type="button">Entrar</button>
         </div>
-      </section>
+        <p class="help">Si no tenés el link, pedinoslo por WhatsApp. Sin acceso no se puede entrar.</p>
+      </div>
 
-      <section class="agenda-card" aria-labelledby="daily-title">
-        <span class="agenda-step">PASO 2</span>
-        <h2 id="daily-title">Entrá a la videollamada</h2>
-        <p>El link o código de acceso llega por email después de reservar. Por seguridad, la sala no se habilita sin ese acceso.</p>
+      <div id="status" class="muted" style="margin-top:10px;"></div>
 
-        <div class="agenda-field">
-          <label for="accessInput">Link / Código de acceso</label>
-          <div class="agenda-join-row">
-            <input id="accessInput" class="agenda-input" type="text" autocomplete="off" placeholder="Pegá el link o código recibido por email" />
-            <button id="btnJoin" class="agenda-button" type="button">Entrar</button>
-          </div>
-          <p class="agenda-help">Si no te llegó, escribinos por WhatsApp y te ayudamos.</p>
+      <div id="callWrap" class="daily-container" style="margin-top: 14px;">
+        <div class="daily-placeholder">
+          <strong>La videollamada se abre acá</strong>
+          <p>Presioná “Entrar” para cargar la sala dentro de la web.</p>
         </div>
+      </div>
 
-        <div id="status" aria-live="polite"></div>
-        <div id="callWrap" class="agenda-call">
-          <div>
-            <strong>La videollamada se abre acá</strong>
-            <p class="agenda-help">Presioná “Entrar” para cargar la sala dentro de la web.</p>
-          </div>
-        </div>
-        <div class="agenda-links">
-          <a href="#turnero">Volver al calendario</a>
-          <a target="_blank" rel="noopener noreferrer" href="https://wa.me/5493584118722">Pedir ayuda por WhatsApp</a>
-        </div>
-      </section>
+      <div style="margin-top: 14px; display:flex; gap:10px; flex-wrap:wrap;">
+        <a class="btn btn-ghost" href="/?view=reservas">Ir al turnero + videollamada</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener noreferrer" href="https://calendar.app.google/LvSPMzEtUA8SKyRk6">Abrir agenda en nueva pestaña</a>
+        <a class="btn btn-ghost" target="_blank" rel="noopener noreferrer" href="https://ranquel.daily.co/VideoLlamada">Abrir Daily (dueño)</a>
+      </div>
     </div>
   </main>
 

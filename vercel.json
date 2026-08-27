@@ -1,39 +1,8 @@
 {
   "redirects": [
     {
-      "source": "/",
-      "has": [
-        { "type": "query", "key": "view", "value": "reservas" }
-      ],
-      "destination": "/videollamada.html",
-      "permanent": true
-    },
-    {
-      "source": "/",
-      "has": [
-        { "type": "query", "key": "view", "value": "opciones" }
-      ],
-      "destination": "/sectores/",
-      "permanent": true
-    },
-    {
       "source": "/Favicon.ico",
       "destination": "/favicon.ico",
-      "permanent": true
-    },
-    {
-      "source": "/marketing",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/marketing/",
-      "destination": "/",
-      "permanent": true
-    },
-    {
-      "source": "/marketing/index.html",
-      "destination": "/",
       "permanent": true
     },
     {

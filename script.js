@@ -656,14 +656,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Las páginas auxiliares comparten el chatbot pero no las vistas de la home.
     if (vista === 'reservas' && !vistaReservas) {
-      const legacyAccess = new URLSearchParams(window.location.search).get('access');
-      window.location.href = legacyAccess
-        ? `/videollamada.html?access=${encodeURIComponent(legacyAccess)}`
-        : '/videollamada.html';
+      window.location.href = '/?view=reservas';
       return;
     }
     if (vista === 'opciones' && !vistaOpciones) {
-      window.location.href = '/sectores/';
+      window.location.href = '/?view=opciones';
       return;
     }
     if (vista === 'inicio' && !vistaInicio) {
@@ -736,9 +733,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Idiomas
-  const savedLang = langSelector
-    ? (localStorage.getItem('rtl-lang') || 'es')
-    : (document.documentElement.lang.startsWith('en') ? 'en' : 'es');
+  const savedLang = localStorage.getItem('rtl-lang') || 'es';
 
   if (langSelector) {
     langSelector.value = savedLang;
@@ -871,7 +866,7 @@ document.addEventListener('DOMContentLoaded', () => {
     } catch (_) {}
   }
 
-  // Compatibilidad con enlaces históricos; Vercel los redirige en producción.
+  // Deep links + Back/Forward: /?view=opciones y /?view=reservas&access=xxx
   applyLocationView();
   window.addEventListener('popstate', applyLocationView);
 
@@ -1220,7 +1215,7 @@ function redirectToVideollamadaThankYou() {
       if (typeof window.navegarA === 'function') {
         window.navegarA('reservas');
       } else {
-        window.location.href = '/videollamada.html';
+        window.location.href = '/?view=reservas';
       }
     } else {
       redirectToBudgetThankYou();
@@ -1367,7 +1362,7 @@ function redirectToVideollamadaThankYou() {
           <p>${isEnglish
             ? 'Web products, custom software, automation, applied AI, analytics, and digital growth.'
             : 'Productos web, software a medida, automatización, IA aplicada, analítica y crecimiento digital.'}</p>
-          <a class="chatbot-conversation-cta" href="/soluciones/">${isEnglish ? 'See solutions' : 'Ver soluciones'}</a>
+          <a class="chatbot-conversation-cta" href="/#services">${isEnglish ? 'See solutions' : 'Ver soluciones'}</a>
         `;
       case 'greeting':
         return `
@@ -1461,7 +1456,7 @@ function redirectToVideollamadaThankYou() {
         if (typeof window.navegarA === 'function') {
           window.navegarA('reservas');
         } else {
-          window.location.href = '/videollamada.html';
+          window.location.href = '/?view=reservas';
         }
       });
     });
