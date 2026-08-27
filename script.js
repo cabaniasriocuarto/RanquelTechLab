@@ -21,7 +21,7 @@ const translations = {
     // HERO + LOCAL SEO
     'hero.badge': 'Río Cuarto · Argentina',
     'hero.title': '<span class="tl-hero-line">Tecnología actual</span> <span class="tl-hero-line">para</span> <em class="tl-hero-line">negocios Rentables.</em>',
-    'hero.subtitle': 'Creamos páginas web, software, inteligencia artificial y marketing digital para mejorar el trabajo, las ventas y las decisiones.',
+    'hero.subtitle': 'Creamos páginas web, programas e inteligencia artificial para mejorar el trabajo, las ventas y las decisiones.',
     'hero.primary': 'Explorar soluciones',
     'hero.secondary': 'Contanos tu desafío <span aria-hidden="true">↗</span>',
     'hero.area1': 'Estrategia',
@@ -214,7 +214,7 @@ const translations = {
     // HERO + LOCAL SEO (EN)
     'hero.badge': 'Río Cuarto · Argentina',
     'hero.title': '<span class="tl-hero-line">Modern technology</span> <span class="tl-hero-line">for</span> <em class="tl-hero-line">profitable businesses.</em>',
-    'hero.subtitle': 'We create websites, software, AI, and digital marketing to improve operations, sales, and decision-making.',
+    'hero.subtitle': 'We create websites, software, and AI to improve operations, sales, and decision-making.',
     'hero.primary': 'Explore solutions',
     'hero.secondary': 'Tell us your challenge <span aria-hidden="true">↗</span>',
     'hero.area1': 'Strategy',
@@ -709,7 +709,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
   });
   
-  document.querySelectorAll('[data-nav="opciones"], .btn-opciones').forEach(el => {
+  document.querySelectorAll('[data-nav="opciones"]').forEach(el => {
     el.addEventListener('click', (e) => {
       e.preventDefault();
       navegarA('opciones');
