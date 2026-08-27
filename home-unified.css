@@ -260,15 +260,54 @@ body.seo-home-page.tl-menu-open { overflow: hidden; }
 }
 
 /* Services */
-.seo-home-services .seo-card-no b { color: var(--seo-muted); }
-.seo-home-service-card { display: flex; flex-direction: column; }
+.seo-home-service-card {
+  --card-accent: #ff7b86;
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.seo-home-services .seo-grid > .seo-home-service-card:nth-of-type(1) { --card-accent: #ff7b86; }
+.seo-home-services .seo-grid > .seo-home-service-card:nth-of-type(2) { --card-accent: #a685ff; }
+.seo-home-services .seo-grid > .seo-home-service-card:nth-of-type(3) { --card-accent: #73b7ff; }
+.seo-home-services .seo-grid > .seo-home-service-card:nth-of-type(4) { --card-accent: #d8f477; }
+
+.seo-home-service-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.seo-home-service-card::after {
+  content: "";
+  width: 170px;
+  height: 170px;
+  position: absolute;
+  right: -64px;
+  bottom: -64px;
+  z-index: 0;
+  border: 1px solid var(--card-accent);
+  border-color: color-mix(in srgb, var(--card-accent) 58%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 70px color-mix(in srgb, var(--card-accent) 12%, transparent);
+  pointer-events: none;
+  transition: transform 360ms ease;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .seo-home-service-card:hover::after { transform: scale(1.22); }
+}
+
+.seo-home-service-card .seo-card-no,
+.seo-home-service-card .seo-card-no b { color: var(--card-accent); }
+
 .seo-home-service-card h3 { margin-top: 52px; }
 .seo-home-service-card .seo-card-link {
   align-self: flex-start;
   margin-top: auto;
   padding-top: 22px;
 }
-.seo-home-service-marketing .seo-card-no { color: var(--seo-marketing); }
 
 .seo-home-sector-preview {
   display: grid;
@@ -625,6 +664,10 @@ body.seo-home-page #mapa-title { color: var(--seo-text) !important; }
 
 @media (prefers-reduced-motion: reduce) {
   .seo-home-page .tl-hero-motion { display: none; }
+  .seo-home-page .seo-home-service-card::after {
+    transition: none !important;
+    transform: none !important;
+  }
   .seo-home-page :is(
     .tl-hero-poster,
     .tl-hero-motion,
