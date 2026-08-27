@@ -44,17 +44,42 @@ body.seo-home-page.tl-menu-open { overflow: hidden; }
 .seo-home-lang[data-flag="es"] { background-image: url("./images/flag-es.svg"); }
 .seo-home-lang[data-flag="en"] { background-image: url("./images/flag-en.svg"); }
 
-/* Hero */
-.seo-home-hero-section { padding-block: 0 clamp(42px, 6vw, 76px); }
-
-.seo-home-hero {
-  min-height: 700px;
-  grid-template-columns: minmax(0, 1.18fr) minmax(340px, 0.82fr);
-  gap: clamp(40px, 7vw, 100px);
+/* Hero: panorama integrado, recuperado de la portada original. */
+.seo-home-hero-section {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-bottom: 1px solid var(--seo-line);
+  padding-block: 0;
+  background: #08090f;
 }
 
-.seo-home-hero-copy { min-width: 0; }
-.seo-home-hero h1 { max-width: 760px; }
+.seo-home-hero-section > .seo-shell {
+  width: 100%;
+  max-width: none;
+}
+
+.seo-home-hero {
+  width: 100%;
+  min-height: calc(100svh - 140px);
+  position: relative;
+  display: block;
+  padding: 0;
+}
+
+.seo-home-hero-copy {
+  width: min(1180px, calc(100% - 48px));
+  min-height: calc(100svh - 140px);
+  margin-inline: auto;
+  padding-block: clamp(82px, 11vh, 132px);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  position: relative;
+  z-index: 5;
+}
+
+.seo-home-hero h1 { max-width: 860px; }
 .seo-home-hero h1 .tl-hero-line { display: block; }
 .seo-home-hero h1 em.tl-hero-line {
   color: var(--seo-coral);
@@ -63,14 +88,15 @@ body.seo-home-page.tl-menu-open { overflow: hidden; }
 
 .seo-home-hero-visual {
   width: 100%;
-  aspect-ratio: 4 / 5;
-  min-height: 0;
-  position: relative;
+  height: 100%;
+  position: absolute;
+  inset: 0;
   isolation: isolate;
   overflow: hidden;
-  border: 1px solid rgba(255, 123, 134, 0.26);
-  background: #0d0e15;
-  box-shadow: var(--seo-shadow);
+  border: 0;
+  background: transparent;
+  box-shadow: none;
+  pointer-events: none;
 }
 
 .seo-home-hero-visual::before,
@@ -82,14 +108,16 @@ body.seo-home-page.tl-menu-open { overflow: hidden; }
 
 .seo-home-hero-visual::before {
   inset: 0;
-  z-index: 2;
-  background: linear-gradient(180deg, rgba(8, 9, 15, 0.06) 48%, rgba(8, 9, 15, 0.86) 100%);
+  z-index: 3;
+  background:
+    linear-gradient(90deg, rgba(8, 9, 15, 0.99) 0%, rgba(8, 9, 15, 0.86) 34%, rgba(8, 9, 15, 0.28) 68%, rgba(8, 9, 15, 0.1) 100%),
+    linear-gradient(0deg, rgba(8, 9, 15, 0.76) 0%, transparent 48%);
 }
 
 .seo-home-hero-visual::after {
-  inset: 10px;
+  inset: 0;
   z-index: 4;
-  border: 1px solid rgba(247, 244, 240, 0.09);
+  background: linear-gradient(180deg, rgba(8, 9, 15, 0.12), transparent 30%, transparent 72%, rgba(8, 9, 15, 0.2));
 }
 
 .seo-home-hero-visual .tl-hero-art {
@@ -106,39 +134,33 @@ body.seo-home-page.tl-menu-open { overflow: hidden; }
   inset: 0;
   display: block;
   object-fit: cover;
-  object-position: 92% center;
+  object-position: 68% center;
 }
 
-.seo-home-hero-status {
-  min-height: 70px;
-  position: absolute;
-  left: 22px;
-  right: 22px;
-  bottom: 22px;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  gap: 8px;
-  border: 1px solid var(--seo-line);
-  padding: 14px;
-  background: rgba(8, 9, 15, 0.84);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  color: var(--seo-text);
-  font-size: 0.64rem;
-  font-weight: 850;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.seo-home-hero-visual .tl-hero-poster {
+  animation:
+    tl-hero-settle 1100ms cubic-bezier(0.2, 0.7, 0.2, 1) both,
+    tl-hero-base-drift 18s 1100ms ease-in-out infinite alternate;
 }
 
-.seo-home-hero-status i { color: var(--seo-coral); font-style: normal; }
+.seo-home-hero-visual .tl-hero-motion {
+  animation:
+    tl-frame-crossfade 12s ease-in-out infinite,
+    tl-motion-drift 17s ease-in-out infinite alternate;
+}
+
+.seo-home-hero-status { display: none; }
 
 .seo-home-capabilities {
+  position: relative;
+  z-index: 6;
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   border-top: 1px solid var(--seo-line);
   border-left: 1px solid var(--seo-line);
+  background: rgba(8, 9, 15, 0.78);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
 }
 
 .seo-home-capabilities > span {
@@ -543,12 +565,18 @@ body.seo-home-page #mapa-title { color: var(--seo-text) !important; }
 
 @media (max-width: 920px) {
   .seo-home-hero {
-    min-height: 0;
-    grid-template-columns: 1fr;
+    min-height: max(620px, calc(100svh - 180px));
+  }
+  .seo-home-hero-copy {
+    min-height: max(620px, calc(100svh - 180px));
   }
   .seo-home-hero-visual {
-    width: min(100%, 520px);
-    justify-self: center;
+    width: 100%;
+  }
+  .seo-home-hero-visual::before {
+    background:
+      linear-gradient(90deg, rgba(8, 9, 15, 0.98) 0%, rgba(8, 9, 15, 0.88) 42%, rgba(8, 9, 15, 0.32) 76%, rgba(8, 9, 15, 0.12) 100%),
+      linear-gradient(0deg, rgba(8, 9, 15, 0.88) 0%, rgba(8, 9, 15, 0.18) 68%, rgba(8, 9, 15, 0.3) 100%);
   }
   .seo-home-capabilities { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 }
@@ -583,15 +611,14 @@ body.seo-home-page #mapa-title { color: var(--seo-text) !important; }
     font-size: 0.68rem;
   }
 
-  .seo-home-hero-section { padding-bottom: 42px; }
-  .seo-home-hero { padding-block: 58px 44px; }
-  .seo-home-hero h1 { font-size: clamp(3rem, 15vw, 4.7rem); }
-  .seo-home-hero-status {
-    left: 12px;
-    right: 12px;
-    bottom: 12px;
-    font-size: 0.52rem;
+  .seo-home-hero-section { padding-bottom: 0; }
+  .seo-home-hero { padding-block: 0; }
+  .seo-home-hero-copy {
+    width: min(1180px, calc(100% - 32px));
+    padding-block: 64px 56px;
   }
+  .seo-home-hero h1 { font-size: clamp(3rem, 15vw, 4.7rem); }
+  .seo-home-hero-visual .tl-hero-art img { object-position: 66% center; }
 
   .seo-home-capabilities > span {
     min-height: 56px;
@@ -642,6 +669,7 @@ body.seo-home-page #mapa-title { color: var(--seo-text) !important; }
 
 @media (max-width: 360px) {
   .seo-home-page .seo-shell { width: min(100% - 24px, 1180px); }
+  .seo-home-hero-section > .seo-shell { width: 100%; }
   .seo-home-page .seo-brand img { width: 42px; height: 42px; }
   .seo-home-page .seo-mobile-menu summary {
     min-height: 42px;
@@ -652,12 +680,8 @@ body.seo-home-page #mapa-title { color: var(--seo-text) !important; }
     width: 64px;
     padding-right: 14px;
   }
+  .seo-home-hero-copy { width: calc(100% - 24px); }
   .seo-home-hero h1 { font-size: clamp(2.72rem, 15vw, 3.65rem); }
-  .seo-home-hero-status {
-    gap: 4px;
-    padding-inline: 8px;
-    letter-spacing: 0.04em;
-  }
   .seo-home-ai .tl-system-map { min-height: 470px; }
   .seo-home-lab .tl-lab-stack { height: 410px; }
 }
