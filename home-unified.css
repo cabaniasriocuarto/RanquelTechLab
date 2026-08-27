@@ -196,6 +196,69 @@ body.seo-home-page.tl-menu-open { overflow: hidden; }
   font-size: clamp(1.02rem, 1.4vw, 1.18rem);
 }
 
+/* About */
+.seo-home-about-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.08fr) minmax(360px, 0.92fr);
+  grid-template-areas:
+    "heading visual"
+    "copy visual";
+  column-gap: clamp(40px, 6vw, 82px);
+  row-gap: 30px;
+  align-items: stretch;
+}
+
+.seo-home-about-heading {
+  grid-area: heading;
+  align-self: end;
+}
+
+.seo-home-about-heading h2 {
+  margin: 0;
+  font-size: clamp(2.65rem, 5.3vw, 5.6rem);
+  line-height: 0.96;
+  letter-spacing: -0.06em;
+  text-wrap: balance;
+}
+
+.seo-home-about-copy {
+  grid-area: copy;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-self: start;
+}
+
+.seo-home-about-visual {
+  min-width: 0;
+  min-height: 560px;
+  grid-area: visual;
+  position: relative;
+  overflow: hidden;
+  margin: 0;
+  border: 1px solid var(--seo-line);
+  border-radius: calc(var(--seo-radius) - 6px);
+  background: #090a10;
+}
+
+.seo-home-about-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(8, 9, 15, 0.03) 54%, rgba(8, 9, 15, 0.48) 100%),
+    radial-gradient(circle at 22% 78%, rgba(255, 123, 134, 0.09), transparent 38%);
+  pointer-events: none;
+}
+
+.seo-home-about-visual img {
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  display: block;
+  object-fit: cover;
+  object-position: center 38%;
+}
+
 /* Services */
 .seo-home-services .seo-card-no b { color: var(--seo-muted); }
 .seo-home-service-card { display: flex; flex-direction: column; }
@@ -423,6 +486,20 @@ body.seo-home-page #mapa-title { color: var(--seo-text) !important; }
 
   .seo-home-ai .tl-system-map { min-height: 520px; }
   .seo-home-lab .tl-lab-stack { height: 500px; }
+
+  .seo-home-about-layout {
+    grid-template-columns: 1fr;
+    grid-template-areas:
+      "heading"
+      "visual"
+      "copy";
+    gap: 30px;
+  }
+
+  .seo-home-about-visual {
+    min-height: 0;
+    aspect-ratio: 16 / 10;
+  }
 }
 
 @media (max-width: 920px) {
@@ -492,6 +569,13 @@ body.seo-home-page #mapa-title { color: var(--seo-text) !important; }
   .seo-home-split h2,
   .seo-home-feature h2,
   .seo-home-contact-copy h2 { font-size: clamp(2.5rem, 13vw, 4rem); }
+
+  .seo-home-about-heading h2 { font-size: clamp(2.5rem, 13vw, 4rem); }
+  .seo-home-about-copy { grid-template-columns: 1fr; }
+  .seo-home-about-visual {
+    aspect-ratio: 4 / 3;
+    border-radius: 14px;
+  }
 
   .seo-home-sector-copy { padding: 28px 22px; }
   .seo-home-sector-copy h3 { font-size: clamp(2.35rem, 12vw, 3.8rem); }
