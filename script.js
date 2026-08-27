@@ -14,7 +14,8 @@ const translations = {
     'nav.method': 'Método',
     'nav.options': 'Ideas por sector',
     'nav.sectors': 'Sectores',
-    'nav.booking': 'Agendá videollamada online',
+    'nav.booking': 'Agendá videollamada',
+    'nav.menu': 'Menú',
     'lang.label': 'Selector de idioma',
     'common.back': '← Volver al inicio',
 
@@ -125,7 +126,7 @@ const translations = {
     'method.step2.desc': 'Ordenamos prioridades y preparamos una propuesta antes de desarrollar.',
     'method.step3.title': 'Construir',
     'method.step3.desc': 'Desarrollamos, integramos y probamos la solución, compartiendo avances.',
-    'method.step4.title': 'Acompañar',
+    'method.step4.title': 'Mejorar',
     'method.step4.desc': 'Ponemos en marcha, medimos y ajustamos según el uso real.',
     'method.step5.title': '5- Conexión con Buscadores y SEO',
     'method.step5.desc': 'Conectamos la web a Google Ads, Google Tag Manager, Google Analytics, Google Search Console, Meta (Facebook + Instagram + WhatsApp), Bing y Bing Ads. Optimización e Indexación de la Página para reconocimiento prioritario en buscadores.',
@@ -192,6 +193,7 @@ const translations = {
     'contact.phone': 'TELÉFONO',
     'footer.location': 'Sobremonte 548 · 1.er piso · local 84 · Río Cuarto · Córdoba · Argentina',
     'footer.copy': '© 2026 Ranquel Tech Lab',
+    'footer.whatsappPage': 'Página de WhatsApp',
     'chat.toggle': 'Consulta rápida <span aria-hidden="true">↗</span>',
     'cta.title': '¿Tenés un desafío?',
     'cta.subtitle': 'Contanos qué necesitás resolver y vemos por dónde empezar.',
@@ -207,7 +209,8 @@ const translations = {
     'nav.method': 'Method',
     'nav.options': 'Ideas by sector',
     'nav.sectors': 'Sectors',
-    'nav.booking': 'Book an online video call',
+    'nav.booking': 'Book a video call',
+    'nav.menu': 'Menu',
     'lang.label': 'Language selector',
     'common.back': '← Back to home',
 
@@ -314,7 +317,7 @@ const translations = {
     'method.step2.desc': 'We define priorities and prepare a proposal before development begins.',
     'method.step3.title': 'Build',
     'method.step3.desc': 'We develop, integrate, and test the solution, sharing progress along the way.',
-    'method.step4.title': 'Support',
+    'method.step4.title': 'Improve',
     'method.step4.desc': 'We launch, measure, and adjust based on real-world use.',
     'method.step5.title': '5 Search engine connection & SEO',
     'method.step5.desc': 'We connect the site to Google Ads, Google Tag Manager, Google Analytics, Google Search Console, Meta (Facebook + Instagram + WhatsApp), Bing and Bing Ads. Optimization and indexing for priority recognition.',
@@ -381,6 +384,7 @@ const translations = {
     'contact.phone': 'PHONE',
     'footer.location': 'Sobremonte 548 · 1st floor · unit 84 · Río Cuarto · Córdoba · Argentina',
     'footer.copy': '© 2026 Ranquel Tech Lab',
+    'footer.whatsappPage': 'WhatsApp page',
     'chat.toggle': 'Quick question <span aria-hidden="true">↗</span>',
     'cta.title': 'Have a challenge?',
     'cta.subtitle': 'Tell us what you need to solve, and we’ll find a starting point.',
@@ -393,15 +397,16 @@ function applyTranslations(lang = 'es') {
   const isEnglish = lang === 'en';
   document.body?.classList.toggle('tl-lang-en', isEnglish);
 
-  document.querySelector('.tl-nav')?.setAttribute('aria-label', isEnglish ? 'Main navigation' : 'Navegación principal');
-  document.querySelector('.tl-footer-nav')?.setAttribute('aria-label', isEnglish ? 'Secondary navigation' : 'Navegación secundaria');
-  document.querySelector('.tl-hero-index')?.setAttribute('aria-label', isEnglish ? 'Areas of expertise' : 'Áreas de trabajo');
+  document.querySelector('.seo-nav')?.setAttribute('aria-label', isEnglish ? 'Main navigation' : 'Navegación principal');
+  document.querySelector('.seo-footer-links')?.setAttribute('aria-label', isEnglish ? 'Secondary navigation' : 'Navegación secundaria');
+  document.querySelector('.seo-footer-social')?.setAttribute('aria-label', isEnglish ? 'Social media and contact' : 'Redes sociales y contacto');
+  document.querySelector('.seo-home-capabilities')?.setAttribute('aria-label', isEnglish ? 'Areas of expertise' : 'Áreas de trabajo');
   document.querySelector('.tl-system-map')?.setAttribute('aria-label', isEnglish ? 'Connected business system visualization' : 'Visualización de un sistema conectado');
-  document.querySelectorAll('.tl-brand').forEach((brand) => {
+  document.querySelectorAll('.seo-brand').forEach((brand) => {
     brand.setAttribute('aria-label', isEnglish ? 'Ranquel Tech Lab, home' : 'Ranquel Tech Lab, inicio');
   });
-  document.querySelector('.tl-whatsapp')?.setAttribute('aria-label', isEnglish ? 'Message us on WhatsApp' : 'Escribir por WhatsApp');
-  document.querySelectorAll('.tl-service-card ul').forEach((list) => {
+  document.querySelector('.seo-nav-whatsapp')?.setAttribute('aria-label', isEnglish ? 'Message us on WhatsApp' : 'Escribir por WhatsApp');
+  document.querySelectorAll('#services .seo-card ul').forEach((list) => {
     list.setAttribute('aria-label', isEnglish ? 'Includes' : 'Incluye');
   });
   document.querySelector('.tl-contact-map iframe')?.setAttribute('title', isEnglish
@@ -413,7 +418,9 @@ function applyTranslations(lang = 'es') {
   if (chatbotTitle) chatbotTitle.textContent = isEnglish ? 'Ranquel Assistant' : 'Asistente Ranquel';
   const menuButton = document.getElementById('menuToggle');
   if (menuButton) {
-    const isOpen = menuButton.getAttribute('aria-expanded') === 'true';
+    const nativeMenu = menuButton.closest('details');
+    const isOpen = nativeMenu ? nativeMenu.open : menuButton.getAttribute('aria-expanded') === 'true';
+    menuButton.setAttribute('aria-expanded', String(isOpen));
     menuButton.setAttribute('aria-label', isEnglish
       ? (isOpen ? 'Close menu' : 'Open menu')
       : (isOpen ? 'Cerrar menú' : 'Abrir menú'));
@@ -596,25 +603,51 @@ document.addEventListener('DOMContentLoaded', () => {
   hardenExternalLinks();
 
   let menuOpen = false;
-  
-  // Toggle menú móvil
-  menuToggle?.addEventListener('click', () => {
-    menuOpen = !menuOpen;
-    document.body.classList.toggle('tl-menu-open', menuOpen);
-    if (mobileMenu) mobileMenu.style.display = menuOpen ? 'block' : 'none';
-    menuToggle.setAttribute('aria-expanded', menuOpen);
-    const menuLangIsEnglish = document.documentElement.lang === 'en';
-    menuToggle.setAttribute('aria-label', menuLangIsEnglish
-      ? (menuOpen ? 'Close menu' : 'Open menu')
-      : (menuOpen ? 'Cerrar menú' : 'Abrir menú'));
-    
-    // Cambiar icono
-    if (menuOpen && menuIcon) {
-      menuIcon.innerHTML = '<path d="M18 6L6 18M6 6l12 12"/>';
-    } else if (menuIcon) {
-      menuIcon.innerHTML = '<path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/>';
-    }
-  });
+  const nativeMobileMenu = mobileMenu instanceof HTMLDetailsElement;
+
+  // La Home comparte el menú nativo <details> de las páginas internas.
+  if (nativeMobileMenu) {
+    const syncNativeMobileMenu = () => {
+      menuOpen = mobileMenu.open;
+      document.body.classList.toggle('tl-menu-open', menuOpen);
+      menuToggle?.setAttribute('aria-expanded', String(menuOpen));
+      const menuLangIsEnglish = document.documentElement.lang === 'en';
+      menuToggle?.setAttribute('aria-label', menuLangIsEnglish
+        ? (menuOpen ? 'Close menu' : 'Open menu')
+        : (menuOpen ? 'Cerrar menú' : 'Abrir menú'));
+    };
+
+    mobileMenu.addEventListener('toggle', syncNativeMobileMenu);
+    syncNativeMobileMenu();
+
+    document.addEventListener('keydown', (event) => {
+      if (event.key !== 'Escape' || !mobileMenu.open) return;
+      mobileMenu.open = false;
+      menuToggle?.focus();
+    });
+
+    document.addEventListener('click', (event) => {
+      if (!mobileMenu.open || !(event.target instanceof Node) || mobileMenu.contains(event.target)) return;
+      mobileMenu.open = false;
+    });
+  } else {
+    menuToggle?.addEventListener('click', () => {
+      menuOpen = !menuOpen;
+      document.body.classList.toggle('tl-menu-open', menuOpen);
+      if (mobileMenu) mobileMenu.style.display = menuOpen ? 'block' : 'none';
+      menuToggle.setAttribute('aria-expanded', menuOpen);
+      const menuLangIsEnglish = document.documentElement.lang === 'en';
+      menuToggle.setAttribute('aria-label', menuLangIsEnglish
+        ? (menuOpen ? 'Close menu' : 'Open menu')
+        : (menuOpen ? 'Cerrar menú' : 'Abrir menú'));
+
+      if (menuOpen && menuIcon) {
+        menuIcon.innerHTML = '<path d="M18 6L6 18M6 6l12 12"/>';
+      } else if (menuIcon) {
+        menuIcon.innerHTML = '<path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/>';
+      }
+    });
+  }
   
   function syncNavigationUrl(vista, anchor = null) {
     if (!window.history?.pushState) return;
@@ -643,7 +676,11 @@ document.addEventListener('DOMContentLoaded', () => {
   function navegarA(vista, anchor = null, { updateHistory = true } = {}) {
     menuOpen = false;
     document.body.classList.remove('tl-menu-open');
-    if (mobileMenu) mobileMenu.style.display = 'none';
+    if (nativeMobileMenu) {
+      mobileMenu.open = false;
+    } else if (mobileMenu) {
+      mobileMenu.style.display = 'none';
+    }
     menuToggle?.setAttribute('aria-expanded', 'false');
     menuToggle?.setAttribute('aria-label', document.documentElement.lang === 'en' ? 'Open menu' : 'Abrir menú');
     if (menuIcon) menuIcon.innerHTML = '<path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/>';
