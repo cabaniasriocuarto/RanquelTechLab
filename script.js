@@ -593,12 +593,15 @@ document.addEventListener('DOMContentLoaded', () => {
     '#metodo': '/metodo/',
     '#contact': '/contacto/'
   };
-  const legacySectionTarget = legacySectionRoutes[window.location.hash];
-  const legacySectionParams = new URLSearchParams(window.location.search);
-  if (legacySectionTarget && !legacySectionParams.has('view')) {
+  function redirectLegacySectionHash() {
+    const legacySectionTarget = legacySectionRoutes[window.location.hash];
+    const legacySectionParams = new URLSearchParams(window.location.search);
+    if (!legacySectionTarget || legacySectionParams.has('view')) return false;
+
     window.location.replace(`${legacySectionTarget}${window.location.search}`);
-    return;
+    return true;
   }
+  if (redirectLegacySectionHash()) return;
 
   // ===== HERO (Video + Imágenes) =====
   // Inicializa el carrusel automático. Si no se llama, queda fija la primera slide.
@@ -869,6 +872,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
   function applyLocationView() {
     try {
+      if (redirectLegacySectionHash()) return;
+
       const params = new URLSearchParams(window.location.search);
       const view = params.get('view');
       const access = params.get('access');
@@ -886,6 +891,7 @@ document.addEventListener('DOMContentLoaded', () => {
   // Deep links + Back/Forward: /?view=reservas&access=xxx
   applyLocationView();
   window.addEventListener('popstate', applyLocationView);
+  window.addEventListener('hashchange', applyLocationView);
 
   
   
