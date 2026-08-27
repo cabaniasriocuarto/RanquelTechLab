@@ -4,7 +4,8 @@
  * Responsabilidades deliberadamente acotadas:
  * - endurecer enlaces que abren una pestaña nueva;
  * - medir WhatsApp, teléfono, email y agenda sin inicializar gtag;
- * - montar un asistente determinista, sin navegación SPA ni traducción global.
+ * - montar un asistente determinista, sin navegación SPA; la traducción visual
+ *   la aporta site-i18n.js en las páginas bilingües.
  *
  * El único dato persistido es si el teaser automático ya se mostró durante
  * esta sesión. Los datos de un presupuesto viven sólo en memoria y se limpian
@@ -331,38 +332,45 @@
 
   function detectChatIntent(value) {
     var text = normalizeChatText(value);
+    var asksForDigitalProduct = /\b(?:landing|pages?|paginas?|sites?|sitios?|web(?:site)?s?|stores?|shops?|tiendas?|e-?commerce|apps?|applications?|aplicacion(?:es)?|software|programs?|programas?|systems?|sistemas?)\b/.test(text);
 
-    if (/whats|wsp/.test(text)) return 'whatsapp';
-    if (/video.?llamada|agenda|turno|reunion|reservar|reserva/.test(text)) return 'booking';
-    if (/telefono|celular|llamar|numero/.test(text)) return 'phone';
+    if (/\b(?:whatsapp|wsp)\b/.test(text)) return 'whatsapp';
+    if (
+      /video.?llamada|\bvideo\s*call\b|\b(?:schedule|book)\s+(?:(?:a|an|the)\s+)?(?:call|meeting|appointment|video\s*call)\b/.test(text)
+      || (!asksForDigitalProduct && /\b(?:agenda|turno|reunion|meeting|appointment|reservar|reserva)\b/.test(text))
+    ) return 'booking';
+    if (/marketing|advertis|publicidad|social media|redes|\b(?:facebook|instagram|google|meta)\s+ads?\b|\bdigital\s+ads?\b|seo|campaign|campana/.test(text)) return 'marketing';
     if (/correo|e-?mail|mail/.test(text)) return 'email';
-    if (/marketing|publicidad|redes|google ads|meta ads|seo|campana/.test(text)) return 'marketing';
-    if (/sector|industria|finanza|hotel|restaurante|gastronomia|agro|mineria|gobierno/.test(text)) return 'sectors';
-    if (/precio|presup|costo|cuanto|valor|cotiz|landing|pagina|sitio|web|tienda|e-?commerce|app|software/.test(text)) return 'prices';
-    if (/servicio|solucion|hacen|desarroll|automatiza|inteligencia|\bia\b/.test(text)) return 'services';
-    if (/contact|hablar|comunicar/.test(text)) return 'contact';
-    if (/hola|buen dia|buenas|hey/.test(text)) return 'greeting';
+    if (/sector|industry|industria|finance|finanza|hospitality|hotel|restaurant|restaurante|gastronomia|agriculture|agro|mining|mineria|government|gobierno|public sector/.test(text)) return 'sectors';
+    if (/\b(?:prices?|pricing|quotes?|budgets?|estimates?|costs?|how much|precios?|presupuestos?|costos?|cuanto|valor(?:es)?|cotizacion(?:es)?)\b/.test(text) || asksForDigitalProduct) return 'prices';
+    if (/service|solution|build|develop|automation|artificial intelligence|\bai\b|servicio|solucion|hacen|desarroll|automatiza|inteligencia|\bia\b/.test(text)) return 'services';
+    if (/\b(?:telefono|phone|telephone|celular|llamar|call|numero|number)\b/.test(text)) return 'phone';
+    if (/contact|talk|speak|hablar|comunicar/.test(text)) return 'contact';
+    if (/hello|\bhi\b|hola|buen dia|buenas|hey/.test(text)) return 'greeting';
     return 'fallback';
   }
 
   function calculateBudget(projectType, details) {
     var base = PROJECT_PRICES[projectType] || PROJECT_PRICES['Desarrollo a medida'];
     var amount = base.amount;
-    var display = base.display;
+    var isEnglish = document.documentElement.lang === 'en';
+    var display = isEnglish && amount
+      ? 'ARS ' + amount.toLocaleString('en-US')
+      : base.display;
     var description = base.details;
 
     if (
       (projectType === 'Página Web 2 páginas' || projectType === 'Página Web con Pagos')
       && details
     ) {
-      var pageMatch = String(details).match(/(\d+)\s*p[aá]ginas?/i);
+      var pageMatch = String(details).match(/(\d+)\s*(?:p[aá]ginas?|pages?)/i);
       var pages = pageMatch ? parseInt(pageMatch[1], 10) : 0;
 
       if (pages > 2) {
         var extraPages = pages - 2;
         var unitPrice = projectType === 'Página Web 2 páginas' ? 50000 : 75000;
         amount += extraPages * unitPrice;
-        display = 'ARS ' + amount.toLocaleString('es-AR');
+        display = 'ARS ' + amount.toLocaleString(isEnglish ? 'en-US' : 'es-AR');
         description = base.details + ' (' + pages + ' páginas en total)';
       }
     }
@@ -404,6 +412,7 @@
     var state = {
       step: 'chat',
       teaser: false,
+      chatDraft: '',
       conversation: [],
       budget: freshBudget(),
     };
@@ -647,6 +656,7 @@
         intent: intent,
       };
       state.teaser = false;
+      state.chatDraft = '';
       state.conversation = state.conversation.concat(nextTurn).slice(-MAX_CONVERSATION_TURNS);
       trackChatIntent(intent);
       render({ focusComposer: true });
@@ -740,7 +750,7 @@
         '  <p class="chatbot-capability-note">Orientación inicial. El presupuesto final se confirma personalmente.</p>',
         '  <form id="chatbot-chat-form" class="chatbot-composer">',
         '    <label class="chatbot-visually-hidden" for="chatbot-chat-input">Escribí tu consulta</label>',
-        '    <input id="chatbot-chat-input" class="chatbot-composer-input" type="text" maxlength="180" autocomplete="off" placeholder="Escribí tu consulta…">',
+        '    <input id="chatbot-chat-input" class="chatbot-composer-input" type="text" maxlength="180" autocomplete="off" placeholder="Escribí tu consulta…" value="' + escapeHTML(state.chatDraft) + '">',
         '    <button class="chatbot-composer-send" type="submit">Enviar</button>',
         '  </form>',
         '</div>',
@@ -749,6 +759,9 @@
       var form = panelInner.querySelector('#chatbot-chat-form');
       var input = panelInner.querySelector('#chatbot-chat-input');
       if (form && input) {
+        input.addEventListener('input', function rememberChatDraft() {
+          state.chatDraft = input.value.slice(0, 180);
+        });
         form.addEventListener('submit', function submitChat(event) {
           event.preventDefault();
           var query = input.value.trim();
@@ -1049,6 +1062,7 @@
       state = {
         step: 'chat',
         teaser: false,
+        chatDraft: '',
         conversation: [],
         budget: freshBudget(),
       };

@@ -98,6 +98,59 @@ body.seo-detail-page img {
   gap: 24px;
 }
 
+.seo-language-picker {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+}
+
+.seo-visually-hidden {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+.seo-lang-select {
+  min-width: 82px;
+  min-height: 44px;
+  border: 1px solid var(--seo-line);
+  border-radius: 999px;
+  padding: 0 28px 0 38px;
+  background-color: #0f1018;
+  background-repeat: no-repeat;
+  background-position: 11px center;
+  background-size: 20px 15px;
+  color: var(--seo-text);
+  color-scheme: dark;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.seo-lang-select[data-flag="es"] {
+  background-image: url('/images/flag-es.svg');
+}
+
+.seo-lang-select[data-flag="en"] {
+  background-image: url('/images/flag-en.svg');
+}
+
+.seo-lang-select:hover {
+  border-color: rgba(255, 123, 134, 0.62);
+}
+
+.seo-lang-select:focus-visible {
+  outline: 3px solid var(--seo-blue);
+  outline-offset: 3px;
+}
+
 .seo-mobile-menu {
   display: none;
   position: relative;
@@ -875,18 +928,18 @@ body.seo-detail-page button:focus-visible {
   outline-offset: 4px;
 }
 
-@media (max-width: 1040px) {
-  .seo-nav {
+@media (max-width: 1240px) {
+  body.seo-detail-page:not(.seo-home-page) .seo-nav {
     min-height: 68px;
     flex-wrap: nowrap;
     padding-block: 8px;
   }
 
-  .seo-links {
+  body.seo-detail-page:not(.seo-home-page) .seo-links {
     display: none;
   }
 
-  .seo-mobile-menu {
+  body.seo-detail-page:not(.seo-home-page) .seo-mobile-menu {
     display: block;
   }
 }
@@ -917,6 +970,21 @@ body.seo-detail-page button:focus-visible {
   .seo-brand img {
     width: 46px;
     height: 46px;
+  }
+
+  body.seo-detail-page:not(.seo-home-page) .seo-brand > span {
+    display: none;
+  }
+
+  body.seo-detail-page:not(.seo-home-page) .seo-nav {
+    gap: 9px;
+  }
+
+  .seo-lang-select {
+    min-width: 68px;
+    padding-inline: 31px 20px;
+    background-position: 8px center;
+    background-size: 18px 14px;
   }
 
   .seo-hero {
@@ -1122,8 +1190,291 @@ body.seo-marketing-page {
   font-style: normal;
 }
 
-.seo-marketing-services .seo-card-no {
-  color: var(--seo-marketing);
+/* Marketing: escenas editoriales, acentos y arcos suaves para que cada
+   servicio tenga identidad sin perder la sobriedad del sistema. */
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services .seo-grid > .seo-card {
+  --marketing-card-accent: #f2d84b;
+  --marketing-card-border: rgba(242, 216, 75, 0.26);
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  border-color: var(--marketing-card-border);
+  border-color: color-mix(in srgb, var(--marketing-card-accent) 26%, transparent);
+  background:
+    linear-gradient(145deg, rgba(21, 24, 39, 0.98), rgba(10, 11, 18, 0.95));
+  background:
+    linear-gradient(
+      145deg,
+      color-mix(in srgb, var(--marketing-card-accent) 6%, rgba(21, 24, 39, 0.98)),
+      rgba(10, 11, 18, 0.95) 72%
+    );
+  transform: translateZ(0);
+  transition:
+    transform 260ms ease,
+    border-color 260ms ease,
+    box-shadow 260ms ease;
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #seo-google {
+  --marketing-card-accent: #73b7ff;
+  --marketing-card-border: rgba(115, 183, 255, 0.26);
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #publicidad-digital {
+  --marketing-card-accent: #ff7b86;
+  --marketing-card-border: rgba(255, 123, 134, 0.26);
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #analitica-conversiones {
+  --marketing-card-accent: #d8f477;
+  --marketing-card-border: rgba(216, 244, 119, 0.26);
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services .seo-grid > .seo-card > :not(.seo-marketing-card-visual) {
+  position: relative;
+  z-index: 3;
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services .seo-grid > .seo-card::before {
+  content: "";
+  width: 270px;
+  height: 270px;
+  position: absolute;
+  right: -78px;
+  bottom: -92px;
+  z-index: 0;
+  border-radius: 50%;
+  background: radial-gradient(
+    circle,
+    color-mix(in srgb, var(--marketing-card-accent) 14%, transparent) 0,
+    color-mix(in srgb, var(--marketing-card-accent) 5%, transparent) 42%,
+    transparent 70%
+  );
+  filter: blur(8px);
+  opacity: 0.62;
+  pointer-events: none;
+  animation: seo-marketing-card-ambient 8.5s ease-in-out infinite alternate;
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services .seo-grid > .seo-card::after {
+  content: "";
+  width: 190px;
+  height: 190px;
+  position: absolute;
+  right: -70px;
+  bottom: -70px;
+  z-index: 2;
+  border: 1px solid var(--marketing-card-accent);
+  border-color: color-mix(in srgb, var(--marketing-card-accent) 58%, transparent);
+  border-radius: 50%;
+  box-shadow: 0 0 72px color-mix(in srgb, var(--marketing-card-accent) 12%, transparent);
+  opacity: 0.72;
+  pointer-events: none;
+  animation: seo-marketing-ring-breathe 6.8s ease-in-out infinite alternate;
+  transition: transform 360ms ease, opacity 260ms ease;
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #seo-google::before,
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #seo-google::after,
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #seo-google .seo-marketing-card-visual img {
+  animation-delay: -1.7s;
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #publicidad-digital::before,
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #publicidad-digital::after,
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #publicidad-digital .seo-marketing-card-visual img {
+  animation-delay: -3.4s;
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #analitica-conversiones::before,
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #analitica-conversiones::after,
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services #analitica-conversiones .seo-marketing-card-visual img {
+  animation-delay: -5.1s;
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services .seo-card-no {
+  color: var(--marketing-card-accent);
+  text-shadow: 0 0 24px color-mix(in srgb, var(--marketing-card-accent) 12%, transparent);
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services .seo-card h2 {
+  color: var(--seo-text);
+  color: color-mix(in srgb, var(--marketing-card-accent) 32%, var(--seo-text));
+  text-shadow: 0 0 30px color-mix(in srgb, var(--marketing-card-accent) 8%, transparent);
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-services .seo-card li::marker {
+  color: var(--marketing-card-accent);
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-card-visual {
+  width: min(64%, 300px);
+  height: 88%;
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  z-index: 1;
+  overflow: hidden;
+  opacity: 0.34;
+  pointer-events: none;
+  -webkit-mask-image: radial-gradient(
+    ellipse at 88% 72%,
+    #000 0,
+    rgba(0, 0, 0, 0.96) 40%,
+    rgba(0, 0, 0, 0.42) 65%,
+    transparent 86%
+  );
+  mask-image: radial-gradient(
+    ellipse at 88% 72%,
+    #000 0,
+    rgba(0, 0, 0, 0.96) 40%,
+    rgba(0, 0, 0, 0.42) 65%,
+    transparent 86%
+  );
+  transition: opacity 320ms ease;
+}
+
+body.seo-detail-page[data-page="marketing"]
+  .seo-marketing-card-visual img {
+  width: 100%;
+  height: 100%;
+  display: block;
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(0.88) contrast(1.08) brightness(0.88);
+  transform: scale(1.04);
+  animation: seo-marketing-image-drift 11s ease-in-out infinite alternate;
+}
+
+@keyframes seo-marketing-card-ambient {
+  from {
+    opacity: 0.48;
+    transform: translate3d(8px, 8px, 0) scale(0.96);
+  }
+  to {
+    opacity: 0.78;
+    transform: translate3d(-10px, -8px, 0) scale(1.08);
+  }
+}
+
+@keyframes seo-marketing-ring-breathe {
+  from { opacity: 0.54; }
+  to { opacity: 0.9; }
+}
+
+@keyframes seo-marketing-image-drift {
+  from { transform: translate3d(2px, 3px, 0) scale(1.04); }
+  to { transform: translate3d(-7px, -5px, 0) scale(1.1); }
+}
+
+@supports (animation-timeline: view()) {
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card {
+    animation: seo-marketing-card-reveal linear both;
+    animation-timeline: view();
+    animation-range: entry 3% cover 26%;
+  }
+}
+
+@keyframes seo-marketing-card-reveal {
+  from {
+    opacity: 0.5;
+    translate: 0 20px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@media (hover: hover) and (pointer: fine) {
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card:hover {
+    border-color: color-mix(in srgb, var(--marketing-card-accent) 58%, transparent);
+    box-shadow:
+      0 32px 86px rgba(0, 0, 0, 0.38),
+      0 0 38px color-mix(in srgb, var(--marketing-card-accent) 8%, transparent);
+    transform: translateY(-4px);
+  }
+
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card:hover::after {
+    opacity: 1;
+    transform: translate3d(-7px, -7px, 0) scale(1.18);
+  }
+
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card:hover .seo-marketing-card-visual {
+    opacity: 0.44;
+  }
+}
+
+@media (max-width: 700px) {
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card::before {
+    width: 210px;
+    height: 210px;
+    right: -66px;
+    bottom: -72px;
+  }
+
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card::after {
+    width: 150px;
+    height: 150px;
+    right: -54px;
+    bottom: -54px;
+  }
+
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-card-visual {
+    width: 62%;
+    height: 68%;
+    opacity: 0.29;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card,
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card::before,
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card::after,
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-card-visual,
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-card-visual img {
+    animation: none !important;
+    transition: none !important;
+    transform: none !important;
+    translate: none !important;
+  }
+
+  body.seo-detail-page[data-page="marketing"]
+    .seo-marketing-services .seo-grid > .seo-card {
+    opacity: 1 !important;
+  }
 }
 
 .seo-marketing-process-section {

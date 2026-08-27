@@ -29,6 +29,7 @@ const translations = {
     'hero.area2': 'Producto',
     'hero.area3': 'IA y datos',
     'hero.area4': 'Crecimiento',
+    'hero.visual.aria': 'Paisaje digital en movimiento de Ranquel Tech Lab',
 
     'hero.chatbot': 'Chatbot',
     'hero.whatsapp': 'WhatsApp',
@@ -117,6 +118,10 @@ const translations = {
     'marketing.point2': 'Campañas orientadas a consultas y ventas',
     'marketing.point3': 'Medición clara de cada resultado',
     'marketing.cta': 'Ver soluciones de marketing <span aria-hidden="true">↗</span>',
+    'marketing.visual.aria': 'Un negocio atrae personas, recibe consultas y mide resultados',
+    'marketing.visual.attract': 'ATRAER',
+    'marketing.visual.inquiries': 'CONSULTAS',
+    'marketing.visual.measure': 'MEDIR',
     'method.eyebrow': '04 / CÓMO TRABAJAMOS',
     'method.title': 'Cuatro etapas.<br>Un proceso claro.',
     'method.subtitle': 'Ordenamos el trabajo en cuatro etapas, con decisiones visibles en cada una.',
@@ -224,6 +229,7 @@ const translations = {
     'hero.area2': 'Product',
     'hero.area3': 'AI & data',
     'hero.area4': 'Growth',
+    'hero.visual.aria': 'Animated digital landscape by Ranquel Tech Lab',
 
     'hero.chatbot': 'Chatbot',
     'hero.whatsapp': 'WhatsApp',
@@ -308,6 +314,10 @@ const translations = {
     'marketing.point2': 'Campaigns focused on inquiries and sales',
     'marketing.point3': 'Clear measurement of every result',
     'marketing.cta': 'Explore marketing services <span aria-hidden="true">↗</span>',
+    'marketing.visual.aria': 'A business attracts customers, receives inquiries, and measures results',
+    'marketing.visual.attract': 'ATTRACT',
+    'marketing.visual.inquiries': 'INQUIRIES',
+    'marketing.visual.measure': 'MEASURE',
     'method.eyebrow': '04 / HOW WE WORK',
     'method.title': 'Four stages.<br>One clear process.',
     'method.subtitle': 'We organize the work into four stages, with visible decisions at each one.',
@@ -393,8 +403,8 @@ const translations = {
 
 function applyTranslations(lang = 'es') {
   const dict = translations[lang] || translations.es;
-  document.documentElement.lang = lang;
   const isEnglish = lang === 'en';
+  document.documentElement.lang = isEnglish ? 'en' : 'es-AR';
   document.body?.classList.toggle('tl-lang-en', isEnglish);
 
   document.querySelector('.seo-nav')?.setAttribute('aria-label', isEnglish ? 'Main navigation' : 'Navegación principal');
@@ -436,6 +446,12 @@ function applyTranslations(lang = 'es') {
     } else {
       el.innerHTML = value;
     }
+  });
+
+  document.querySelectorAll('[data-i18n-aria-label]').forEach((el) => {
+    const key = el.getAttribute('data-i18n-aria-label');
+    const value = dict[key];
+    if (value) el.setAttribute('aria-label', value);
   });
 
   window.ranquelChatbot?.refresh?.();
@@ -760,7 +776,13 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   // Idiomas
-  const savedLang = localStorage.getItem('rtl-lang') || 'es';
+  let savedLang = 'es';
+  try {
+    const storedLang = localStorage.getItem('rtl-lang');
+    if (storedLang === 'es' || storedLang === 'en') savedLang = storedLang;
+  } catch (_) {
+    // El selector sigue funcionando aunque el navegador bloquee el almacenamiento.
+  }
 
   if (langSelector) {
     langSelector.value = savedLang;
@@ -771,7 +793,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
   langSelector?.addEventListener('change', (event) => {
     const nextLang = event.target.value;
-    localStorage.setItem('rtl-lang', nextLang);
+    try {
+      localStorage.setItem('rtl-lang', nextLang);
+    } catch (_) {
+      // La preferencia queda aplicada en esta página aunque no se pueda persistir.
+    }
     updateLangFlag(langSelector, nextLang);
     applyTranslations(nextLang);
   });
