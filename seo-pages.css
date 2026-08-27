@@ -772,16 +772,22 @@ body.seo-detail-page button:focus-visible {
   }
 }
 
-/* Keep the shared footer readable while a full chatbot conversation is open.
-   The compact automatic teaser does not reserve this extra space. */
+/* Keep the shared footer readable while the chatbot is open. On desktop the
+   footer content moves away from either panel. On smaller screens the compact
+   teaser and the full conversation reserve only the vertical space they need. */
 @media (min-width: 901px) {
-  body:has(#chatbot-panel:not(.chatbot-hidden) #chatbot-panel-inner:not(.chatbot-panel-inner-teaser))
+  body:has(#chatbot-panel:not(.chatbot-hidden))
     .seo-footer .seo-shell {
     padding-right: 420px;
   }
 }
 
 @media (max-width: 900px) {
+  body:has(#chatbot-panel:not(.chatbot-hidden) #chatbot-panel-inner.chatbot-panel-inner-teaser)
+    .seo-footer {
+    padding-bottom: calc(380px + env(safe-area-inset-bottom));
+  }
+
   body:has(#chatbot-panel:not(.chatbot-hidden) #chatbot-panel-inner:not(.chatbot-panel-inner-teaser))
     .seo-footer {
     padding-bottom: calc(min(680px, calc(100dvh - 72px)) - 28px + env(safe-area-inset-bottom));
