@@ -18,16 +18,21 @@ INDEPENDENT_AUDIT:
   REPOSITORY: "owner/repo"
   BASE_SHA: "sha completo"
   AUDITED_HEAD: "sha completo"
+  REMOTE_HEAD: "sha completo publicado"
+  DRAFT_PR_HEAD: "sha completo actual del Draft PR"
   WRITER: "sesión/agente"
   AUDITOR: "sesión/agente diferente"
   AUDITED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ"
   MODE: READ_ONLY
+  INDEPENDENT_REVIEW_REQUEST: REQUIRED
   VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED"
   INDEPENDENT_VALIDATION_GRANTED: "INDEPENDENTLY_VALIDATED | NONE"
 ```
 
-Si `AUDITED_HEAD` no coincide con el HEAD actual del PR, el dictamen queda
-`BLOCKED` hasta auditar el commit correcto.
+Si `AUDITED_HEAD`, `REMOTE_HEAD` y `DRAFT_PR_HEAD` no coinciden, el dictamen
+queda `BLOCKED` hasta auditar el commit publicado correcto. Un `NEW_HEAD`
+invalida solicitud, CI, dictamen y madurez anteriores: el writer debe repetir
+`PUSH`, `DRAFT_PR_UPDATE`, `CI_EXACT_HEAD` e `INDEPENDENT_REVIEW`.
 
 ## 2. Atestación de independencia
 
@@ -102,6 +107,8 @@ COVERAGE:
     - "D01 | ... | D12 — nombre canónico — MATERIAL | NOT_APPLICABLE — Sxx activadoras"
   OMITTED_OR_BLOCKED_CHECKS:
     - "check, estado y causa | NONE"
+  REQUIRED_MATERIAL_CHECK_INVENTORY_COMPLETE: "true | false"
+  ALL_MATERIAL_CHECKS_ELIGIBLE_FOR_MATURITY: "true | false"
 
 RESIDUAL_RISK:
   LEVEL: "CRITICAL | HIGH | MEDIUM | LOW | INFORMATIONAL"
@@ -110,16 +117,29 @@ RESIDUAL_RISK:
 ```
 
 Un check bloqueado no se compensa con resultados exitosos de otra superficie.
+Para conceder `INDEPENDENTLY_VALIDATED`, el inventario requerido debe estar
+completo, sin IDs omitidos o duplicados, y cada check `MATERIAL` debe ser
+`PASS` o `NOT_APPLICABLE` con justificación válida. `NOT_RUN`, `PARTIAL`,
+`UNKNOWN`, `AUTH_BLOCKED`, `PREVIEW_BLOCKED`, `CAPABILITY_GAP`, `FAIL`,
+`BLOCKED`, un check omitido/duplicado o un `NOT_APPLICABLE` injustificado
+obligan a usar `INDEPENDENT_VALIDATION_GRANTED: NONE`.
 
 ## 7. Reglas de veredicto
 
 - `PASS`: exact HEAD revisado, evidencia suficiente, contrato satisfecho y sin
-  findings que requieran cambio. Permite registrar `INDEPENDENTLY_VALIDATED`,
-  pero no decide Ready, merge ni cierre de la issue.
+  findings que requieran cambio. Permite registrar `INDEPENDENTLY_VALIDATED`
+  sólo si todos los checks `MATERIAL` son `PASS` o `NOT_APPLICABLE` con
+  justificación válida; no decide Ready, merge ni cierre de la issue.
 - `CHANGES_REQUIRED`: existe al menos un finding que debe corregirse. El writer
-  crea un HEAD nuevo y la auditoría se repite.
+  crea un HEAD nuevo, repite push, actualiza el Draft PR, obtiene CI exact-head
+  y solicita una auditoría nueva. El dictamen anterior no aplica al nuevo HEAD.
 - `BLOCKED`: no puede emitirse un dictamen fiable por HEAD incorrecto, evidencia
   ausente, acceso insuficiente, scope ambiguo o capacidad faltante.
+
+La solicitud independiente es obligatoria para todo Draft PR implementable. Si
+no puede completarse, el manifiesto conserva `CAPABILITY_GAP`, `AUTH_BLOCKED` o
+`BLOCKED` según la causa y este dictamen usa `BLOCKED`; nunca se concede madurez
+ni se recomienda HUMAN_GATE como si fuera PASS.
 
 No existe `PASS_WITH_CAVEATS`: una limitación material produce
 `CHANGES_REQUIRED` o `BLOCKED`; un riesgo aceptable se documenta con owner y

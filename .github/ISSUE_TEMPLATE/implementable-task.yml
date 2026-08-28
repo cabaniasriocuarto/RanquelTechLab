@@ -1,6 +1,6 @@
-name: Implementable task
-description: Define an executable, bounded task contract for Ranquel Tech Lab.
-title: "[TASK] "
+name: Tarea implementable
+description: Definí un contrato de tarea ejecutable y acotado para Ranquel Tech Lab.
+title: "[TAREA] "
 labels:
   - codex-ready
   - needs-evidence
@@ -8,16 +8,17 @@ body:
   - type: markdown
     attributes:
       value: |
-        Do not include secrets or personal data. Repository truth, the current
-        issue, `AGENTS.md`, and `docs/truth/**` override old chat context.
-        Build the Sxx inventory and D01-D12 classification from the
-        [canonical interdisciplinary review matrix](https://github.com/cabaniasriocuarto/RanquelTechLab/blob/main/docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
+        No incluyas secretos ni datos personales. La verdad del repositorio, la
+        issue actual, `AGENTS.md` y `docs/truth/**` prevalecen sobre el contexto
+        de conversaciones anteriores. Construí el inventario Sxx y la
+        clasificación D01–D12 a partir de la
+        [matriz interdisciplinaria canónica](https://github.com/cabaniasriocuarto/RanquelTechLab/blob/main/docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
 
   - type: input
     id: parent_issue
     attributes:
-      label: Parent issue
-      description: Use an issue reference such as #2, or explain why there is no parent.
+      label: Issue padre
+      description: "Usá una referencia a una issue, por ejemplo #2, o explicá por qué no hay una issue padre."
       placeholder: "#2"
     validations:
       required: true
@@ -25,41 +26,41 @@ body:
   - type: input
     id: milestone
     attributes:
-      label: Milestone
-      description: Use the exact M0-M4 milestone name.
+      label: Hito
+      description: Usá el nombre exacto del hito M0–M4.
     validations:
       required: true
 
   - type: textarea
     id: dependencies
     attributes:
-      label: Dependencies and blockers
-      description: List issue references and the required ordering.
-      placeholder: "Depends on #N. Blocks #M."
+      label: Dependencias y bloqueos
+      description: Listá las referencias a issues y el orden requerido.
+      placeholder: "Depende de #N. Bloquea #M."
     validations:
       required: true
 
   - type: textarea
     id: objective
     attributes:
-      label: Objective
-      description: State the observable outcome, not just the implementation idea.
+      label: Objetivo
+      description: Indicá el resultado observable, no sólo la idea de implementación.
     validations:
       required: true
 
   - type: textarea
     id: baseline
     attributes:
-      label: Observed baseline
-      description: Record current repository behavior and external unknowns separately.
+      label: Baseline observado
+      description: Registrá por separado el comportamiento actual del repositorio y las incógnitas externas.
     validations:
       required: true
 
   - type: textarea
     id: allowed_paths
     attributes:
-      label: Allowed paths and symbols
-      description: Use the narrowest explicit allowlist that can complete the task.
+      label: Rutas y símbolos permitidos
+      description: Usá la lista explícita de rutas permitidas más acotada que permita completar la tarea.
       render: text
     validations:
       required: true
@@ -67,8 +68,8 @@ body:
   - type: textarea
     id: forbidden_paths
     attributes:
-      label: Forbidden paths
-      description: Include sensitive and adjacent surfaces that must remain unchanged.
+      label: Rutas prohibidas
+      description: Incluí las superficies sensibles y adyacentes que deben permanecer sin cambios.
       render: text
     validations:
       required: true
@@ -76,49 +77,49 @@ body:
   - type: textarea
     id: external_systems
     attributes:
-      label: External systems
-      description: Separate allowed read/write operations from prohibited mutations.
+      label: Sistemas externos
+      description: Separá las operaciones de lectura/escritura permitidas de las mutaciones prohibidas.
       placeholder: |
-        Allowed:
-        Prohibited:
+        Permitido:
+        Prohibido:
     validations:
       required: true
 
   - type: textarea
     id: preserved_contracts
     attributes:
-      label: Contracts to preserve
-      description: Include routes, data, SEO, privacy, analytics, API, or release invariants.
+      label: Contratos que deben preservarse
+      description: Incluí invariantes de rutas, datos, SEO, privacidad, analítica, API o release.
     validations:
       required: true
 
   - type: textarea
     id: changed_surfaces
     attributes:
-      label: Changed surfaces inventory
-      description: List each effect with an Sxx ID and every exact applicable matrix row; list domain owners separately because they cannot replace matrix rows.
+      label: Inventario de superficies modificadas
+      description: Listá cada efecto con un ID Sxx y cada fila exacta aplicable de la matriz; listá por separado los responsables de dominio porque no pueden reemplazar las filas de la matriz.
       placeholder: |
-        S01 — effect — paths/symbols/systems — exact matrix row(s) — domain owner(s)
-        S02 — effect — paths/symbols/systems — exact matrix row(s) — domain owner(s)
+        S01 — efecto — rutas/símbolos/sistemas — fila(s) exacta(s) de la matriz — responsable(s) de dominio
+        S02 — efecto — rutas/símbolos/sistemas — fila(s) exacta(s) de la matriz — responsable(s) de dominio
     validations:
       required: true
 
   - type: textarea
     id: interdisciplinary_classification
     attributes:
-      label: Interdisciplinary classification D01-D12
-      description: Classify every discipline as MATERIAL or NOT_APPLICABLE with criterion, evidence, reviewer, and STOP condition.
+      label: Clasificación interdisciplinaria D01–D12
+      description: Clasificá cada disciplina como MATERIAL o NOT_APPLICABLE con criterio, evidencia, persona revisora y condición STOP.
       placeholder: |
-        D01 — MATERIAL — surface — contract/criterion — evidence — reviewer — STOP
-        D02 — NOT_APPLICABLE — concrete reason
-        Continue through D12.
+        D01 — MATERIAL — superficie — contrato/criterio — evidencia — persona revisora — STOP
+        D02 — NOT_APPLICABLE — motivo concreto
+        Continuá hasta D12.
     validations:
       required: true
 
   - type: dropdown
     id: risk
     attributes:
-      label: Risk
+      label: Riesgo
       options:
         - LIGHT
         - STANDARD
@@ -130,15 +131,16 @@ body:
   - type: markdown
     attributes:
       value: |
-        For an SEO/indexable surface, complete the Golden SEO fields below.
-        Otherwise select or enter NOT_APPLICABLE and justify that classification.
+        Para una superficie SEO/indexable, completá los campos Golden SEO
+        siguientes. En caso contrario, seleccioná o ingresá NOT_APPLICABLE y
+        justificá esa clasificación.
 
   - type: input
     id: seoArchetype
     attributes:
       label: seoArchetype
-      description: Use the archetype approved by #26, or NOT_APPLICABLE with a reason.
-      placeholder: "NOT_APPLICABLE — no SEO/indexable surface"
+      description: "Usá el arquetipo aprobado en #26 o NOT_APPLICABLE con un motivo."
+      placeholder: "NOT_APPLICABLE — sin superficie SEO/indexable"
     validations:
       required: true
 
@@ -146,8 +148,8 @@ body:
     id: goldenBaselineVersion
     attributes:
       label: goldenBaselineVersion
-      description: Use the approved baseline version, NOT_AVAILABLE, or NOT_APPLICABLE with a reason.
-      placeholder: "NOT_APPLICABLE — no SEO/indexable surface"
+      description: Usá la versión de baseline aprobada, NOT_AVAILABLE o NOT_APPLICABLE con un motivo.
+      placeholder: "NOT_APPLICABLE — sin superficie SEO/indexable"
     validations:
       required: true
 
@@ -227,7 +229,7 @@ body:
     id: MULTILINGUAL_SEO
     attributes:
       label: MULTILINGUAL_SEO
-      description: Existing client-side language UI is not proof of multilingual SEO parity.
+      description: La interfaz de idioma existente del lado del cliente no demuestra la paridad SEO multilingüe.
       options:
         - PASS
         - FAIL
@@ -245,49 +247,51 @@ body:
   - type: textarea
     id: tests_gates
     attributes:
-      label: Tests and gates
-      description: List focal tests, regression checks, surface gates, and exact-head needs.
+      label: Pruebas y controles
+      description: Listá las pruebas focales, los controles de regresión, los criterios de aprobación por superficie, las necesidades del HEAD exacto y la solicitud independiente obligatoria.
     validations:
       required: true
 
   - type: textarea
     id: visual_validation
     attributes:
-      label: Visual validation
-      description: Define desktop/mobile coverage or justify NOT_APPLICABLE.
+      label: Validación visual
+      description: Definí la cobertura para escritorio y móvil o justificá NOT_APPLICABLE.
     validations:
       required: true
 
   - type: textarea
     id: evidence
     attributes:
-      label: Required evidence
-      description: Define commands, artifacts, SHAs, previews, logs, and honest states.
+      label: Evidencia requerida
+      description: Definí comandos, artefactos, SHAs, vistas previas, registros, estados honestos y evidencia de la auditoría independiente.
     validations:
       required: true
 
   - type: textarea
     id: stop_conditions
     attributes:
-      label: STOP conditions
-      description: List events that require stopping instead of expanding scope.
+      label: Condiciones STOP
+      description: Listá los eventos que exigen detenerse en lugar de ampliar el alcance.
     validations:
       required: true
 
   - type: textarea
     id: definition_of_done
     attributes:
-      label: Definition of Done
-      description: "Include merge, post-merge acceptance, truth reconciliation, and explicit human issue close; PRs use non-closing Refs #N."
+      label: Definición de terminado
+      description: "Incluí merge, aceptación post-merge, reconciliación de verdad y cierre humano explícito de la issue; los PR usan la referencia no autocerrante Refs #N."
     validations:
       required: true
 
   - type: checkboxes
     id: acknowledgements
     attributes:
-      label: Human-governed workflow
+      label: Flujo bajo gobierno humano
       options:
-        - label: I did not include secrets, tokens, credentials, or personal data.
+        - label: No incluí secretos, tokens, credenciales ni datos personales.
           required: true
-        - label: Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
+        - label: "INDEPENDENT_REVIEW_REQUEST=REQUIRED: todo Draft PR implementable solicitará auditoría independiente; la falta de capacidad o autorización bloquea el avance y no equivale a PASS."
+          required: true
+        - label: Marcar el PR como Ready, hacer merge, cerrar explícitamente la issue, desplegar, publicar, ejecutar campañas y autorizar gasto siguen siendo decisiones humanas.
           required: true

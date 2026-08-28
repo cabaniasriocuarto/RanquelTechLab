@@ -164,9 +164,13 @@ ni gasto de Ads”.
 ## Auditoría y autoridad humana
 
 El writer realiza self-review interdisciplinario y termina en
-SELF_VALIDATED_ONLY. Para riesgo HIGH/CRITICAL, o cuando la issue lo exija, un
-auditor distinto revisa read-only el HEAD exacto y emite PASS,
-CHANGES_REQUIRED o BLOCKED sin reparar.
+SELF_VALIDATED_ONLY. Para todo Draft PR implementable rige
+`INDEPENDENT_REVIEW_REQUEST=REQUIRED`: un auditor distinto revisa read-only el
+HEAD exacto y emite PASS, CHANGES_REQUIRED o BLOCKED sin reparar. La intensidad
+es proporcional para riesgo LIGHT/STANDARD y exact-head completa para
+HIGH/CRITICAL. Si la revisión no puede completarse, se conserva
+`CAPABILITY_GAP`, `AUTH_BLOCKED` o `BLOCKED` y no se habilita HUMAN_GATE como si
+fuera PASS.
 
 La persona responsable decide Ready, merge, deploy, publicación, cambios
 externos, secretos y gasto. La cobertura de todas las disciplinas no amplía esa

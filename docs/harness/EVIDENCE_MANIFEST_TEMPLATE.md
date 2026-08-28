@@ -20,6 +20,8 @@ EVIDENCE_MANIFEST:
   REPOSITORY: "owner/repo"
   BASE_SHA: "sha completo"
   HEAD: "sha completo validado"
+  REMOTE_HEAD: "sha completo publicado; debe coincidir con HEAD"
+  DRAFT_PR_HEAD: "sha completo actual del Draft PR; debe coincidir con HEAD"
   BRANCH: "rama"
   WRITER: "sesión/agente"
   RECORDED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ"
@@ -28,9 +30,11 @@ EVIDENCE_MANIFEST:
   EVIDENCE_MATURITY: SELF_VALIDATED_ONLY
 ```
 
-`HEAD` debe coincidir con diff, CI, preview y auditoría que se reclaman. Si el
-commit cambia, revalidar o marcar la evidencia anterior como no aplicable al
-nuevo HEAD.
+`HEAD`, `REMOTE_HEAD` y `DRAFT_PR_HEAD` deben coincidir con diff, CI, preview y
+auditoría que se reclaman. Si el commit cambia, el ciclo
+`NEW_HEAD → PUSH → DRAFT_PR_UPDATE → CI_EXACT_HEAD → INDEPENDENT_REVIEW`
+se repite; la solicitud, los resultados y la madurez anteriores quedan
+obsoletos para el nuevo HEAD.
 
 ## 2. Baseline y scope
 
@@ -77,7 +81,14 @@ estructurales exactos pero con secretos reemplazados por placeholders explícito
 | V-006 | Focal tests | `<comando>` | `<n>` | `<estado>` | `<resultado>` | `<ref>` | `<detalle>` |
 | V-007 | Surface gates | `<comando/inspección>` | `<n>` | `<estado>` | `<resultado>` | `<ref>` | `<detalle>` |
 | V-008 | Preview/visual | `<URL redactada/ref>` | `N/A` | `<estado>` | `<desktop/móvil>` | `<ref>` | `<detalle>` |
-| V-009 | CI exact-head | `<job/run>` | `N/A` | `<estado>` | `<sha/result>` | `<ref>` | `<detalle>` |
+| V-009 | Commit candidato | `git commit` | `<n>` | `<estado>` | `<HEAD>` | `<ref>` | `<detalle>` |
+| V-010 | Push candidato | `git push` | `<n>` | `<estado>` | `<REMOTE_HEAD>` | `<ref>` | `<detalle>` |
+| V-011 | Draft PR create/update | `<inspección GitHub>` | `N/A` | `<estado>` | `<DRAFT_PR_HEAD>` | `<ref>` | `<detalle>` |
+| V-012 | CI exact-head | `<job/run>` | `N/A` | `<estado>` | `<sha/result>` | `<ref>` | `<detalle>` |
+| V-013 | Independent review request | `<solicitud>` | `N/A` | `<estado>` | `REQUIRED; <exact HEAD>` | `<ref>` | `<detalle>` |
+| V-014 | Independent review | `<dictamen>` | `N/A` | `<estado>` | `<PASS/CHANGES_REQUIRED/BLOCKED; exact HEAD>` | `<ref>` | `<detalle>` |
+| V-015 | Human merge | `<inspección post-merge>` | `N/A` | `<estado>` | `PR_MERGED=<YES/NO>` | `<ref>` | `<detalle>` |
+| V-016 | Integrated SHA | `<inspección de main>` | `N/A` | `<estado>` | `INTEGRATED_SHA=<sha/NOT_CAPTURED>` | `<ref>` | `<detalle>` |
 
 Cuando SEO/indexación sea material, agregar estas filas y enlazar el owner de
 [paridad](../truth/SEO_PARITY_CONTRACT.md):
@@ -134,7 +145,13 @@ Reglas:
   bloqueo; no heredan éxito de otra prueba.
 - `PARTIAL` identifica qué parte pasó y qué parte falta.
 - `SELF_VALIDATED_ONLY` es el máximo estado global que asigna el writer.
-- `INDEPENDENTLY_VALIDATED` requiere auditor distinto y exact HEAD.
+- `INDEPENDENT_REVIEW_REQUEST=REQUIRED` para todo Draft PR implementable.
+- `INDEPENDENTLY_VALIDATED` requiere auditor distinto, exact HEAD, inventario
+  completo y todos los checks `MATERIAL` en `PASS` o `NOT_APPLICABLE` con
+  justificación válida.
+- `NOT_RUN`, `PARTIAL`, `UNKNOWN`, `AUTH_BLOCKED`, `PREVIEW_BLOCKED`,
+  `CAPABILITY_GAP`, `FAIL`, `BLOCKED`, un check omitido/duplicado o un
+  `NOT_APPLICABLE` injustificado impiden `INDEPENDENTLY_VALIDATED`.
 - `POST_MERGE_ACCEPTED` requiere verificación posterior sobre lo integrado.
 
 ## 4. Revisiones interdisciplinarias
@@ -233,11 +250,18 @@ WRITER_DECLARATION:
   ZERO_UNAUTHORIZED_EXTERNAL_MUTATIONS: "true | false"
   FINAL_VALIDATION_RESULT: "resultado exacto definido por EVIDENCE_MANIFEST.VALIDATION_RESULT_OWNER"
   EVIDENCE_MATURITY: SELF_VALIDATED_ONLY
-  AUDIT_REQUESTED: "true | false | NOT_APPLICABLE con justificación"
+  INDEPENDENT_REVIEW_REQUEST: REQUIRED
+  INDEPENDENT_REVIEW_REQUESTED: true
+  INDEPENDENT_REVIEW_HEAD: "sha completo igual a HEAD"
+  INDEPENDENT_REVIEW: "PASS | CAPABILITY_GAP | AUTH_BLOCKED | BLOCKED | NOT_RUN"
+  INDEPENDENT_AUDIT_VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED | NOT_ISSUED"
   READY_DECISION_OWNER: "humano"
   AUTO_CLOSE_KEYWORD_PRESENT: false
   ISSUE_CLOSE_OWNER: "humano después de POST_MERGE_ACCEPTANCE y TRUTH_RECONCILIATION"
-  MERGE_PERFORMED: false
+  HUMAN_MERGE: "NOT_RUN | PASS"
+  PR_MERGED: false
+  INTEGRATED_SHA: NOT_CAPTURED
+  POST_MERGE_ACCEPTANCE_TARGET: INTEGRATED_SHA
   ISSUE_CLOSED: false
 ```
 

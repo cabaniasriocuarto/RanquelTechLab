@@ -27,15 +27,24 @@ Toda tarea sigue este orden:
 6. STAGED_SCOPE_SECRET_RECHECK
 7. FOCAL_TESTS
 8. SURFACE_GATES
-9. CI_EXACT_HEAD
-10. INDEPENDENT_REVIEW
-11. HUMAN_GATE
-12. POST_MERGE_ACCEPTANCE
-13. TRUTH_RECONCILIATION
-14. EXPLICIT_ISSUE_CLOSE
+9. COMMIT_CANDIDATE
+10. PUSH_CANDIDATE
+11. DRAFT_PR_CREATE_OR_UPDATE
+12. CI_EXACT_HEAD
+13. INDEPENDENT_REVIEW
+14. HUMAN_GATE
+15. HUMAN_MERGE
+16. CAPTURE_INTEGRATED_SHA
+17. POST_MERGE_ACCEPTANCE
+18. TRUTH_RECONCILIATION
+19. EXPLICIT_ISSUE_CLOSE
 
 Un paso posterior no sana uno anterior fallido. Commit, push, Draft PR, CI verde
 o preview aislado no equivalen a DONE.
+
+Una reparación que crea `NEW_HEAD` repite obligatoriamente `PUSH`,
+`DRAFT_PR_UPDATE`, `CI_EXACT_HEAD` e `INDEPENDENT_REVIEW`. Los resultados del
+HEAD anterior quedan obsoletos para el candidato nuevo.
 
 ## Niveles de riesgo
 
@@ -100,7 +109,7 @@ niveles de riesgo sin crear valores alternativos.
 | Estado | Significado |
 | --- | --- |
 | SELF_VALIDATED_ONLY | El writer completó su validación; no hubo auditoría independiente |
-| INDEPENDENTLY_VALIDATED | Un auditor distinto revisó el HEAD exacto sin FAIL o BLOCKED abierto |
+| INDEPENDENTLY_VALIDATED | Un auditor distinto revisó el HEAD exacto y todos los checks MATERIAL requeridos son PASS o NOT_APPLICABLE con justificación válida |
 | POST_MERGE_ACCEPTED | El resultado integrado/publicado fue aceptado según el runbook |
 
 Reglas de interpretación:
@@ -108,6 +117,9 @@ Reglas de interpretación:
 - NOT_RUN, PARTIAL, UNKNOWN, AUTH_BLOCKED, PREVIEW_BLOCKED y CAPABILITY_GAP nunca
   son PASS.
 - NOT_APPLICABLE exige superficie inspeccionada y razón; no significa no mirado.
+- NOT_RUN, PARTIAL, UNKNOWN, AUTH_BLOCKED, PREVIEW_BLOCKED, CAPABILITY_GAP,
+  FAIL y BLOCKED impiden conceder INDEPENDENTLY_VALIDATED. También lo impiden
+  un check MATERIAL omitido o un NOT_APPLICABLE sin justificación válida.
 - SELF_VALIDATED_ONLY, INDEPENDENTLY_VALIDATED y POST_MERGE_ACCEPTED son etapas,
   no sustitutos de los resultados de cada gate.
 - Un resultado aplica sólo al HEAD, entorno, paths y momento registrados.
@@ -124,12 +136,12 @@ Reglas de interpretación:
 | Surface gates | Según matriz | Según matriz | Todos los materiales | Todos más revisión humana especializada |
 | Preview exact-head | Si cambia render público | Si cambia render público | Obligatorio para superficie pública | Obligatorio más comparación/rollback |
 | CI exact-head | Si existe capacidad aplicable | Si existe capacidad aplicable | Requerido; brecha explícita si falta | Requerido, sin reemplazo documental |
-| Auditoría independiente | Si la issue la pide | Si la issue la pide | Obligatoria | Obligatoria con aprobación humana |
+| Auditoría independiente | Solicitud obligatoria; revisión proporcional | Solicitud obligatoria; revisión proporcional | Obligatoria y exact-head completa | Obligatoria, exact-head completa y con aprobación humana |
 | Rollback | Reversión simple | Documentado | Verificable | Probado y autorizado |
 | Post-merge | Reconciliar truth | Aceptación proporcional | Aceptación funcional/externa | Ventana, owner y criterios explícitos |
 
-Una issue puede endurecer la fila. Por ejemplo, una tarea documental STANDARD
-puede exigir auditoría independiente aunque la tabla no la requiera por defecto.
+Una issue puede endurecer la intensidad, pero nunca omitir la solicitud. Para
+todo Draft PR implementable rige `INDEPENDENT_REVIEW_REQUEST=REQUIRED`.
 
 ## Definición de cada gate
 
@@ -162,11 +174,23 @@ Usan [TESTING_MATRIX.md](TESTING_MATRIX.md) y
 [INTERDISCIPLINARY_REVIEW_MATRIX.md](INTERDISCIPLINARY_REVIEW_MATRIX.md).
 Cada contrato material tiene criterio y resultado.
 
+### COMMIT_CANDIDATE, PUSH_CANDIDATE y DRAFT_PR_CREATE_OR_UPDATE
+
+El staged set validado se convierte en un commit con SHA completo, se publica
+mediante push normal y se crea o actualiza el Draft PR. Antes de CI, el HEAD
+local, el remote head y el head del Draft PR deben coincidir. Un índice sin
+commit o un commit sólo local no puede recibir evidencia exact-head remota.
+
+Cuando una reparación produce `NEW_HEAD`, la publicación del commit, la
+actualización del Draft, la CI y la auditoría se repiten; ningún resultado se
+hereda del HEAD anterior.
+
 ### CI_EXACT_HEAD
 
-La evidencia identifica el SHA evaluado. Hasta que #24 implemente CI aplicable,
-la brecha se reporta CAPABILITY_GAP o NOT_APPLICABLE sólo cuando el criterio no
-sea material; nunca se fabrica un PASS de CI.
+La evidencia identifica el mismo SHA local, remoto y del Draft PR. Hasta que la
+issue #24 implemente CI aplicable, la brecha se reporta CAPABILITY_GAP o
+NOT_APPLICABLE sólo cuando el criterio no sea material; nunca se fabrica un PASS
+de CI ni se hereda el resultado de otro commit.
 
 ### INDEPENDENT_REVIEW
 
@@ -174,18 +198,32 @@ Sesión/agente distinto, read-only, mismo HEAD, revisión completa de findings y
 sin reparación dentro del dictamen. La salida es PASS, CHANGES_REQUIRED o
 BLOCKED, con severidad, evidencia, path y criterio de cierre.
 
+La solicitud es obligatoria para todo Draft PR implementable. `LIGHT` y
+`STANDARD` admiten revisión proporcional; `HIGH` y `CRITICAL` exigen revisión
+exact-head completa. `CAPABILITY_GAP`, `AUTH_BLOCKED` o `BLOCKED` conservan la
+causa y bloquean el avance regular a HUMAN_GATE; no se convierten en PASS.
+
 ### HUMAN_GATE
 
 Una persona decide Ready, merge, cierre explícito de la issue, deploy, secretos,
 DNS, Search Console, Analytics, Ads, publicación y gasto. El silencio no es
 autorización.
 
+### HUMAN_MERGE y CAPTURE_INTEGRATED_SHA
+
+Después de la decisión humana, registrar `PR_MERGED=YES` y capturar
+`INTEGRATED_SHA=<SHA completo>` desde `main`. El SHA integrado puede diferir del
+PR head; por eso la aceptación no puede inferirlo ni reutilizar el commit del PR
+sin comprobarlo.
+
 ### POST_MERGE_ACCEPTANCE, TRUTH_RECONCILIATION y EXPLICIT_ISSUE_CLOSE
 
-Verifican lo integrado o publicado, no el Draft PR. Se actualizan owners e
-historia sin anticipar resultados externos. Sólo después una persona autorizada
-cierra la issue explícitamente. Los PRs usan `Refs #N`; las closing keywords no
-son compatibles con esta secuencia.
+`POST_MERGE_ACCEPTANCE` requiere `HUMAN_MERGE=PASS`, `PR_MERGED=YES` e
+`INTEGRATED_SHA` capturado. Verifica ese SHA integrado o publicado, no el Draft
+PR ni un PR head no integrado. Se actualizan owners e historia sin anticipar
+resultados externos. Sólo después una persona autorizada cierra la issue
+explícitamente. Los PRs usan `Refs #N`; las closing keywords no son compatibles
+con esta secuencia.
 
 ## Evidencia requerida
 
@@ -227,6 +265,8 @@ Detenerse ante:
 - FAIL bloquea el criterio.
 - BLOCKED y los estados de ausencia se presentan al humano; no se ocultan.
 - Sólo todos los gates obligatorios satisfechos permiten recomendar avance.
+- Sólo `INDEPENDENT_REVIEW=PASS` sobre el HEAD actual permite la transición
+  regular a HUMAN_GATE; una brecha se escala como bloqueo, nunca como éxito.
 - El writer termina en SELF_VALIDATED_ONLY.
 - Ready, merge y publicación continúan siendo humanos incluso con
   INDEPENDENTLY_VALIDATED.

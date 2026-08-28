@@ -132,12 +132,28 @@ TASK_CONTRACT:
       - "gate y criterio | NOT_APPLICABLE con justificación"
     VISUAL_VALIDATION:
       - "desktop/móvil exact-head | NOT_APPLICABLE con justificación"
+    CANDIDATE_PUBLICATION:
+      COMMIT_CANDIDATE:
+        - "crear el HEAD real desde el staged set validado"
+      PUSH_CANDIDATE:
+        - "push normal y remote head igual al HEAD local"
+      DRAFT_PR_CREATE_OR_UPDATE:
+        - "Draft PR head igual al commit publicado"
+      NEW_HEAD_REVALIDATION:
+        - "si cambia HEAD: repetir PUSH, DRAFT_PR_UPDATE, CI_EXACT_HEAD e INDEPENDENT_REVIEW"
     CI_EXACT_HEAD:
-      - "job esperado | NOT_RUN/CAPABILITY_GAP hasta que exista"
-    INDEPENDENT_AUDIT:
-      - "requerida/no requerida y fundamento"
+      - "job esperado sobre el mismo HEAD local/remoto/Draft | NOT_RUN/CAPABILITY_GAP hasta que exista"
+    INDEPENDENT_REVIEW:
+      REQUEST: REQUIRED
+      INTENSITY: "PROPORTIONAL para LIGHT/STANDARD | EXACT_HEAD_COMPLETE para HIGH/CRITICAL"
+      REQUIRED_RESULT_BEFORE_HUMAN_GATE: PASS
+      NON_PASS_STATE: "CAPABILITY_GAP | AUTH_BLOCKED | BLOCKED según la causa"
+    HUMAN_MERGE:
+      PR_MERGED_REQUIRED: true
+      INTEGRATED_SHA_REQUIRED: true
     POST_MERGE_ACCEPTANCE:
-      - "verificación posterior y owner humano"
+      - "requiere HUMAN_MERGE=PASS, PR_MERGED=YES e INTEGRATED_SHA capturado"
+      - "verificación posterior contra INTEGRATED_SHA y owner humano"
 
   12_REQUIRED_EVIDENCE:
     ITEMS:
@@ -162,7 +178,8 @@ TASK_CONTRACT:
     - "validaciones con estados honestos"
     - "manifiesto de evidencia completo"
     - "Draft PR con Refs #N no autocerrante, issue owner, scope/no-scope, riesgo y rollback"
-    - "auditoría independiente solicitada cuando corresponda"
+    - "INDEPENDENT_REVIEW_REQUEST=REQUIRED y solicitud registrada para el exact HEAD"
+    - "si cambia HEAD, push/Draft/CI/auditoría se repiten antes de HUMAN_GATE"
     - "sin Ready, merge, deploy o cierre no autorizados; cierre humano sólo después de aceptación y reconciliación"
 ```
 
@@ -196,6 +213,11 @@ TASK_CONTRACT:
    entre superficies.
 10. **Contratos preservados:** enlaza al owner; no copia detalle mutable.
 11. **Validaciones:** cada gate tiene criterio de éxito y estado posterior.
+    El candidato debe convertirse en commit, publicarse y actualizar el Draft
+    antes de CI/auditoría. La solicitud independiente es obligatoria; su
+    intensidad varía por riesgo, no su existencia. Un HEAD nuevo invalida la
+    CI, solicitud, dictamen y madurez anteriores. La aceptación post-merge exige
+    merge comprobado y captura separada del SHA integrado.
 12. **Evidencia:** usa la
     [plantilla de manifiesto](EVIDENCE_MANIFEST_TEMPLATE.md) y referencia exact
     HEAD.

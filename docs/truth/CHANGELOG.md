@@ -66,6 +66,14 @@ Status: `CURRENT_IN_PROGRESS`
   y conservan causas específicas de ausencia o bloqueo.
 - El lifecycle define un único Draft PR state-only de reconciliación después del
   merge/aceptación, sin push directo ni nuevo scope de implementación.
+- El lifecycle convierte el staged set en commit publicado y Draft PR antes de
+  CI/auditoría, repite el ciclo completo ante `NEW_HEAD` y separa el merge
+  humano de la captura del SHA realmente integrado.
+- Todo Draft PR implementable solicita auditoría independiente. La intensidad
+  es proporcional al riesgo y `INDEPENDENTLY_VALIDATED` exige todos los checks
+  materiales en `PASS` o `NOT_APPLICABLE` con justificación válida.
+- El formulario de tarea implementable presenta en español todo texto humano y
+  conserva sin traducir sólo IDs, enums, paths y labels GitHub contractuales.
 - El router común aplica procedencia y gates de medios tanto a `media/**` como a
   `images/**` sin crear un router hermano fuera de la allowlist de #3.
 - Los owners `CURRENT_IN_PROGRESS` se describen como propuestas del Draft, no

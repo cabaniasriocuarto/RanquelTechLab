@@ -181,13 +181,21 @@ check.
 | Estado de evidencia | Criterio |
 | --- | --- |
 | `SELF_VALIDATED_ONLY` | La sesión autora ejecutó y registró sus validaciones sobre el HEAD indicado. Es el máximo estado que puede autoasignarse. |
-| `INDEPENDENTLY_VALIDATED` | Otra sesión o agente revisó read-only el mismo HEAD, no reparó hallazgos y registró todos los checks requeridos sin `FAIL` o `BLOCKED` abierto. |
+| `INDEPENDENTLY_VALIDATED` | Otra sesión o agente revisó read-only el mismo HEAD, no reparó hallazgos y verificó que todos los checks `MATERIAL` requeridos sean `PASS` o `NOT_APPLICABLE` con justificación válida. |
 | `POST_MERGE_ACCEPTED` | Se verificó el commit efectivamente integrado y, cuando aplica, el objetivo publicado correspondiente. Es posterior al merge. |
 
 Un cambio con evidencia `SELF_VALIDATED_ONLY` no está independientemente
 auditado. `INDEPENDENTLY_VALIDATED` no significa merge ni deploy. Un finding de
 auditoría se registra `FAIL`/`BLOCKED` y no permite usar
 `INDEPENDENTLY_VALIDATED`.
+
+Tampoco permiten elevar esa madurez `NOT_RUN`, `PARTIAL`, `UNKNOWN`,
+`AUTH_BLOCKED`, `PREVIEW_BLOCKED`, `CAPABILITY_GAP`, un check `MATERIAL`
+omitido, una fila duplicada o un `NOT_APPLICABLE` sin justificación concreta.
+Esos estados conservan su causa original; no se degradan ni se ocultan bajo un
+resultado global. `NOT_APPLICABLE` es elegible para esta evaluación sólo cuando
+el check no es material y la justificación demuestra por qué.
+
 `POST_MERGE_ACCEPTED` sólo puede declararse después de identificar el commit y
 el objetivo realmente aceptados.
 

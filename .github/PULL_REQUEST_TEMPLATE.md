@@ -8,6 +8,9 @@ Refs #N
 - Parent/dependencies:
 - Base branch and `BASE_SHA`:
 - Branch:
+- Candidate `HEAD` committed locally:
+- Remote branch `HEAD`:
+- Draft PR `HEAD`:
 - Exact `HEAD` reviewed:
 - Risk: `LIGHT | STANDARD | HIGH | CRITICAL`
 
@@ -86,7 +89,13 @@ in the final column, not in materiality.
 | Secret/privacy scan | `NOT_RUN` | |
 | Focal tests | `NOT_RUN` | |
 | Surface gates | `NOT_RUN` | |
+| Commit candidate | `NOT_RUN` | Candidate `HEAD` |
+| Push candidate | `NOT_RUN` | Remote `HEAD` |
+| Draft PR create/update | `NOT_RUN` | Draft PR `HEAD` |
 | Exact-head CI | `NOT_RUN` | |
+| Independent review request | `REQUIRED` | Exact `HEAD` |
+| Independent review state | `NOT_RUN` | `PASS / CAPABILITY_GAP / AUTH_BLOCKED / BLOCKED` |
+| Independent audit verdict | `NOT_ISSUED` | `PASS / CHANGES_REQUIRED / BLOCKED` |
 
 ## Preview and visual validation
 
@@ -107,8 +116,16 @@ in the final column, not in materiality.
 ## Evidence manifest
 
 - Overall writer state: `SELF_VALIDATED_ONLY`
+- `INDEPENDENT_REVIEW_REQUEST=REQUIRED`
+- Independent review requested for exact HEAD:
+- Independent review state:
+- Independent audit verdict:
 - Artifacts/links:
 - Known gaps or blocked checks:
+- `HUMAN_MERGE`: `NOT_RUN`
+- `PR_MERGED`: `NO`
+- `INTEGRATED_SHA`: `NOT_CAPTURED`
+- `POST_MERGE_ACCEPTANCE_TARGET`: `INTEGRATED_SHA`
 - Post-merge acceptance required:
 - Truth reconciliation required:
 - Explicit issue close owner after both steps:
@@ -125,6 +142,9 @@ in the final column, not in materiality.
 - [ ] No prohibited external system was mutated.
 - [ ] No secrets, credentials, private URLs, or personal data were committed.
 - [ ] Missing, partial, blocked, unknown, and capability-gap states are not reported as `PASS`.
+- [ ] Local, remote, Draft PR, CI and audit HEADs coincide.
+- [ ] If a repair created `NEW_HEAD`, push, Draft update, CI and independent review were repeated.
+- [ ] Independent review was requested; only `PASS` on the current exact HEAD enables the regular human gate.
 - [ ] The PR uses `Refs #N`; no closing keyword can close the issue at merge time.
 - [ ] Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
 
