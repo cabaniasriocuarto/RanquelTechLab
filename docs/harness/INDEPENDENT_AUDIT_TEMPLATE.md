@@ -25,14 +25,37 @@ INDEPENDENT_AUDIT:
   AUDITED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ"
   MODE: READ_ONLY
   INDEPENDENT_REVIEW_REQUEST: REQUIRED
-  VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED"
+  INDEPENDENT_REVIEW_REQUESTED: "true | false"
+  INDEPENDENT_REVIEW_REQUEST_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
+  INDEPENDENT_REVIEW_REQUEST_HEAD: "sha completo igual a AUDITED_HEAD | NOT_REQUESTED"
+  INDEPENDENT_REVIEW_REQUEST_EVIDENCE: "ref comprobable | NONE"
+  INDEPENDENT_REVIEW_EXECUTION_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
+  INDEPENDENT_REVIEW_EXECUTION_CAUSE: "NONE | HEAD_MISMATCH | causa explícita"
+  INDEPENDENT_AUDIT_VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED | NOT_ISSUED"
+  OPEN_MATERIAL_FINDINGS: "entero >= 0 | UNKNOWN antes de ejecución"
+  AUDITED_PR_HEAD: "sha completo igual a AUDITED_HEAD"
+  INDEPENDENT_REVIEW_HEAD: "sha completo igual a AUDITED_HEAD"
   INDEPENDENT_VALIDATION_GRANTED: "INDEPENDENTLY_VALIDATED | NONE"
 ```
 
 Si `AUDITED_HEAD`, `REMOTE_HEAD` y `DRAFT_PR_HEAD` no coinciden, el dictamen
-queda `BLOCKED` hasta auditar el commit publicado correcto. Un `NEW_HEAD`
-invalida solicitud, CI, dictamen y madurez anteriores: el writer debe repetir
-`PUSH`, `DRAFT_PR_UPDATE`, `CI_EXACT_HEAD` e `INDEPENDENT_REVIEW`.
+queda `BLOCKED` hasta auditar el commit publicado correcto. Un commit nuevo
+invalida toda evidencia anterior. El writer debe repetir:
+
+```text
+NEW_HEAD
+→ DIFF_CHECK
+→ EXACT_STAGE
+→ STAGED_SCOPE_SECRET_RECHECK
+→ AFFECTED_FOCAL_TESTS
+→ AFFECTED_SURFACE_GATES
+→ COMMIT_CANDIDATE
+→ PUSH_CANDIDATE
+→ DRAFT_PR_UPDATE
+→ CI_EXACT_HEAD
+→ INDEPENDENT_REVIEW_REQUEST
+→ INDEPENDENT_AUDIT
+```
 
 ## 2. Atestación de independencia
 
@@ -59,7 +82,13 @@ auditor debe revisar el resultado nuevo.
 - [ ] Inventario de superficies `Sxx` y derivación separada de D01–D12.
 - [ ] EVIDENCE_MANIFEST y comandos sanitizados.
 - [ ] Resultados de focal tests y surface gates.
+- [ ] Si hubo `NEW_HEAD`, ledger de reparación completo y en el orden canónico.
+- [ ] `PREVIOUS_HEAD_EVIDENCE_REUSED=false` y evidencia local ligada al nuevo HEAD.
+- [ ] `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` sin drift de índice/worktree.
+- [ ] Gates afectados repetidos; gates no afectados `NOT_APPLICABLE` y justificados.
+- [ ] Si cambió un contrato transversal, matriz contractual completa reejecutada.
 - [ ] CI/preview exact-head cuando aplican.
+- [ ] Solicitud, ejecución y dictamen registrados como dimensiones separadas.
 - [ ] Ledger de mutaciones externas y confirmaciones de no-scope.
 - [ ] Riesgos, rollback y limitaciones declaradas.
 
@@ -129,14 +158,16 @@ distinto —incluido `MATERIAL`/`NOT_APPLICABLE`— obligan a usar
 
 ## 7. Reglas de veredicto
 
-- `PASS`: exact HEAD revisado, evidencia suficiente, contrato satisfecho y sin
-  findings que requieran cambio. Permite registrar `INDEPENDENTLY_VALIDATED`
+- `PASS`: exact HEAD revisado, evidencia suficiente, contrato satisfecho y cero
+  findings materiales abiertos. Requiere request `true`/`PASS`, execution
+  `PASS`, `INDEPENDENT_AUDIT_VERDICT=PASS`, `AUDITED_HEAD=HEAD` y
+  `OPEN_MATERIAL_FINDINGS=0`. Permite registrar `INDEPENDENTLY_VALIDATED`
   sólo si todas las filas requeridas usan `MATERIAL`/`PASS` o
   `NOT_APPLICABLE`/`NOT_APPLICABLE` con justificación concreta de no
   materialidad; no decide Ready, merge ni cierre de la issue.
 - `CHANGES_REQUIRED`: existe al menos un finding que debe corregirse. El writer
-  crea un HEAD nuevo, repite push, actualiza el Draft PR, obtiene CI exact-head
-  y solicita una auditoría nueva. El dictamen anterior no aplica al nuevo HEAD.
+  crea un HEAD nuevo y repite el ciclo completo de reparación definido en la
+  sección 1. El dictamen anterior no aplica al nuevo HEAD.
 - `BLOCKED`: no puede emitirse un dictamen fiable por HEAD incorrecto, evidencia
   ausente, acceso insuficiente, scope ambiguo o capacidad faltante.
 
@@ -144,6 +175,12 @@ La solicitud independiente es obligatoria para todo Draft PR implementable. Si
 no puede completarse, el manifiesto conserva `CAPABILITY_GAP`, `AUTH_BLOCKED` o
 `BLOCKED` según la causa y este dictamen usa `BLOCKED`; nunca se concede madurez
 ni se recomienda HUMAN_GATE como si fuera PASS.
+
+Request `PASS` sólo acredita la solicitud; execution `PASS` sólo acredita que se
+emitió un dictamen. `CHANGES_REQUIRED`, `BLOCKED`, `NOT_ISSUED`, `NOT_RUN`,
+`CAPABILITY_GAP`, `AUTH_BLOCKED`, `HEAD_MISMATCH` u `OPEN_FINDINGS_GT_0`
+bloquean el gate regular. La excepción bootstrap de CI no sustituye ninguna de
+estas condiciones ni convierte `HARNESS_CI_EXACT_HEAD=CAPABILITY_GAP` en PASS.
 
 No existe `PASS_WITH_CAVEATS`: una limitación material produce
 `CHANGES_REQUIRED` o `BLOCKED`; un riesgo aceptable se documenta con owner y
@@ -153,7 +190,12 @@ decisión humana.
 
 ```yaml
 CONCLUSION:
-  VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED"
+  INDEPENDENT_REVIEW_EXECUTION_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
+  INDEPENDENT_AUDIT_VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED | NOT_ISSUED"
+  AUDITED_HEAD: "sha completo"
+  AUDITED_PR_HEAD: "sha completo igual a AUDITED_HEAD"
+  INDEPENDENT_REVIEW_HEAD: "sha completo igual a AUDITED_HEAD"
+  OPEN_MATERIAL_FINDINGS: "entero >= 0 | UNKNOWN"
   SUMMARY: "conclusión breve sustentada"
   FINDING_COUNT:
     CRITICAL: 0
@@ -163,6 +205,7 @@ CONCLUSION:
     INFORMATIONAL: 0
   REQUIRED_NEXT_ACTIONS:
     - "acción/owner | NONE"
+  REGULAR_HUMAN_GATE_ELIGIBLE: "true | false"
   HUMAN_DECISION_REQUIRED: true
   READY_RECOMMENDATION: "ELIGIBLE_FOR_HUMAN_REVIEW | DO_NOT_MARK_READY | BLOCKED"
   MERGE_PERFORMED: false

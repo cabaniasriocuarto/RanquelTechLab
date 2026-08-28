@@ -140,20 +140,72 @@ TASK_CONTRACT:
       DRAFT_PR_CREATE_OR_UPDATE:
         - "Draft PR head igual al commit publicado"
       NEW_HEAD_REVALIDATION:
-        - "si cambia HEAD: repetir PUSH, DRAFT_PR_UPDATE, CI_EXACT_HEAD e INDEPENDENT_REVIEW"
+        REQUIRED_SEQUENCE:
+          - NEW_HEAD
+          - DIFF_CHECK
+          - EXACT_STAGE
+          - STAGED_SCOPE_SECRET_RECHECK
+          - AFFECTED_FOCAL_TESTS
+          - AFFECTED_SURFACE_GATES
+          - COMMIT_CANDIDATE
+          - PUSH_CANDIDATE
+          - DRAFT_PR_UPDATE
+          - CI_EXACT_HEAD
+          - INDEPENDENT_REVIEW_REQUEST
+          - INDEPENDENT_AUDIT
+        PREVIOUS_HEAD: "sha anterior | NOT_APPLICABLE"
+        VALIDATED_STAGED_TREE_SHA: "tree sha"
+        NEW_HEAD: "sha completo"
+        NEW_HEAD_TREE_SHA: "tree sha"
+        NEW_HEAD_TREE_MATCHES_VALIDATED_STAGED_TREE: "true | false"
+        PREVIOUS_HEAD_EVIDENCE_REUSED: false
+        AFFECTED_FOCAL_TESTS: "lista y resultado"
+        AFFECTED_SURFACE_GATES: "lista y resultado"
+        UNAFFECTED_GATES: "NOT_APPLICABLE más justificación concreta por gate | NONE"
+        TRANSVERSAL_CONTRACT_CHANGED: "true | false"
+        TRANSVERSAL_CONTRACT_MATRIX_REQUIRED: "true cuando cambió; false con justificación"
+        TRANSVERSAL_CONTRACT_MATRIX_RESULT: "resultado canónico | NOT_APPLICABLE justificado"
     CI_EXACT_HEAD:
       - "job esperado sobre el mismo HEAD local/remoto/Draft | NOT_RUN/CAPABILITY_GAP hasta que exista"
-    INDEPENDENT_REVIEW:
+    INDEPENDENT_REVIEW_REQUEST:
       REQUEST: REQUIRED
       INTENSITY: "PROPORTIONAL para LIGHT/STANDARD | EXACT_HEAD_COMPLETE para HIGH/CRITICAL"
-      REQUIRED_RESULT_BEFORE_HUMAN_GATE: PASS
-      NON_PASS_STATE: "CAPABILITY_GAP | AUTH_BLOCKED | BLOCKED según la causa"
+      INDEPENDENT_REVIEW_REQUESTED: "true | false"
+      INDEPENDENT_REVIEW_REQUEST_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
+      INDEPENDENT_REVIEW_REQUEST_HEAD: "sha completo igual a HEAD | NOT_REQUESTED"
+      INDEPENDENT_REVIEW_REQUEST_EVIDENCE: "ref comprobable | NONE"
+    INDEPENDENT_AUDIT:
+      INDEPENDENT_REVIEW_EXECUTION_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
+      INDEPENDENT_REVIEW_EXECUTION_CAUSE: "NONE | HEAD_MISMATCH | causa explícita"
+      INDEPENDENT_AUDIT_VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED | NOT_ISSUED"
+      AUDITED_HEAD: "sha completo igual a HEAD | NOT_REVIEWED"
+      OPEN_MATERIAL_FINDINGS: "entero >= 0 | UNKNOWN antes de ejecución"
+      REGULAR_HUMAN_GATE_REQUIRES: "INDEPENDENT_REVIEW_REQUESTED=true; INDEPENDENT_REVIEW_REQUEST_STATE=PASS; INDEPENDENT_REVIEW_EXECUTION_STATE=PASS; INDEPENDENT_AUDIT_VERDICT=PASS; AUDITED_HEAD=HEAD; OPEN_MATERIAL_FINDINGS=0"
+      BLOCKING_CONDITIONS: "CHANGES_REQUIRED | BLOCKED | NOT_ISSUED | NOT_RUN | CAPABILITY_GAP | AUTH_BLOCKED | HEAD_MISMATCH | OPEN_FINDINGS_GT_0"
     HUMAN_MERGE:
+      PR_NUMBER_REQUIRED: true
       PR_MERGED_REQUIRED: true
-      INTEGRATED_SHA_REQUIRED: true
+      MERGED_PR_HEAD_REQUIRED: true
+      AUDITED_PR_HEAD_REQUIRED: true
+      INDEPENDENT_REVIEW_HEAD_REQUIRED: true
+      REQUIRED_HEAD_EQUALITY: "MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD"
+      HEAD_DRIFT_RESULT: "BLOCKED con MERGE_ACCEPTANCE=BLOCKED_HEAD_DRIFT; no capturar INTEGRATED_SHA"
+    CAPTURE_INTEGRATED_SHA:
+      SOURCE: "resultado del PR mergeado, nunca el tip corriente de main"
+      INTEGRATED_SHA_SOURCE: MERGED_PR
+      MERGE_METHOD: "MERGE | SQUASH | REBASE | NOT_OBSERVABLE"
+      REACHABLE_FROM_MAIN_REQUIRED: true
+      MAIN_HEAD_AT_ACCEPTANCE_REQUIRED: true
     POST_MERGE_ACCEPTANCE:
       - "requiere HUMAN_MERGE=PASS, PR_MERGED=YES e INTEGRATED_SHA capturado"
       - "verificación posterior contra INTEGRATED_SHA y owner humano"
+    TRUTH_RECONCILIATION:
+      VALID_MODES:
+        NO_DIFF: "justificación y SOURCE_INTEGRATED_SHA igual a INTEGRATED_SHA"
+        MERGED_PR: "PR mergeado; exact HEAD auditado; RECONCILIATION_INTEGRATED_SHA_SOURCE=MERGED_PR y RECONCILIATION_INTEGRATED_SHA alcanzable desde main"
+      INVALID_AS_PASS: "Draft | Ready | CLOSED_UNMERGED | PR creado/revisado sin merge"
+    EXPLICIT_ISSUE_CLOSE:
+      REQUIRES: "POST_MERGE_ACCEPTANCE=PASS y TRUTH_RECONCILIATION=PASS por uno de los dos modos válidos"
 
   12_REQUIRED_EVIDENCE:
     ITEMS:
@@ -179,7 +231,8 @@ TASK_CONTRACT:
     - "manifiesto de evidencia completo"
     - "Draft PR con Refs #N no autocerrante, issue owner, scope/no-scope, riesgo y rollback"
     - "INDEPENDENT_REVIEW_REQUEST=REQUIRED y solicitud registrada para el exact HEAD"
-    - "si cambia HEAD, push/Draft/CI/auditoría se repiten antes de HUMAN_GATE"
+    - "si cambia HEAD, se repite el ciclo completo NEW_HEAD y no se hereda evidencia"
+    - "HUMAN_GATE regular sólo con request true/PASS, execution PASS, verdict PASS, AUDITED_HEAD=HEAD y cero findings materiales abiertos"
     - "sin Ready, merge, deploy o cierre no autorizados; cierre humano sólo después de aceptación y reconciliación"
 ```
 

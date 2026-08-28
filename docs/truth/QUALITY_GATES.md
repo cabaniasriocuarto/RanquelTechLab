@@ -31,20 +31,40 @@ Toda tarea sigue este orden:
 10. PUSH_CANDIDATE
 11. DRAFT_PR_CREATE_OR_UPDATE
 12. CI_EXACT_HEAD
-13. INDEPENDENT_REVIEW
-14. HUMAN_GATE
-15. HUMAN_MERGE
-16. CAPTURE_INTEGRATED_SHA
-17. POST_MERGE_ACCEPTANCE
-18. TRUTH_RECONCILIATION
-19. EXPLICIT_ISSUE_CLOSE
+13. INDEPENDENT_REVIEW_REQUEST
+14. INDEPENDENT_AUDIT
+15. HUMAN_GATE
+16. HUMAN_MERGE
+17. CAPTURE_INTEGRATED_SHA
+18. POST_MERGE_ACCEPTANCE
+19. TRUTH_RECONCILIATION
+20. EXPLICIT_ISSUE_CLOSE
 
 Un paso posterior no sana uno anterior fallido. Commit, push, Draft PR, CI verde
 o preview aislado no equivalen a DONE.
 
-Una reparación que crea `NEW_HEAD` repite obligatoriamente `PUSH`,
-`DRAFT_PR_UPDATE`, `CI_EXACT_HEAD` e `INDEPENDENT_REVIEW`. Los resultados del
-HEAD anterior quedan obsoletos para el candidato nuevo.
+Una reparación que crea `NEW_HEAD` repite obligatoriamente:
+
+```text
+NEW_HEAD
+→ DIFF_CHECK
+→ EXACT_STAGE
+→ STAGED_SCOPE_SECRET_RECHECK
+→ AFFECTED_FOCAL_TESTS
+→ AFFECTED_SURFACE_GATES
+→ COMMIT_CANDIDATE
+→ PUSH_CANDIDATE
+→ DRAFT_PR_UPDATE
+→ CI_EXACT_HEAD
+→ INDEPENDENT_REVIEW_REQUEST
+→ INDEPENDENT_AUDIT
+```
+
+Toda evidencia del HEAD anterior queda obsoleta. Los gates no afectados sólo
+pueden usar `NOT_APPLICABLE` con justificación concreta; un cambio de contrato
+transversal repite la matriz contractual completa aplicable. El árbol del nuevo
+commit debe coincidir con el staged tree validado. Omitir un paso bloquea el
+ciclo; publicación, CI o auditoría posteriores no sanan checks locales faltantes.
 
 ## Niveles de riesgo
 
@@ -185,9 +205,10 @@ mediante push normal y se crea o actualiza el Draft PR. Antes de CI, el HEAD
 local, el remote head y el head del Draft PR deben coincidir. Un índice sin
 commit o un commit sólo local no puede recibir evidencia exact-head remota.
 
-Cuando una reparación produce `NEW_HEAD`, la publicación del commit, la
-actualización del Draft, la CI y la auditoría se repiten; ningún resultado se
-hereda del HEAD anterior.
+Cuando una reparación produce `NEW_HEAD`, se repite el ciclo completo definido
+arriba y se prueba
+`NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA`. Ningún resultado local, remoto ni
+independiente se hereda del HEAD anterior.
 
 ### CI_EXACT_HEAD
 
@@ -196,38 +217,75 @@ issue #24 implemente CI aplicable, la brecha se reporta CAPABILITY_GAP o
 NOT_APPLICABLE sólo cuando el criterio no sea material; nunca se fabrica un PASS
 de CI ni se hereda el resultado de otro commit.
 
-### INDEPENDENT_REVIEW
+### INDEPENDENT_REVIEW_REQUEST e INDEPENDENT_AUDIT
 
 Sesión/agente distinto, read-only, mismo HEAD, revisión completa de findings y
-sin reparación dentro del dictamen. La salida es PASS, CHANGES_REQUIRED o
-BLOCKED, con severidad, evidencia, path y criterio de cierre.
+sin reparación dentro del dictamen. Se registran por separado:
+
+- `INDEPENDENT_REVIEW_REQUESTED=true|false` y
+  `INDEPENDENT_REVIEW_REQUEST_STATE`;
+- `INDEPENDENT_REVIEW_EXECUTION_STATE`;
+- `INDEPENDENT_AUDIT_VERDICT=PASS|CHANGES_REQUIRED|BLOCKED|NOT_ISSUED`;
+- `AUDITED_HEAD` y `OPEN_MATERIAL_FINDINGS`.
+
+Request `PASS` sólo acredita una solicitud válida, evidenciada y dirigida al
+HEAD. Execution `PASS` sólo acredita que la auditoría se completó y emitió un
+dictamen. El dictamen conserva su resultado propio.
 
 La solicitud es obligatoria para todo Draft PR implementable. `LIGHT` y
 `STANDARD` admiten revisión proporcional; `HIGH` y `CRITICAL` exigen revisión
-exact-head completa. `CAPABILITY_GAP`, `AUTH_BLOCKED` o `BLOCKED` conservan la
-causa y bloquean el avance regular a HUMAN_GATE; no se convierten en PASS.
+exact-head completa. `CHANGES_REQUIRED`, `BLOCKED`, `NOT_ISSUED`, `NOT_RUN`,
+`CAPABILITY_GAP`, `AUTH_BLOCKED`, `HEAD_MISMATCH` y `OPEN_FINDINGS_GT_0`
+conservan su dimensión o causa y bloquean el avance regular a HUMAN_GATE; no se
+convierten en PASS. La excepción bootstrap para una CI inexistente conserva
+`HARNESS_CI_EXACT_HEAD=CAPABILITY_GAP` y jamás completa o relaja la auditoría.
 
 ### HUMAN_GATE
 
 Una persona decide Ready, merge, cierre explícito de la issue, deploy, secretos,
 DNS, Search Console, Analytics, Ads, publicación y gasto. El silencio no es
-autorización.
+autorización. La transición regular sólo se recomienda cuando:
+
+```text
+INDEPENDENT_REVIEW_REQUESTED=true
+AND INDEPENDENT_REVIEW_REQUEST_STATE=PASS
+AND INDEPENDENT_REVIEW_EXECUTION_STATE=PASS
+AND INDEPENDENT_AUDIT_VERDICT=PASS
+AND AUDITED_HEAD=HEAD
+AND OPEN_MATERIAL_FINDINGS=0
+```
+
+Una combinación `INDEPENDENT_AUDIT_VERDICT=PASS` con findings materiales
+abiertos es inválida y falla cerradamente.
 
 ### HUMAN_MERGE y CAPTURE_INTEGRATED_SHA
 
-Después de la decisión humana, registrar `PR_MERGED=YES` y capturar
-`INTEGRATED_SHA=<SHA completo>` desde `main`. El SHA integrado puede diferir del
-PR head; por eso la aceptación no puede inferirlo ni reutilizar el commit del PR
-sin comprobarlo.
+Después de la decisión humana, leer el PR en GitHub y registrar `PR_NUMBER`,
+`PR_MERGED=YES`, `MERGED_PR_HEAD`, `AUDITED_PR_HEAD` e
+`INDEPENDENT_REVIEW_HEAD`. `HUMAN_MERGE=PASS` exige igualdad entre esos tres
+HEADs. Cualquier diferencia produce `MERGE_ACCEPTANCE=BLOCKED_HEAD_DRIFT` y
+prohíbe capturar el SHA integrado.
+
+Con la identidad aprobada, obtener `INTEGRATED_SHA` del resultado del PR
+mergeado, registrar `INTEGRATED_SHA_SOURCE=MERGED_PR`, el método observable y su
+reachability desde `main`. `MAIN_HEAD_AT_ACCEPTANCE` se registra por separado:
+puede ser un tip posterior y nunca identifica por sí mismo qué commit integró el
+PR.
 
 ### POST_MERGE_ACCEPTANCE, TRUTH_RECONCILIATION y EXPLICIT_ISSUE_CLOSE
 
 `POST_MERGE_ACCEPTANCE` requiere `HUMAN_MERGE=PASS`, `PR_MERGED=YES` e
 `INTEGRATED_SHA` capturado. Verifica ese SHA integrado o publicado, no el Draft
 PR ni un PR head no integrado. Se actualizan owners e historia sin anticipar
-resultados externos. Sólo después una persona autorizada cierra la issue
-explícitamente. Los PRs usan `Refs #N`; las closing keywords no son compatibles
-con esta secuencia.
+resultados externos.
+
+`TRUTH_RECONCILIATION=PASS` sólo admite `NO_DIFF`, con justificación/evidencia y
+el mismo source integrated SHA, o `MERGED_PR`, con PR de reconciliación mergeado,
+exact HEAD auditado, integration SHA obtenido de ese PR y alcanzable desde
+`main`. Draft, Ready y cerrado sin merge no satisfacen `MERGED_PR`. Sólo después
+de aceptación y una de esas dos rutas completas una persona autorizada cierra la
+issue explícitamente. Los PRs usan `Refs #N`; las closing keywords no son
+compatibles con esta secuencia.
 
 ## Evidencia requerida
 
@@ -269,8 +327,9 @@ Detenerse ante:
 - FAIL bloquea el criterio.
 - BLOCKED y los estados de ausencia se presentan al humano; no se ocultan.
 - Sólo todos los gates obligatorios satisfechos permiten recomendar avance.
-- Sólo `INDEPENDENT_REVIEW=PASS` sobre el HEAD actual permite la transición
-  regular a HUMAN_GATE; una brecha se escala como bloqueo, nunca como éxito.
+- Sólo solicitud `true`/`PASS`, ejecución `PASS`, dictamen `PASS`,
+  `AUDITED_HEAD=HEAD` y cero findings materiales abiertos permiten la transición
+  regular a HUMAN_GATE; cualquier otra combinación falla cerradamente.
 - El writer termina en SELF_VALIDATED_ONLY.
 - Ready, merge y publicación continúan siendo humanos incluso con
   INDEPENDENTLY_VALIDATED.

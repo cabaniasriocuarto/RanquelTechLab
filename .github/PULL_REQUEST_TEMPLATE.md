@@ -12,7 +12,29 @@ Refs #N
 - Remote branch `HEAD`:
 - Draft PR `HEAD`:
 - Exact `HEAD` reviewed:
+- Previous `HEAD` for a repair, if applicable:
+- Validated staged tree SHA:
+- New `HEAD` tree SHA:
+- New `HEAD` tree matches validated staged tree: `true | false | NOT_APPLICABLE`
+- Previous `HEAD` evidence reused: `false | NOT_APPLICABLE`
 - Risk: `LIGHT | STANDARD | HIGH | CRITICAL`
+
+If this PR repairs a reviewed commit, record every step for the new candidate:
+
+```text
+NEW_HEAD
+→ DIFF_CHECK
+→ EXACT_STAGE
+→ STAGED_SCOPE_SECRET_RECHECK
+→ AFFECTED_FOCAL_TESTS
+→ AFFECTED_SURFACE_GATES
+→ COMMIT_CANDIDATE
+→ PUSH_CANDIDATE
+→ DRAFT_PR_UPDATE
+→ CI_EXACT_HEAD
+→ INDEPENDENT_REVIEW_REQUEST
+→ INDEPENDENT_AUDIT
+```
 
 ## TASK_CONTRACT
 
@@ -87,15 +109,20 @@ in the final column, not in materiality.
 | Exact staging and staged scope | `NOT_RUN` | |
 | `git diff --cached --check` | `NOT_RUN` | |
 | Secret/privacy scan | `NOT_RUN` | |
-| Focal tests | `NOT_RUN` | |
-| Surface gates | `NOT_RUN` | |
+| Affected focal tests | `NOT_RUN` | New `HEAD`; list every affected test |
+| Affected surface gates | `NOT_RUN` | New `HEAD`; list every affected gate |
+| Unaffected gates | `NOT_APPLICABLE` | Concrete non-materiality reason per gate |
+| Transversal contract matrix | `NOT_RUN / NOT_APPLICABLE` | Full applicable matrix if the contract changed |
 | Commit candidate | `NOT_RUN` | Candidate `HEAD` |
 | Push candidate | `NOT_RUN` | Remote `HEAD` |
 | Draft PR create/update | `NOT_RUN` | Draft PR `HEAD` |
 | Exact-head CI | `NOT_RUN` | |
 | Independent review request | `REQUIRED` | Exact `HEAD` |
-| Independent review state | `NOT_RUN` | `PASS / CAPABILITY_GAP / AUTH_BLOCKED / BLOCKED` |
-| Independent audit verdict | `NOT_ISSUED` | `PASS / CHANGES_REQUIRED / BLOCKED` |
+| Independent review request state | `NOT_RUN` | `PASS / NOT_RUN / CAPABILITY_GAP / AUTH_BLOCKED / BLOCKED` |
+| Independent review execution state | `NOT_RUN` | `PASS / NOT_RUN / CAPABILITY_GAP / AUTH_BLOCKED / BLOCKED` |
+| Independent audit verdict | `NOT_ISSUED` | `PASS / CHANGES_REQUIRED / BLOCKED / NOT_ISSUED` |
+| Audited `HEAD` | `NOT_REVIEWED` | Must equal current `HEAD` |
+| Open material findings | `UNKNOWN` | Must equal `0` for regular human gate |
 
 ## Preview and visual validation
 
@@ -117,17 +144,40 @@ in the final column, not in materiality.
 
 - Overall writer state: `SELF_VALIDATED_ONLY`
 - `INDEPENDENT_REVIEW_REQUEST=REQUIRED`
-- Independent review requested for exact HEAD:
-- Independent review state:
-- Independent audit verdict:
+- `INDEPENDENT_REVIEW_REQUESTED`:
+- `INDEPENDENT_REVIEW_REQUEST_STATE`:
+- `INDEPENDENT_REVIEW_REQUEST_HEAD`:
+- `INDEPENDENT_REVIEW_REQUEST_EVIDENCE`:
+- `INDEPENDENT_REVIEW_EXECUTION_STATE`:
+- `INDEPENDENT_AUDIT_VERDICT`:
+- `AUDITED_HEAD`:
+- `OPEN_MATERIAL_FINDINGS`:
 - Artifacts/links:
 - Known gaps or blocked checks:
 - `HUMAN_MERGE`: `NOT_RUN`
+- `PR_NUMBER`: `NOT_MERGED`
 - `PR_MERGED`: `NO`
+- `MERGED_PR_HEAD`: `NOT_CAPTURED`
+- `AUDITED_PR_HEAD`: `NOT_CAPTURED`
+- `INDEPENDENT_REVIEW_HEAD`: `NOT_CAPTURED`
+- `MERGE_ACCEPTANCE`: `NOT_RUN | PASS | BLOCKED_HEAD_DRIFT`
+- `INTEGRATED_SHA_SOURCE`: `NOT_CAPTURED`
 - `INTEGRATED_SHA`: `NOT_CAPTURED`
+- `MERGE_METHOD`: `NOT_RUN`
+- `INTEGRATED_SHA_REACHABLE_FROM_MAIN`: `NOT_RUN`
+- `MAIN_HEAD_AT_ACCEPTANCE`: `NOT_CAPTURED`
 - `POST_MERGE_ACCEPTANCE_TARGET`: `INTEGRATED_SHA`
 - Post-merge acceptance required:
-- Truth reconciliation required:
+- Truth reconciliation mode: `NOT_RUN | NO_DIFF | MERGED_PR`
+- Truth reconciliation source integrated SHA:
+- `NO_DIFF` justification/evidence, if selected:
+- `RECONCILIATION_PR`:
+- `RECONCILIATION_PR_MERGED`:
+- `RECONCILIATION_PR_HEAD`:
+- `RECONCILIATION_AUDITED_HEAD`:
+- `RECONCILIATION_INTEGRATED_SHA_SOURCE`:
+- `RECONCILIATION_INTEGRATED_SHA`:
+- `RECONCILIATION_SHA_REACHABLE_FROM_MAIN`:
 - Explicit issue close owner after both steps:
 
 ## Risks and rollback
@@ -143,13 +193,16 @@ in the final column, not in materiality.
 - [ ] No secrets, credentials, private URLs, or personal data were committed.
 - [ ] Missing, partial, blocked, unknown, and capability-gap states are not reported as `PASS`.
 - [ ] Local, remote, Draft PR, CI and audit HEADs coincide.
-- [ ] If a repair created `NEW_HEAD`, push, Draft update, CI and independent review were repeated.
-- [ ] Independent review was requested; only `PASS` on the current exact HEAD enables the regular human gate.
+- [ ] If a repair created `NEW_HEAD`, the complete local-to-audit cycle was repeated in canonical order; staged/new trees match and no prior-HEAD evidence was reused.
+- [ ] Independent review was requested; request and execution are `PASS`, verdict is `PASS`, audited/current HEADs match, and open material findings are zero before recommending the regular human gate.
+- [ ] Human merge, when run, compares merged, audited and reviewed PR HEADs; integrated SHA comes from the merged PR, not from the current `main` tip.
+- [ ] Truth reconciliation passes only by justified `NO_DIFF` or an audited and merged reconciliation PR reachable from `main`.
 - [ ] The PR uses `Refs #N`; no closing keyword can close the issue at merge time.
 - [ ] Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
 
 ## Independent audit request
 
 Please audit this PR read-only at the exact `HEAD`, report every finding with
-severity and evidence, and return `PASS`, `CHANGES_REQUIRED`, or `BLOCKED`.
+severity and evidence, and record execution state, audit verdict, audited HEAD
+and open material finding count separately.
 Do not repair findings inside the audit.

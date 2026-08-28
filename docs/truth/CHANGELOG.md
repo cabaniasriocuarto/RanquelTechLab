@@ -67,16 +67,21 @@ Status: `CURRENT_IN_PROGRESS`
 - El lifecycle define un único Draft PR state-only de reconciliación después del
   merge/aceptación, sin push directo ni nuevo scope de implementación.
 - El lifecycle convierte el staged set en commit publicado y Draft PR antes de
-  CI/auditoría, repite el ciclo completo ante `NEW_HEAD` y separa el merge
-  humano de la captura del SHA realmente integrado.
+  CI/auditoría. Ante `NEW_HEAD` repite diff, staging exacto, scope/secrets,
+  pruebas y gates afectados, commit, push, Draft, CI, solicitud y auditoría;
+  prueba igualdad entre staged tree y commit tree y no hereda evidencia previa.
 - Todo Draft PR implementable solicita auditoría independiente. La intensidad
   es proporcional al riesgo y `INDEPENDENTLY_VALIDATED` exige exactamente
   `MATERIAL`/`PASS` o `NOT_APPLICABLE`/`NOT_APPLICABLE` justificado por fila;
   una pareja inválida nunca eleva la madurez.
-- El manifiesto separa obligación, resultado, causa, evidencia y HEAD de la
-  solicitud independiente; una solicitud bloqueada no puede declararse
-  realizada. También registra en orden aceptación post-merge, reconciliación de
-  truth y cierre explícito después de capturar el SHA integrado.
+- El manifiesto separa solicitud, ejecución y dictamen independiente. El gate
+  humano regular exige request/ejecución/veredicto en `PASS`, exact HEAD y cero
+  findings materiales abiertos; la excepción bootstrap de CI no relaja esa
+  conjunción.
+- La aceptación compara HEAD mergeado, auditado y revisado, obtiene el SHA
+  integrado del resultado del PR y registra el tip de `main` por separado. Truth
+  sólo se reconcilia mediante `NO_DIFF` justificado o un PR state-only auditado,
+  mergeado y alcanzable desde `main` antes del cierre explícito.
 - El formulario de tarea implementable presenta en español todo texto humano y
   conserva sin traducir sólo IDs, enums, paths y labels GitHub contractuales.
 - El router común aplica procedencia y gates de medios tanto a `media/**` como a
