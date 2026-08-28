@@ -20,6 +20,8 @@ Status: `CURRENT_IN_PROGRESS`
 - Owners de arquitectura, capacidades, rutas, SEO, contenido/comunicación,
   marketing/analítica, seguridad/privacidad, testing, quality gates, revisión
   interdisciplinaria, backlog, decisiones, workflow y release/rollback.
+- Owner canónico de procedencia y derechos de medios, con el inventario heredado
+  honestamente `PENDING_TO_VALIDATE`.
 - Owners reservados para el Golden SEO Baseline y el contrato de paridad de
   #26; los owners están `CURRENT_IN_PROGRESS` en este Draft y las capacidades
   que reservan siguen `PLANNED_NOT_IMPLEMENTED`.
@@ -34,7 +36,8 @@ Status: `CURRENT_IN_PROGRESS`
 ### Decisions
 
 - #28 es el siguiente bloque obligatorio después de #3 y antes de #24; conserva
-  los cinco previews actuales y es el owner de la topología Vercel.
+  todos los previews inventariados en la evidencia volátil de PR #27 y es el
+  owner de la topología Vercel.
 - #24 sigue después de #28 y antes de #4, con ownership de scripts, gates
   ejecutables y workflows.
 - #2 se asigna a M0 por la limitación de un milestone por issue; #25 pertenece a
@@ -46,12 +49,27 @@ Status: `CURRENT_IN_PROGRESS`
 - #26 pertenece a M0 y bloquea #5, #7, #19 y #20; templates y formularios
   capturan contexto SEO/paridad sin implementar ni aprobar el gate.
 
+### Changed
+
+- Las plantillas separan inventario de superficies `Sxx` de la clasificación
+  interdisciplinaria D01–D12 y derivan esta última desde la matriz canónica.
+- Los gates SEO de formularios y contratos aceptan los resultados aplicables del
+  vocabulario completo de `SOURCE_OF_TRUTH.md`, sin enums reducidos paralelos.
+- El conteo de previews deja los owners estables; éstos referencian el registro
+  volátil `F-PR-001` de PR #27 sin copiar el número. La decisión durable de
+  conservación no cambia.
+- La doble emisión Ads observable en `gracias-videollamada.html` queda
+  `PENDING_TO_VALIDATE`, con baseline en #4 y resolución en #11.
+- Procedencia, licencia y responsable por asset enrutan al owner único
+  `MEDIA_PROVENANCE.md`.
+
 ### Explicitly unchanged
 
 - Producto público: HTML, CSS, JavaScript, APIs, rutas y páginas de ciudades.
 - `feat/bilingual-site` y otros PRs o ramas.
-- Configuración Vercel, DNS, Search Console, GA4, GTM y Google Ads. Los cinco
-  previews de PR #27 se conservan y no se limpian ni promueven dentro de #3.
+- Configuración Vercel, DNS, Search Console, GA4, GTM y Google Ads. Todos los
+  previews inventariados en la evidencia volátil de PR #27 se conservan y no se
+  limpian ni promueven dentro de #3.
 - Scripts, schemas, CI o workflows ejecutables del harness.
 
 Este bloque pasa a una entrada integrada sólo después del merge humano, la

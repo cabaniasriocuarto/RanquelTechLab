@@ -127,16 +127,31 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 
 - Fecha: 2026-08-27.
 - Status: `CURRENT_IN_PROGRESS`.
-- Contexto: la integración preexistente generó cinco previews automáticos para
-  el Draft PR #27 y originó `F-PR-001`; la decisión humana vigente creó #28 para
-  aislar esa topología antes del harness ejecutable.
-- Decisión: los cinco previews actuales se conservan. #3 no los limpia, borra,
-  promueve ni reconfigura. La prueba de proyecto canónico, la topología Vercel y
-  cualquier remediación pertenecen exclusivamente a #28, ubicada entre #3 y
-  #24.
+- Contexto: la integración preexistente generó múltiples previews automáticos
+  inventariados en la evidencia volátil de PR #27 y originó `F-PR-001`; la
+  decisión humana vigente creó #28 para aislar esa topología antes del harness
+  ejecutable.
+- Decisión: todos los previews cubiertos por esa evidencia se conservan. #3 no
+  los limpia, borra, promueve ni reconfigura. La prueba de proyecto canónico, la
+  topología Vercel y cualquier remediación pertenecen exclusivamente a #28,
+  ubicada entre #3 y #24.
 - Consecuencia: #3 mantiene cero mutaciones Vercel y no ejecuta #28. Proyecto
   canónico, lineage de producción y equivalencia de configuración permanecen
   sin afirmar en estos owners hasta que #28 produzca evidencia y aceptación.
+
+## D-011 — Owner canónico de procedencia y derechos de medios
+
+- Fecha: 2026-08-28.
+- Status: `CURRENT_IN_PROGRESS`.
+- Contexto: `media/AGENTS.md` exigía fuente, licencia y responsable, pero ningún
+  truth owner alojaba el registro mutable por asset.
+- Decisión: [MEDIA_PROVENANCE.md](MEDIA_PROVENANCE.md) es el owner de
+  procedencia, titularidad, derechos, transformaciones, responsable y evidencia
+  por asset. Los routers y owners editoriales/técnicos enlazan ese registro sin
+  duplicarlo.
+- Consecuencia: el inventario heredado permanece `PENDING_TO_VALIDATE`; #3 no
+  inventaría licencias ni cambia assets, y #10 debe reconciliar este owner si
+  integra sidecars `source.json`.
 
 ## Cómo agregar una decisión
 

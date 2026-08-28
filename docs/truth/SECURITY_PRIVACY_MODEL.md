@@ -64,7 +64,9 @@ UNKNOWN`; no es un `Status` documental.
   la preferencia `es`/`en` bajo `rtl-lang`.
 - [site-runtime.js](../../site-runtime.js) usa `sessionStorage` para recordar si
   mostró el teaser automático.
-- Las páginas de gracias usan flags de sesión para reducir eventos duplicados.
+- Las páginas de gracias usan flags de sesión para reducir repetición por
+  recarga; eso no deduplica eventos distintos emitidos dentro de una misma
+  ejecución.
 - Los datos del presupuesto viven en memoria del runtime hasta que se envían o
   se abandona la página.
 
@@ -218,6 +220,7 @@ Límites observados:
 | Sin rate limits ni tests de abuso versionados. | `CURRENT_IMPLEMENTED_TRUTH` como ausencia observable | Revisar antes de ampliar exposición o volumen. |
 | README/instructivos describen secretos y arquitecturas divergentes. | `CURRENT_IMPLEMENTED_TRUTH` | Seguir código/owners actuales; no copiar valores ni reactivar flujos directos sin decisión. |
 | GTM y GA4 directo coexisten en Home. | Configuración externa `UNKNOWN` | Potencial duplicación; requiere inspección autorizada del contenedor. |
+| `gracias-videollamada.html:70-85` emite dos acciones Ads con un mismo `transaction_id`. | Conformidad `PENDING_TO_VALIDATE`; configuración externa `UNKNOWN` | #4 captura baseline y #11 resuelve clasificación/fuente única; #3 no cambia producto ni cuentas. |
 
 El registro de un riesgo no autoriza corregir producto dentro de una issue
 documental.

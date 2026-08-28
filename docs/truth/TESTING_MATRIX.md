@@ -64,7 +64,7 @@ TASK_CONTRACT antes de continuar.
 | Redirect global, dominio o publicación masiva | CRITICAL | Mapa completo y comportamiento origen-destino | Loops/cadenas, canonical, enlaces, sitemap, observación externa y rollback probado |
 | Frontend o interacción | STANDARD | Estado inicial, acciones, errores y teclado | Viewports, navegación, reduced motion, consola, performance y contenido |
 | Accesibilidad | STANDARD | Semántica, nombre accesible, teclado, foco y contraste | Journey móvil/desktop, zoom, errores, alt y tecnologías de asistencia proporcionales |
-| Media | STANDARD | Origen/licencia, formato, dimensiones, alt y render | Peso, responsive, LCP/CLS, links rotos y cache |
+| Media | STANDARD | Origen/licencia en [MEDIA_PROVENANCE.md](MEDIA_PROVENANCE.md), formato, dimensiones, alt y render | Peso, responsive, LCP/CLS, links rotos y cache |
 | API serverless, formulario o input | HIGH | Contrato válido/inválido, status, método y sanitización | Auth, rate limits, CORS, logs, secretos, PII, timeout y consumidor frontend |
 | Seguridad, headers o permisos | HIGH | Control objetivo y caso de abuso | Least privilege, trust boundary, supply chain, datos y rollback |
 | Analítica o tags | HIGH | Disparador, payload sanitizado y deduplicación | Consentimiento, cardinalidad, recepción autorizada, performance y cero PII |

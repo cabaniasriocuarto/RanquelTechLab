@@ -13,7 +13,7 @@ el cambio todavía no es verdad de `main`.
 | Orden | Issue | Estado documental | Condición para avanzar |
 | --- | --- | --- | --- |
 | 1 | #3 — Gobierno y documentación | `CURRENT_IN_PROGRESS` | Merge humano, aceptación post-merge, reconciliación de truth y cierre explícito |
-| 2 | #28 — Topología Vercel | `BLOCKED` | #3 aceptada; conservar los cinco previews y ejecutar #28 en scope propio |
+| 2 | #28 — Topología Vercel | `BLOCKED` | #3 aceptada; conservar los previews inventariados en la evidencia de PR #27 y ejecutar #28 en scope propio |
 | 3 | #24 — Harness ejecutable | `BLOCKED` | #28 integrada y su topología aceptada |
 | 4 | #4 — Baseline de producción | `BLOCKED` | #24 integrada y operativa |
 | 5 | #26 — Golden SEO y paridad | `BLOCKED` | #4 integrada y baseline bruto disponible |
@@ -32,7 +32,7 @@ Las issues #5, #7, #19 y #20 no pueden avanzar sin integrar la issue #26.
 
 1. #3 — Instalar gobierno, `AGENTS.md` y documentación fuente de verdad.
 2. #28 — Auditar y consolidar la topología Vercel en scope externo propio,
-   conservando los cinco previews actuales.
+   conservando los previews inventariados en la evidencia volátil de PR #27.
 3. #24 — Implementar contratos, gates, CI y auditoría independiente.
 4. #4 — Capturar baseline SEO, analítica, rutas, seguridad, performance y
    rollback de producción.
@@ -118,9 +118,10 @@ esa administración.
   propios.
 - Las dependencias declaradas en la issue mandan aunque el orden visual de la
   jerarquía sea distinto.
-- #28 depende de #3 y bloquea #24. Los cinco previews actuales de PR #27 se
-  conservan; cleanup, borrado, promoción o reconfiguración están prohibidos en
-  #3. La topología Vercel y su eventual remediación pertenecen a #28.
+- #28 depende de #3 y bloquea #24. Todos los previews inventariados en la
+  evidencia volátil de PR #27 se conservan; cleanup, borrado, promoción o
+  reconfiguración están prohibidos en #3. La topología Vercel y su eventual
+  remediación pertenecen a #28.
 - #26 depende de #3, #24 y #4; bloquea #5, #7, #19 y #20. Sus owners de baseline
   y paridad permanecen planificados hasta ejecutar esa issue.
 - #14–#18 pueden avanzar en paralelo sólo después de integrar #9 y #10 y

@@ -32,23 +32,36 @@ Refs #N
 
 ## Changed surfaces
 
-| Surface | Materiality | Required disciplines/gates | Result and evidence |
-| --- | --- | --- | --- |
-| D01 — Producto, negocio y estrategia comercial | `MATERIAL / NOT_APPLICABLE` | | |
-| D02 — Arquitectura de software e información | `MATERIAL / NOT_APPLICABLE` | | |
-| D03 — Frontend, UX responsive y diseño | `MATERIAL / NOT_APPLICABLE` | | |
-| D04 — Accesibilidad | `MATERIAL / NOT_APPLICABLE` | | |
-| D05 — SEO técnico y SEO local | `MATERIAL / NOT_APPLICABLE` | | |
-| D06 — Contenido, comunicación y marca | `MATERIAL / NOT_APPLICABLE` | | |
-| D07 — Marketing y CRO | `MATERIAL / NOT_APPLICABLE` | | |
-| D08 — GA4, GTM, atribución y conversiones | `MATERIAL / NOT_APPLICABLE` | | |
-| D09 — Google Ads | `MATERIAL / NOT_APPLICABLE` | | |
-| D10 — Performance y Core Web Vitals | `MATERIAL / NOT_APPLICABLE` | | |
-| D11 — Seguridad y privacidad | `MATERIAL / NOT_APPLICABLE` | | |
-| D12 — QA, release, rollback y auditoría independiente | `MATERIAL / NOT_APPLICABLE` | | |
+Inventory every material effect with a task-local ID and reference the exact
+applicable row or rows in the
+[canonical matrix](../docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md). Record
+domain owners separately; they do not replace matrix rows. Do not use D01–D12
+as surface names.
+
+| ID | Effect | Paths/symbols/systems | Exact canonical matrix row(s) | Domain owner(s) |
+| --- | --- | --- | --- | --- |
+| S01 | | | | |
+
+## Interdisciplinary classification D01–D12
+
+| Discipline | Activated by surfaces | Materiality | Required gates | Result and evidence |
+| --- | --- | --- | --- | --- |
+| D01 — Producto, negocio y estrategia comercial | | `MATERIAL / NOT_APPLICABLE` | | |
+| D02 — Arquitectura de software e información | | `MATERIAL / NOT_APPLICABLE` | | |
+| D03 — Frontend, UX responsive y diseño | | `MATERIAL / NOT_APPLICABLE` | | |
+| D04 — Accesibilidad | | `MATERIAL / NOT_APPLICABLE` | | |
+| D05 — SEO técnico y SEO local | | `MATERIAL / NOT_APPLICABLE` | | |
+| D06 — Contenido, comunicación y marca | | `MATERIAL / NOT_APPLICABLE` | | |
+| D07 — Marketing y CRO | | `MATERIAL / NOT_APPLICABLE` | | |
+| D08 — GA4, GTM, atribución y conversiones | | `MATERIAL / NOT_APPLICABLE` | | |
+| D09 — Google Ads | | `MATERIAL / NOT_APPLICABLE` | | |
+| D10 — Performance y Core Web Vitals | | `MATERIAL / NOT_APPLICABLE` | | |
+| D11 — Seguridad y privacidad | | `MATERIAL / NOT_APPLICABLE` | | |
+| D12 — QA, release, rollback y auditoría independiente | | `MATERIAL / NOT_APPLICABLE` | | |
 
 Declare D01–D12 individually. Every `NOT_APPLICABLE` needs a concrete reason;
-validation results belong in the final column, not in materiality.
+derive the required set from the surface inventory and record validation results
+in the final column, not in materiality.
 
 ## Golden SEO parity (required for SEO/indexable surfaces)
 

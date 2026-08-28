@@ -41,6 +41,7 @@ siempre son decisiones humanas.
 | --- | --- | --- |
 | Presencia de etiquetas y hooks de eventos en código | CURRENT_IMPLEMENTED_TRUTH | FEATURE_MAP inventaría la capacidad observable |
 | Baseline exhaustivo y recepción externa de eventos | PENDING_TO_VALIDATE | #4 registra código, configuración y observación por separado |
+| Doble emisión Ads en `gracias-videollamada.html` | PENDING_TO_VALIDATE | #4 captura baseline; #11 resuelve fuente, clasificación y deduplicación |
 | Contrato de cero PII y deduplicación | CURRENT_IN_PROGRESS | Este documento y SECURITY_PRIVACY_MODEL dentro del Draft de #3 |
 | Taxonomía por ciudad, provincia, servicio y CTA | PLANNED_NOT_IMPLEMENTED | #11 |
 | Dimensiones y key events en GA4 | PLANNED_NOT_IMPLEMENTED | #11 con aprobación humana externa |
@@ -88,6 +89,9 @@ una página duplicada.
 
 ## Conversiones y deduplicación
 
+Los principios siguientes son requisitos de evolución y revisión; no afirman
+que el baseline heredado ya sea conforme.
+
 - Una intención de negocio se clasifica antes de elegirse como conversión.
 - Eventos de UI, leads validados y conversiones publicitarias no son sinónimos.
 - Un mismo gesto no dispara múltiples conversiones primarias por integraciones
@@ -99,6 +103,22 @@ una página duplicada.
 - Un cambio de medición conserva comparación o documenta la ruptura de serie.
 - La ausencia de eventos en una herramienta de debug no demuestra su ausencia
   en producción, y la presencia local no demuestra recepción externa.
+
+### Contradicción heredada de videollamada
+
+El bloque `gracias-videollamada.html:70-85` emite dos eventos directos de Google
+Ads `conversion` durante la primera carga aceptada por el guard de sesión. Ambos
+usan el mismo `transaction_id` y acciones `send_to` distintas. El guard evita
+repetir el bloque por recarga dentro de la sesión; no deduplica esas dos acciones
+en la primera ejecución.
+
+La configuración externa que determina si cada acción es primaria, secundaria,
+importada o recibida permanece `External verification: UNKNOWN`. Por eso la
+conformidad con la fuente única y la prohibición de múltiples conversiones
+primarias está `PENDING_TO_VALIDATE`, no en `PASS`. #4 debe capturar el baseline
+sin remediarlo y #11 es el owner de la matriz evento-origen-destino, la decisión
+primary/secondary y cualquier corrección de deduplicación. #3 no modifica el
+HTML, los tags ni las cuentas externas.
 
 ## Atribución y campañas
 

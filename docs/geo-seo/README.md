@@ -33,7 +33,7 @@ Para inventario implementado consultar
 | Issue | Responsabilidad futura |
 | --- | --- |
 | #3 | Gobierno documental y administrativo |
-| #28 | Topología Vercel; conserva los cinco previews actuales y se ejecuta antes de #24 |
+| #28 | Topología Vercel; conserva los previews inventariados en la evidencia volátil de PR #27 y se ejecuta antes de #24 |
 | #24 | Harness ejecutable, gates y CI; obligatorio antes de #4 |
 | #4 | Baseline verificable de producción y rollback |
 | #26 | Golden SEO Baseline, arquetipos y contrato de paridad; bloquea #5/#7/#19/#20 |

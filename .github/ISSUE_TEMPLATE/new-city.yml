@@ -131,11 +131,15 @@ body:
     attributes:
       label: SEO_GOLDEN_PARITY
       options:
-        - NOT_RUN
-        - BLOCKED
-        - PARTIAL
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
     validations:
       required: true
 
@@ -144,10 +148,15 @@ body:
     attributes:
       label: HOME_SEO_REGRESSION
       options:
-        - NOT_RUN
-        - BLOCKED
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
     validations:
       required: true
 
@@ -156,10 +165,15 @@ body:
     attributes:
       label: LOCAL_CONTENT_UTILITY
       options:
-        - NOT_RUN
-        - BLOCKED
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
     validations:
       required: true
 
@@ -168,10 +182,15 @@ body:
     attributes:
       label: MOBILE_SEO_PARITY
       options:
-        - NOT_RUN
-        - BLOCKED
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
     validations:
       required: true
 
@@ -181,11 +200,16 @@ body:
       label: MULTILINGUAL_SEO
       description: Use NOT_APPLICABLE only when the approved archetype has no multilingual pair.
       options:
-        - NOT_RUN
-        - BLOCKED
-        - NOT_APPLICABLE
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
     validations:
       required: true
 

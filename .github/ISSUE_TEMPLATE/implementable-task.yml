@@ -90,25 +90,14 @@ body:
     validations:
       required: true
 
-  - type: dropdown
+  - type: textarea
     id: changed_surfaces
     attributes:
-      label: Changed surfaces
-      description: Select every material D01-D12 discipline; the canonical names come from INTERDISCIPLINARY_REVIEW_MATRIX.md.
-      multiple: true
-      options:
-        - D01 — Producto, negocio y estrategia comercial
-        - D02 — Arquitectura de software e información
-        - D03 — Frontend, UX responsive y diseño
-        - D04 — Accesibilidad
-        - D05 — SEO técnico y SEO local
-        - D06 — Contenido, comunicación y marca
-        - D07 — Marketing y CRO
-        - D08 — GA4, GTM, atribución y conversiones
-        - D09 — Google Ads
-        - D10 — Performance y Core Web Vitals
-        - D11 — Seguridad y privacidad
-        - D12 — QA, release, rollback y auditoría independiente
+      label: Changed surfaces inventory
+      description: List each effect with an Sxx ID and every exact applicable matrix row; list domain owners separately because they cannot replace matrix rows.
+      placeholder: |
+        S01 — effect — paths/symbols/systems — exact matrix row(s) — domain owner(s)
+        S02 — effect — paths/symbols/systems — exact matrix row(s) — domain owner(s)
     validations:
       required: true
 
@@ -165,12 +154,16 @@ body:
     attributes:
       label: SEO_GOLDEN_PARITY
       options:
-        - NOT_APPLICABLE
-        - NOT_RUN
-        - BLOCKED
-        - PARTIAL
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
     validations:
       required: true
 
@@ -179,11 +172,16 @@ body:
     attributes:
       label: HOME_SEO_REGRESSION
       options:
-        - NOT_APPLICABLE
-        - NOT_RUN
-        - BLOCKED
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
     validations:
       required: true
 
@@ -192,11 +190,16 @@ body:
     attributes:
       label: LOCAL_CONTENT_UTILITY
       options:
-        - NOT_APPLICABLE
-        - NOT_RUN
-        - BLOCKED
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
     validations:
       required: true
 
@@ -205,11 +208,16 @@ body:
     attributes:
       label: MOBILE_SEO_PARITY
       options:
-        - NOT_APPLICABLE
-        - NOT_RUN
-        - BLOCKED
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
     validations:
       required: true
 
@@ -219,11 +227,16 @@ body:
       label: MULTILINGUAL_SEO
       description: Existing client-side language UI is not proof of multilingual SEO parity.
       options:
-        - NOT_APPLICABLE
-        - NOT_RUN
-        - BLOCKED
         - PASS
         - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
     validations:
       required: true
 

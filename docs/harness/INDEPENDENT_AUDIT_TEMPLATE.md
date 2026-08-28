@@ -51,6 +51,7 @@ auditor debe revisar el resultado nuevo.
 - [ ] TASK_CONTRACT emitido antes de editar.
 - [ ] Diff completo entre base y exact HEAD.
 - [ ] Lista de archivos changed y staged.
+- [ ] Inventario de superficies `Sxx` y derivación separada de D01–D12.
 - [ ] EVIDENCE_MANIFEST y comandos sanitizados.
 - [ ] Resultados de focal tests y surface gates.
 - [ ] CI/preview exact-head cuando aplican.
@@ -95,8 +96,10 @@ de capacidad se listan por separado y pueden justificar `BLOCKED`.
 
 ```yaml
 COVERAGE:
+  CHANGED_SURFACES_REVIEWED:
+    - "S01 — efecto — paths/símbolos/sistemas — filas exactas de matriz — owners adicionales | NONE"
   DISCIPLINES_D01_D12_REVIEWED:
-    - "D01 | ... | D12 — nombre canónico — MATERIAL | NOT_APPLICABLE"
+    - "D01 | ... | D12 — nombre canónico — MATERIAL | NOT_APPLICABLE — Sxx activadoras"
   OMITTED_OR_BLOCKED_CHECKS:
     - "check, estado y causa | NONE"
 

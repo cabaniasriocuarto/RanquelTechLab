@@ -71,9 +71,20 @@ TASK_CONTRACT:
 
   8_CHANGED_SURFACES:
     CANONICAL_OWNER: "docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md"
+    SURFACE_INVENTORY:
+      - SURFACE_ID: "S01; identificador local de esta tarea, no enum canónico"
+        EFFECT: "efecto material que cambia"
+        PATHS_OR_SYMBOLS:
+          - "path, símbolo o sistema afectado"
+        MATRIX_ROWS:
+          - "fila exacta de INTERDISCIPLINARY_REVIEW_MATRIX.md"
+        DOMAIN_OWNERS:
+          - "owner adicional aplicable | NONE"
     DISCIPLINES:
       - DISCIPLINE_ID: "D01 | D02 | ... | D12; incluir exactamente las doce filas en orden"
         DISCIPLINE_NAME: "nombre canónico copiado del owner"
+        ACTIVATED_BY_SURFACES:
+          - "S01"
         MATERIALITY: "MATERIAL | NOT_APPLICABLE"
         ACTIVATING_EFFECT: "efecto real o justificación concreta"
         CONTRACT_AND_ACCEPTANCE: "owner y criterio"
@@ -84,13 +95,14 @@ TASK_CONTRACT:
 
   SEO_INDEXABLE_CONTEXT:
     APPLIES: "true | false con justificación"
+    CANONICAL_RESULTS_OWNER: "docs/truth/SOURCE_OF_TRUTH.md#resultados-de-validación-permitidos"
     seoArchetype: "arquetipo aprobado | NOT_APPLICABLE"
     goldenBaselineVersion: "versión aprobada | NOT_APPLICABLE | NOT_AVAILABLE"
-    SEO_GOLDEN_PARITY: "PASS | FAIL | BLOCKED | PARTIAL | NOT_RUN | NOT_APPLICABLE"
-    HOME_SEO_REGRESSION: "PASS | FAIL | BLOCKED | NOT_RUN | NOT_APPLICABLE"
-    LOCAL_CONTENT_UTILITY: "PASS | FAIL | BLOCKED | NOT_RUN | NOT_APPLICABLE"
-    MOBILE_SEO_PARITY: "PASS | FAIL | BLOCKED | NOT_RUN | NOT_APPLICABLE"
-    MULTILINGUAL_SEO: "PASS | FAIL | BLOCKED | NOT_RUN | NOT_APPLICABLE"
+    SEO_GOLDEN_PARITY: "resultado canónico definido por CANONICAL_RESULTS_OWNER"
+    HOME_SEO_REGRESSION: "resultado canónico definido por CANONICAL_RESULTS_OWNER"
+    LOCAL_CONTENT_UTILITY: "resultado canónico definido por CANONICAL_RESULTS_OWNER"
+    MOBILE_SEO_PARITY: "resultado canónico definido por CANONICAL_RESULTS_OWNER"
+    MULTILINGUAL_SEO: "resultado canónico definido por CANONICAL_RESULTS_OWNER"
 
   9_RISK:
     LEVEL: "LIGHT | STANDARD | HIGH | CRITICAL"
@@ -168,12 +180,16 @@ TASK_CONTRACT:
    exacta. Acceso a GitHub no autoriza Vercel o Google.
 7. **Sistemas prohibidos:** incluye deploy, DNS, Analytics, Ads y secretos cuando
    no son scope.
-8. **Changed surfaces:** se determina por efecto real, no por extensión del
-   archivo. No se mantiene un enum paralelo: D01–D12 son las únicas claves de
-   clasificación, toda marca `NOT_APPLICABLE` se justifica y las doce se
-   declaran individualmente según la
-   [matriz interdisciplinaria](../truth/INTERDISCIPLINARY_REVIEW_MATRIX.md). Si
-   SEO/indexación es material, completa además los campos de
+8. **Changed surfaces:** se determinan por efecto real, no por extensión del
+   archivo. Se inventaría cada superficie con un ID local `S01`, `S02`, etc. y
+   se referencian todas las filas exactas aplicables de la matriz. Los owners de
+   dominio se registran por separado y no sustituyen esas filas; los IDs `Sxx`
+   no forman un enum global. Después se deriva la unión de disciplinas y se
+   declaran D01–D12 individualmente, con cada `NOT_APPLICABLE` justificado, según la
+   [matriz interdisciplinaria](../truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
+   Superficies y disciplinas son dimensiones separadas: una superficie puede
+   activar varias disciplinas y una disciplina puede ser activada por varias
+   superficies. Si SEO/indexación es material, completa además los campos de
    [SEO_PARITY_CONTRACT.md](../truth/SEO_PARITY_CONTRACT.md); un gate todavía no
    implementado queda `NOT_RUN`/`BLOCKED`, nunca `PASS`.
 9. **Riesgo:** usa [QUALITY_GATES.md](../truth/QUALITY_GATES.md) y acumula riesgo

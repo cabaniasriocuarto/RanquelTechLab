@@ -36,21 +36,24 @@ Until #26 defines the baseline and contract, `seoArchetype` and
 `PASS`. A non-SEO task may use `NOT_APPLICABLE` only with a changed-surface
 justification.
 
-## Reserved gate results
+## Gate results
 
-| Gate | Allowed results |
-| --- | --- |
-| `SEO_GOLDEN_PARITY` | `PASS`, `FAIL`, `BLOCKED`, `PARTIAL`, `NOT_RUN`, `NOT_APPLICABLE` |
-| `HOME_SEO_REGRESSION` | `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`, `NOT_APPLICABLE` |
-| `LOCAL_CONTENT_UTILITY` | `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`, `NOT_APPLICABLE` |
-| `MOBILE_SEO_PARITY` | `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`, `NOT_APPLICABLE` |
-| `MULTILINGUAL_SEO` | `PASS`, `FAIL`, `BLOCKED`, `NOT_RUN`, `NOT_APPLICABLE` |
+All five gates use the complete validation-result vocabulary owned by
+[SOURCE_OF_TRUTH.md](SOURCE_OF_TRUTH.md#resultados-de-validación-permitidos).
+This file does not maintain reduced per-gate enums or create alternative
+evidence states. Issue Forms repeat the complete applicable set only because
+GitHub dropdowns cannot derive options dynamically from that owner. The generic
+task form includes all ten results. In the city form, the four mandatory SEO
+publication gates omit `NOT_APPLICABLE`; `MULTILINGUAL_SEO` includes it because
+the approved archetype may have no multilingual pair.
 
-`NOT_APPLICABLE` is not permitted for an applicable publication gate. `PARTIAL`,
-`BLOCKED`, `NOT_RUN`, and `FAIL` do not authorize publication. The generic
-meaning of every result remains owned by
-[SOURCE_OF_TRUTH.md](SOURCE_OF_TRUTH.md); this file does not create alternative
-evidence states.
+`PARTIAL` records incomplete variant or viewport coverage. `UNKNOWN` records an
+insufficient observation. `AUTH_BLOCKED`, `PREVIEW_BLOCKED`, and
+`CAPABILITY_GAP` preserve the specific cause that prevented validation.
+`NOT_APPLICABLE` is not permitted for an applicable publication gate and must
+include a changed-surface justification when the gate is genuinely not
+material. Only `PASS` satisfies a required gate; every other result remains
+distinct and fail-closed.
 
 ## Fail-closed publication boundary
 

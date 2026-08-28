@@ -47,7 +47,7 @@ estado del proyecto Vercel es `UNKNOWN`.
 | Daily token API | Verifica access code, ventana temporal y rol; solicita un meeting token. | [api/daily/token.js](../../api/daily/token.js) | Emisión y funcionamiento live `UNKNOWN`. |
 | Automatización de turnos | Lee eventos, evita reproceso básico, solicita accesos y envía emails. El archivo está versionado; el runtime vive fuera del repo. | [apps-script/Ranquel_Turnos_Videollamada.gs](../../apps-script/Ranquel_Turnos_Videollamada.gs) | Proyecto, properties, trigger, Calendar y MailApp `UNKNOWN`. |
 | Configuración de hosting | Redirects, headers de seguridad y caché para medios. | [vercel.json](../../vercel.json) | Configuración aplicada por un deploy `UNKNOWN`. |
-| Medios | Imágenes, SVG, fuentes y videos servidos como archivos estáticos. | [media](../../media), [images](../../images) | Procedencia/licencia y entrega CDN `UNKNOWN`; ver owner de contenido y media. |
+| Medios | Imágenes, SVG, fuentes y videos servidos como archivos estáticos. | [media](../../media), [images](../../images) | Procedencia/licencia `PENDING_TO_VALIDATE` en [MEDIA_PROVENANCE.md](MEDIA_PROVENANCE.md); entrega CDN `UNKNOWN`. |
 
 ## Capas de frontend
 
@@ -194,15 +194,18 @@ ventana immutable si se reemplazan sin versionar la URL.
 
 ### Gobierno de topología Vercel
 
-La decisión humana originada por `F-PR-001` conserva los cinco previews
-actuales de PR #27. #3 no autoriza limpiarlos, borrarlos, promoverlos ni cambiar
-su configuración. La auditoría, prueba de proyecto canónico y remediación de la
-topología externa pertenecen a #28, que se ejecuta en scope propio antes de #24.
+La decisión humana originada por `F-PR-001` conserva todos los previews
+inventariados en la evidencia volátil de PR #27. #3 no autoriza limpiarlos,
+borrarlos, promoverlos ni cambiar su configuración. La auditoría, prueba de
+proyecto canónico y remediación de la topología externa pertenecen a #28, que se
+ejecuta en scope propio antes de #24.
 
-Este owner no duplica IDs, URLs ni resultados volátiles de Vercel. Hasta que la
-issue #28 produzca evidencia aceptada, proyecto canónico, trazabilidad de
-producción y equivalencia de configuración permanecen `PENDING_TO_VALIDATE` con
-`External verification: UNKNOWN` en la verdad estable del repositorio.
+Este owner no duplica conteos, IDs, URLs ni resultados volátiles de Vercel. Para
+esta decisión, el registro observado se identifica como `F-PR-001` en la
+evidencia volátil de PR #27; los owners estables sólo lo referencian. Hasta que
+la issue #28 produzca evidencia aceptada, proyecto canónico, trazabilidad de
+producción y equivalencia de configuración permanecen `PENDING_TO_VALIDATE`
+con `External verification: UNKNOWN` en la verdad estable del repositorio.
 
 ## No implementado
 

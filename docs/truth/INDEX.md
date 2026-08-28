@@ -18,6 +18,7 @@ detail. If two files claim the same type, stop and resolve ownership explicitly.
 | Golden SEO evidence and lineage | [SEO_GOLDEN_BASELINE.md](SEO_GOLDEN_BASELINE.md) | Classify the baseline owned by #26 |
 | SEO parity and Home regression | [SEO_PARITY_CONTRACT.md](SEO_PARITY_CONTRACT.md) | Govern comparison and publication gates |
 | Content, communication, brand | [CONTENT_COMMUNICATION_STANDARD.md](CONTENT_COMMUNICATION_STANDARD.md) | Verify claims and local value |
+| Media provenance and usage rights | [MEDIA_PROVENANCE.md](MEDIA_PROVENANCE.md) | Record source, license, owner and evidence per asset |
 | Marketing, analytics, Ads | [MARKETING_ANALYTICS_CONTRACT.md](MARKETING_ANALYTICS_CONTRACT.md) | Govern measurement and campaigns |
 | Security and privacy | [SECURITY_PRIVACY_MODEL.md](SECURITY_PRIVACY_MODEL.md) | Review inputs, data and trust boundaries |
 | Test selection | [TESTING_MATRIX.md](TESTING_MATRIX.md) | Choose focal and regression checks |

@@ -51,7 +51,9 @@ SCOPE:
     - "path"
   FORBIDDEN_PATHS_TOUCHED: false
   CHANGED_SURFACES:
-    - "D01 | ... | D12 — nombre canónico — MATERIAL | NOT_APPLICABLE"
+    - "S01 — efecto — paths/símbolos/sistemas — filas exactas de matriz — owners adicionales | NONE"
+  DISCIPLINES_D01_D12:
+    - "D01 | ... | D12 — nombre canónico — MATERIAL | NOT_APPLICABLE — Sxx activadoras"
   RISK_LEVEL: "LIGHT | STANDARD | HIGH | CRITICAL"
 ```
 
@@ -93,7 +95,7 @@ Para una superficie no SEO, registrar `NOT_APPLICABLE` y la justificación una
 sola vez. La ausencia de baseline o gate implementado se declara `NOT_RUN`,
 `BLOCKED` o `CAPABILITY_GAP`; no se transforma en `PASS`.
 
-Estados de evidencia permitidos:
+Resultados por check permitidos:
 
 ```text
 PASS
@@ -106,6 +108,11 @@ UNKNOWN
 AUTH_BLOCKED
 PREVIEW_BLOCKED
 CAPABILITY_GAP
+```
+
+Estados de madurez del conjunto de evidencia:
+
+```text
 SELF_VALIDATED_ONLY
 INDEPENDENTLY_VALIDATED
 POST_MERGE_ACCEPTED
@@ -142,8 +149,9 @@ Reglas:
 
 Los nombres e IDs se copian de
 [INTERDISCIPLINARY_REVIEW_MATRIX.md](../truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
-La selección se justifica mediante
-[INTERDISCIPLINARY_REVIEW_MATRIX.md](../truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
+La selección se deriva del inventario de superficies `Sxx`, que permanece
+separado y referencia todas las filas exactas aplicables del mismo documento.
+Los owners de dominio se registran aparte y no reemplazan esas filas.
 
 ## 5. Ledger de mutaciones externas
 

@@ -3,7 +3,10 @@
 These rules apply to `media/**` and complement the repository router.
 
 - Every new or replaced asset needs a documented source, usage right or license,
-  responsible owner, semantic purpose, dimensions, format, and size.
+  responsible owner, semantic purpose, dimensions, format, and size. Record that
+  truth in the canonical
+  [media provenance owner](../docs/truth/MEDIA_PROVENANCE.md); this router is not
+  the mutable inventory.
 - Decorative media uses empty alt text in HTML; informative media needs concise,
   contextual alt text. Do not embed claims that content review has not approved.
 - Optimize responsive delivery, intrinsic dimensions, loading priority, motion,

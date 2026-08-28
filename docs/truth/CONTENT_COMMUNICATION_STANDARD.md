@@ -137,8 +137,10 @@ El owner de producto define qué capacidades están implementadas en
 - No se oculta información esencial dentro de imágenes, animaciones o texto
   inaccesible.
 
-Origen, licencia, dimensiones y peso de archivos pertenecen a media/AGENTS.md y
-a los owners técnicos correspondientes.
+La procedencia, titularidad y licencia por asset pertenecen al
+[registro canónico de medios](MEDIA_PROVENANCE.md). `media/AGENTS.md` enruta los
+gates técnicos; este owner conserva alt, claims, función editorial y veracidad
+del uso.
 
 ## Revisión editorial proporcional
 
