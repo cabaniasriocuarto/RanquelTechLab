@@ -132,19 +132,71 @@ Estas fases se registran desde el Draft con estados honestos, pero no se usan
 para anticipar `INDEPENDENTLY_VALIDATED`: antes del gate humano permanecen
 `NOT_RUN`/`false`. Para completar el lifecycle deben ejecutarse en este orden.
 
+#### `PRE_MERGE_DEFAULTS`
+
+Este bloque es la única fuente canónica de defaults pre-merge del manifiesto.
+V-015, V-016, V-018 y `WRITER_DECLARATION` deben copiar estos valores de forma
+literal; no admiten alias ni sinónimos para representar el estado pre-merge.
+
+```yaml
+PRE_MERGE_DEFAULTS:
+  HUMAN_MERGE: NOT_RUN
+  PR_NUMBER: NOT_MERGED
+  PR_MERGED: false
+  MERGED_PR_HEAD: NOT_CAPTURED
+  AUDITED_PR_HEAD: NOT_CAPTURED
+  INDEPENDENT_REVIEW_HEAD: NOT_CAPTURED
+  MERGE_ACCEPTANCE: NOT_RUN
+  INTEGRATED_SHA_SOURCE: NOT_CAPTURED
+  INTEGRATED_SHA: NOT_CAPTURED
+  MERGE_METHOD: NOT_RUN
+  INTEGRATED_SHA_REACHABLE_FROM_MAIN: NOT_RUN
+  MAIN_HEAD_AT_ACCEPTANCE: NOT_CAPTURED
+  POST_MERGE_ACCEPTANCE_SHA: NOT_RUN
+  POST_MERGE_ACCEPTANCE_STATE: NOT_RUN
+  POST_MERGE_ACCEPTANCE_EVIDENCE: NONE
+  TRUTH_RECONCILIATION_MODE: NOT_RUN
+  TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA: NOT_RUN
+  TRUTH_RECONCILIATION_NO_DIFF_JUSTIFICATION: NONE
+  RECONCILIATION_PR: NOT_RUN
+  RECONCILIATION_PR_MERGED: false
+  RECONCILIATION_PR_HEAD: NOT_CAPTURED
+  RECONCILIATION_AUDITED_HEAD: NOT_CAPTURED
+  RECONCILIATION_INTEGRATED_SHA_SOURCE: NOT_CAPTURED
+  RECONCILIATION_INTEGRATED_SHA: NOT_CAPTURED
+  RECONCILIATION_SHA_REACHABLE_FROM_MAIN: NOT_RUN
+  TRUTH_RECONCILIATION_STATE: NOT_RUN
+  TRUTH_RECONCILIATION_EVIDENCE: NONE
+  EXPLICIT_ISSUE_CLOSE_STATE: NOT_RUN
+  EXPLICIT_ISSUE_CLOSE_EVIDENCE: NONE
+  ISSUE_CLOSED: false
+```
+
 | ID | Fase | Inspección | Estado | Resultado observado | Evidencia | Dependencia/limitación |
 | --- | --- | --- | --- | --- | --- | --- |
-| V-015 | Human merge | `<inspección del PR en GitHub>` | `<estado>` | `PR_NUMBER=<N>; PR_MERGED=<YES/NO>; MERGED_PR_HEAD=<sha>; AUDITED_PR_HEAD=<sha>; INDEPENDENT_REVIEW_HEAD=<sha>; MERGE_ACCEPTANCE=<PASS/BLOCKED_HEAD_DRIFT>` | `<ref/NONE>` | `PASS exige igualdad de los tres HEADs; drift bloquea V-016` |
-| V-016 | Integrated SHA | `<inspección del resultado del PR y main>` | `<estado>` | `INTEGRATED_SHA_SOURCE=MERGED_PR; INTEGRATED_SHA=<sha/NOT_CAPTURED>; MERGE_METHOD=<MERGE/SQUASH/REBASE/NOT_OBSERVABLE>; INTEGRATED_SHA_REACHABLE_FROM_MAIN=<YES/NO/NOT_RUN>; MAIN_HEAD_AT_ACCEPTANCE=<sha/NOT_CAPTURED>` | `<ref/NONE>` | `REQUIRES=V-015:PASS; main tip no identifica el merge` |
+| V-015 | Human merge | `<inspección del PR en GitHub>` | `HUMAN_MERGE=<NOT_RUN/PASS/BLOCKED>` | `PR_NUMBER=<N/NOT_MERGED>; PR_MERGED=<YES/NO/false>; MERGED_PR_HEAD=<sha/NOT_CAPTURED>; AUDITED_PR_HEAD=<sha/NOT_CAPTURED>; INDEPENDENT_REVIEW_HEAD=<sha/NOT_CAPTURED>; MERGE_ACCEPTANCE=<NOT_RUN/PASS/BLOCKED_HEAD_DRIFT>` | `<ref/NONE>` | `PRE_MERGE_DEFAULTS literal; PASS exige tres SHA reales e iguales; drift bloquea V-016` |
+| V-016 | Integrated SHA | `<inspección del resultado del PR y main>` | `<estado>` | `INTEGRATED_SHA_SOURCE=<MERGED_PR/NOT_CAPTURED>; INTEGRATED_SHA=<sha/NOT_CAPTURED>; MERGE_METHOD=<MERGE/SQUASH/REBASE/NOT_OBSERVABLE/NOT_RUN>; INTEGRATED_SHA_REACHABLE_FROM_MAIN=<YES/NO/NOT_RUN>; MAIN_HEAD_AT_ACCEPTANCE=<sha/NOT_CAPTURED>` | `<ref/NONE>` | `PRE_MERGE_DEFAULTS literal; REQUIRES=V-015:PASS; main tip no identifica el merge` |
 | V-017 | Post-merge acceptance | `<inspección contra INTEGRATED_SHA>` | `<estado>` | `TARGET=INTEGRATED_SHA; ACCEPTED_SHA=<sha/NOT_RUN>` | `<ref/NONE>` | `REQUIRES=V-015:PASS,V-016:PASS` |
-| V-018 | Truth reconciliation | `<MERGED_PR/inspección NO_DIFF>` | `<estado>` | `MODE=<NO_DIFF/MERGED_PR/NOT_RUN>; SOURCE_INTEGRATED_SHA=<sha/NOT_RUN>; NO_DIFF_JUSTIFICATION=<detalle/N_A>; RECONCILIATION_PR=<N/N_A>; RECONCILIATION_PR_MERGED=<YES/NO/N_A>; RECONCILIATION_PR_HEAD=<sha/N_A>; RECONCILIATION_AUDITED_HEAD=<sha/N_A>; RECONCILIATION_INTEGRATED_SHA_SOURCE=<MERGED_PR/N_A>; RECONCILIATION_INTEGRATED_SHA=<sha/N_A>; RECONCILIATION_SHA_REACHABLE_FROM_MAIN=<YES/NO/N_A>` | `<ref/NONE>` | `REQUIRES=V-017:PASS; sólo uno de los dos modos válidos` |
+| V-018 | Truth reconciliation | `<MERGED_PR/inspección NO_DIFF>` | `TRUTH_RECONCILIATION_STATE=<NOT_RUN/PASS/BLOCKED>` | `MODE=<NO_DIFF/MERGED_PR/NOT_RUN>; SOURCE_INTEGRATED_SHA=<sha/NOT_RUN>; NO_DIFF_JUSTIFICATION=<detalle/NONE>; RECONCILIATION_PR=<N/NOT_RUN>; RECONCILIATION_PR_MERGED=<true/false>; RECONCILIATION_PR_HEAD=<sha/NOT_CAPTURED>; RECONCILIATION_AUDITED_HEAD=<sha/NOT_CAPTURED>; RECONCILIATION_INTEGRATED_SHA_SOURCE=<MERGED_PR/NOT_CAPTURED>; RECONCILIATION_INTEGRATED_SHA=<sha/NOT_CAPTURED>; RECONCILIATION_SHA_REACHABLE_FROM_MAIN=<YES/NO/NOT_RUN>` | `TRUTH_RECONCILIATION_EVIDENCE=<ref/NONE>` | `PRE_MERGE_DEFAULTS literal; REQUIRES=V-017:PASS; sólo uno de los dos modos válidos` |
 | V-019 | Explicit issue close | `<inspección GitHub>` | `<estado>` | `ISSUE_CLOSED=<true/false>` | `<ref/NONE>` | `REQUIRES=V-017:PASS,V-018:PASS; OWNER=humano` |
 
-`V-015=PASS` exige `PR_MERGED=YES` e
-`MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD`; cualquier diferencia
-usa estado `BLOCKED`, causa `MERGE_ACCEPTANCE=BLOCKED_HEAD_DRIFT` y deja V-016
-`NOT_RUN`. `V-016=PASS` exige SHA obtenido del PR mergeado y reachability desde
-`main`; `MAIN_HEAD_AT_ACCEPTANCE` se conserva como observación separada.
+Antes de ejecutar esas fases, V-015 usa `PR_MERGED=false`, no `NO`; `NO` queda
+reservado para una inspección post-run que comprueba que el PR no fue mergeado y
+tampoco permite `PASS`. En V-018, `MODE`, `SOURCE_INTEGRATED_SHA` y
+`NO_DIFF_JUSTIFICATION` son la proyección de tabla de los tres campos canónicos
+con prefijo `TRUTH_RECONCILIATION_`; sus defaults se copian literalmente. V-015,
+V-016 y V-018 copian todos sus demás defaults de `PRE_MERGE_DEFAULTS` sin
+transformaciones.
+
+`V-015=PASS` exige `PR_MERGED=YES`, `MERGE_ACCEPTANCE=PASS` e
+`MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD`, con los tres valores
+como SHA reales y no `NOT_CAPTURED`; cualquier diferencia usa estado `BLOCKED`,
+causa `MERGE_ACCEPTANCE=BLOCKED_HEAD_DRIFT` y deja V-016 `NOT_RUN`.
+`HUMAN_MERGE=NOT_RUN` nunca permite `V-015=PASS`. `V-016=PASS` exige V-015 en
+`PASS`, `INTEGRATED_SHA_SOURCE=MERGED_PR`, un `INTEGRATED_SHA` real obtenido del
+PR mergeado e `INTEGRATED_SHA_REACHABLE_FROM_MAIN=YES`;
+`NOT_CAPTURED`/`NOT_RUN` nunca permiten `PASS`. `MAIN_HEAD_AT_ACCEPTANCE` se
+conserva como observación separada y no sustituye a `INTEGRATED_SHA`.
 
 `V-017=PASS` exige `ACCEPTED_SHA=INTEGRATED_SHA`. `V-018=PASS` exige V-017 y
 exactamente uno de estos caminos:
@@ -155,8 +207,9 @@ exactamente uno de estos caminos:
   auditado, integration SHA obtenido de ese PR y alcanzable desde `main`.
 
 Draft, Ready, cerrado sin merge y el valor heredado `RESULT=PR` son inválidos
-como reconciliación. `V-019=PASS` e `ISSUE_CLOSED=true` exigen V-017, uno de los
-dos modos V-018 en PASS, evidencia y cierre humano explícito.
+como reconciliación. `TRUTH_RECONCILIATION_MODE=NOT_RUN` y cualquier otro default
+pre-merge nunca permiten `V-018=PASS`. `V-019=PASS` e `ISSUE_CLOSED=true` exigen
+V-017, uno de los dos modos V-018 en PASS, evidencia y cierre humano explícito.
 
 Cuando SEO/indexación sea material, agregar estas filas y enlazar el owner de
 [paridad](../truth/SEO_PARITY_CONTRACT.md):
@@ -329,6 +382,10 @@ ejecución permanece `NOT_RUN`.
 
 ## 8. Declaración del writer y handoff
 
+Para completar `WRITER_DECLARATION`, expandir literalmente el bloque canónico
+`PRE_MERGE_DEFAULTS` en los campos pre-merge listados abajo. Esta expansión no es
+una segunda fuente de defaults y no puede introducir overrides ni sinónimos.
+
 ```yaml
 WRITER_DECLARATION:
   CONTRACT_SATISFIED: "true | false | partial"
@@ -350,13 +407,13 @@ WRITER_DECLARATION:
   READY_DECISION_OWNER: "humano"
   AUTO_CLOSE_KEYWORD_PRESENT: false
   ISSUE_CLOSE_OWNER: "humano después de POST_MERGE_ACCEPTANCE y TRUTH_RECONCILIATION"
-  HUMAN_MERGE: "NOT_RUN | PASS | BLOCKED"
-  PR_NUMBER: "N | NOT_MERGED"
+  HUMAN_MERGE: NOT_RUN
+  PR_NUMBER: NOT_MERGED
   PR_MERGED: false
   MERGED_PR_HEAD: NOT_CAPTURED
   AUDITED_PR_HEAD: NOT_CAPTURED
   INDEPENDENT_REVIEW_HEAD: NOT_CAPTURED
-  MERGE_ACCEPTANCE: "NOT_RUN | PASS | BLOCKED_HEAD_DRIFT"
+  MERGE_ACCEPTANCE: NOT_RUN
   INTEGRATED_SHA_SOURCE: NOT_CAPTURED
   INTEGRATED_SHA: NOT_CAPTURED
   MERGE_METHOD: NOT_RUN
@@ -384,6 +441,11 @@ WRITER_DECLARATION:
   EXPLICIT_ISSUE_CLOSE_EVIDENCE: NONE
   ISSUE_CLOSED: false
 ```
+
+Si cualquier literal pre-merge de V-015, V-016 o V-018 difiere del bloque
+`PRE_MERGE_DEFAULTS` o de su expansión literal en `WRITER_DECLARATION`, el
+resultado obligatorio es `MANIFEST_SCHEMA_RESULT=FAIL`. Esta comparación no
+modifica los valores post-run permitidos ni sus predicados de `PASS`.
 
 Los defaults pre-merge permanecen `NOT_RUN`/`false`. `HUMAN_MERGE=PASS` exige
 número de PR, merge comprobado e igualdad entre `MERGED_PR_HEAD`,
