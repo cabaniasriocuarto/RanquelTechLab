@@ -19,7 +19,13 @@ INDEPENDENT_AUDIT:
   BASE_SHA: "sha completo"
   AUDITED_HEAD: "sha completo"
   REMOTE_HEAD: "sha completo publicado"
-  DRAFT_PR_HEAD: "sha completo actual del Draft PR"
+  PR_HEAD: "sha completo actual del PR"
+  V011_PR_IS_OPEN: "true | false"
+  V011_PR_IS_DRAFT: "true | false"
+  V011_DRAFT_PR_HEAD: "sha completo igual a AUDITED_HEAD | NOT_CAPTURED"
+  V011_OBSERVED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+  V011_EVIDENCE: "ref comprobable | NONE"
+  PR_CURRENT_STATE: "OPEN_DRAFT | OPEN_READY | MERGED | CLOSED_UNMERGED"
   WRITER: "sesión/agente"
   AUDITOR: "sesión/agente diferente"
   AUDITED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ"
@@ -38,9 +44,14 @@ INDEPENDENT_AUDIT:
   INDEPENDENT_VALIDATION_GRANTED: "INDEPENDENTLY_VALIDATED | NONE"
 ```
 
-Si `AUDITED_HEAD`, `REMOTE_HEAD` y `DRAFT_PR_HEAD` no coinciden, el dictamen
-queda `BLOCKED` hasta auditar el commit publicado correcto. Un commit nuevo
-invalida toda evidencia anterior. El writer debe repetir:
+Si `AUDITED_HEAD`, `REMOTE_HEAD` y `PR_HEAD` no coinciden, el dictamen queda
+`BLOCKED` hasta auditar el commit publicado correcto. Antes de `HUMAN_GATE`,
+V-011 también exige PR abierto, `V011_PR_IS_DRAFT=true`,
+`V011_DRAFT_PR_HEAD=AUDITED_HEAD`, instante y evidencia. Una transición Ready
+posterior y autorizada se registra en
+`PR_CURRENT_STATE` sin invalidar esa observación histórica. Un commit nuevo
+invalida toda evidencia anterior y convierte el siguiente ciclo en reparación;
+el writer debe repetir:
 
 ```text
 REPAIR_EDIT
@@ -85,24 +96,44 @@ auditor debe revisar el resultado nuevo.
 - [ ] Inventario de superficies `Sxx` y derivación separada de D01–D12.
 - [ ] EVIDENCE_MANIFEST y comandos sanitizados.
 - [ ] Resultados de focal tests y surface gates.
-- [ ] Si hubo reparación, ledger completo desde `REPAIR_EDIT` y en el orden canónico.
-- [ ] `PREVIOUS_HEAD_EVIDENCE_REUSED=false` y evidencia local ligada al nuevo HEAD.
-- [ ] `COMMIT_CANDIDATE` precede a `CAPTURE_NEW_HEAD`, que registra el SHA completo.
-- [ ] `VERIFY_COMMIT_TREE_MATCH` precede al push y deja `TREE_MATCH=PASS` sólo si
-  `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` sin drift de índice/worktree.
-- [ ] Push, CI, request y auditoría citan `NEW_HEAD`, nunca `PREVIOUS_HEAD`.
-- [ ] Gates afectados repetidos; gates no afectados `NOT_APPLICABLE` y justificados.
-- [ ] `STAGED_SCOPE_SECRET_RECHECK` prueba con `git diff --quiet` e inventario
-  untracked que `PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS`, repite cached
-  diff/scope/secrets y captura `PRE_GATE_STAGED_TREE_SHA`.
-- [ ] Después de los gates, `POST_GATE_WORKTREE_INDEX_RECHECK=PASS` repite esos
-  controles, prueba cero drift y fija
+- [ ] Todo candidato fue commiteado, su HEAD completo fue capturado y el push
+  normal publicó ese mismo SHA.
+- [ ] Si hubo reparación, el ledger completo parte de `REPAIR_EDIT`, conserva el
+  orden canónico y registra `PREVIOUS_HEAD_EVIDENCE_REUSED=false`.
+- [ ] Sólo si hubo reparación, `COMMIT_CANDIDATE` precede a `CAPTURE_NEW_HEAD` y
+  `VERIFY_COMMIT_TREE_MATCH`; `TREE_MATCH=PASS` exige
+  `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` antes del push.
+- [ ] Un candidato inicial no inventa `PREVIOUS_HEAD`, V-R01, trees validados ni
+  `TREE_MATCH`; su no materialidad no se cuenta como `PASS`.
+- [ ] Si hubo reparación, push, CI, request y auditoría citan `NEW_HEAD`, nunca
+  `PREVIOUS_HEAD`; gates afectados se repitieron y los demás se justificaron.
+- [ ] Si hubo reparación, `STAGED_SCOPE_SECRET_RECHECK` inventaría todos los
+  untracked y registra la fuente de gates: worktree con `UNTRACKED_FILES=NONE` o
+  copia aislada con `ISOLATED_VALIDATION_TREE_SHA=PRE_GATE_STAGED_TREE_SHA`.
+- [ ] Ningún untracked relevante participó en gates fuera del candidato, aunque
+  su path estuviera allowlisted; no se agregó ni eliminó contenido ajeno.
+- [ ] Si hubo reparación, `POST_GATE_WORKTREE_INDEX_RECHECK=PASS` prueba cero
+  drift, el mismo objetivo ejecutado y
   `POST_GATE_CURRENT_INDEX_TREE_SHA=PRE_GATE_STAGED_TREE_SHA=VALIDATED_STAGED_TREE_SHA`.
 - [ ] Un recheck omitido o `FAIL` bloquea commit/push/auditoría y vuelve a
   `DIFF_CHECK`, staging y gates; `TREE_MATCH=PASS` posterior no lo compensa.
 - [ ] Si cambió un contrato transversal, matriz contractual completa reejecutada.
-- [ ] CI/preview exact-head cuando aplican.
+- [ ] Validadores efímeros, evidencia y artefactos permanecieron fuera del repo;
+  el recheck prueba que no dejaron archivos tracked, staged ni untracked.
+- [ ] `CI_HEAD` se comparó sólo si existió una ejecución real usada como
+  evidencia; sin CI del harness se conservan `CAPABILITY_GAP` y `NOT_CAPTURED`,
+  y los contextos Vercel permanecen separados.
+- [ ] V-011 demuestra PR abierto y Draft antes de `HUMAN_GATE`, con
+  `V011_DRAFT_PR_HEAD=AUDITED_HEAD`, sin inferirlo del nombre del campo; el
+  estado actual posterior está separado.
 - [ ] Solicitud, ejecución y dictamen registrados como dimensiones separadas.
+- [ ] La cadena de cierre conserva V-014 favorable y autorización humana para el
+  gate, más autorización de merge separada para el mismo HEAD; un merge
+  observado no sana `CHANGES_REQUIRED`.
+- [ ] V-017 usa sólo `POST_MERGE_ACCEPTANCE_SHA=INTEGRATED_SHA`, sin alias.
+- [ ] Ambos modos de reconciliación exigen V-017 en `PASS` y
+  `TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`; mantienen separado
+  `RECONCILIATION_INTEGRATED_SHA` del PR posterior.
 - [ ] Ledger de mutaciones externas y confirmaciones de no-scope.
 - [ ] Riesgos, rollback y limitaciones declaradas.
 
@@ -118,8 +149,9 @@ Material ausente se registra como finding o causa de `BLOCKED`; no se presume.
 | Semántica | ¿El cambio cumple el objetivo y DoD? | `<estado>` | `<ref>` |
 | Contratos | ¿Se preservan owners y contratos declarados? | `<estado>` | `<ref>` |
 | Tests | ¿Las pruebas son suficientes para changed surfaces/riesgo? | `<estado>` | `<ref>` |
-| Repair integrity | ¿El tree pre-gate sigue idéntico después de los gates y no existe drift de worktree/índice/untracked? | `<estado>` | `<ref>` |
+| Repair integrity | ¿Los gates vieron sólo el candidato indexado —worktree sin untracked o tree aislado— y el mismo tree siguió idéntico después? | `<estado>` | `<ref>` |
 | Estados | ¿No se presentó falta de evidencia como `PASS`? | `<estado>` | `<ref>` |
+| Lifecycle | ¿Draft observado, CI condicional, V-014, autorización humana, aceptación y reconciliación preservan orden e identidades? | `<estado>` | `<ref>` |
 | Seguridad/privacidad | ¿No hay secretos, PII o trust-boundary drift? | `<estado>` | `<ref>` |
 | Producto/SEO | ¿Se preservan Home/canonical y no-scope público? | `<estado>` | `<ref>` |
 | Externos | ¿Toda mutación está autorizada y documentada? | `<estado>` | `<ref>` |
@@ -196,6 +228,8 @@ emitió un dictamen. `CHANGES_REQUIRED`, `BLOCKED`, `NOT_ISSUED`, `NOT_RUN`,
 `CAPABILITY_GAP`, `AUTH_BLOCKED`, `HEAD_MISMATCH` u `OPEN_FINDINGS_GT_0`
 bloquean el gate regular. La excepción bootstrap de CI no sustituye ninguna de
 estas condiciones ni convierte `HARNESS_CI_EXACT_HEAD=CAPABILITY_GAP` en PASS.
+`RANQUEL-HARNESS-BOOTSTRAP-001` sólo corresponde a #3, su closeout y el HEAD
+humano autorizado; no se transfiere a otro HEAD ni concede Ready o merge.
 
 No existe `PASS_WITH_CAVEATS`: una limitación material produce
 `CHANGES_REQUIRED` o `BLOCKED`; un riesgo aceptable se documenta con owner y
@@ -211,6 +245,15 @@ CONCLUSION:
   AUDITED_PR_HEAD: "sha completo igual a AUDITED_HEAD"
   INDEPENDENT_REVIEW_HEAD: "sha completo igual a AUDITED_HEAD"
   OPEN_MATERIAL_FINDINGS: "entero >= 0 | UNKNOWN"
+  CLOSEOUT_IDENTITY_AUDIT:
+    V014_STATE: "PASS | estado honesto"
+    HUMAN_GATE_AUTHORIZATION: "NOT_RUN | PASS | BLOCKED"
+    HUMAN_GATE_AUTHORIZED_HEAD: "sha | NOT_CAPTURED"
+    MERGE_AUTHORIZATION: "NOT_GRANTED | GRANTED"
+    MERGE_AUTHORIZED_HEAD: "sha | NOT_CAPTURED"
+    INTEGRATED_SHA: "sha de implementación | NOT_CAPTURED"
+    POST_MERGE_ACCEPTANCE_SHA: "sha igual a INTEGRATED_SHA | NOT_RUN"
+    TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA: "sha igual a INTEGRATED_SHA | NOT_RUN"
   RECONCILIATION_PR_AUDIT:
     RECONCILIATION_PR: "N | NOT_RUN"
     RECONCILIATION_PR_MERGED: "true | false"
@@ -253,18 +296,25 @@ audit verdict `PASS`,
 `RECONCILIATION_AUDITED_HEAD=RECONCILIATION_PR_HEAD` y cero findings materiales.
 Aun con ese handoff,
 `TRUTH_RECONCILIATION_STATE` no puede ser `PASS` hasta que
+`TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`,
 `RECONCILIATION_PR_MERGED=true`, se capture el HEAD efectivamente mergeado y se
 pruebe
 `RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD`.
 El source debe ser `MERGED_PR`; el integrated SHA debe ser el
 `mergeCommit.oid`/`merge_commit_sha` observado en ese mismo
 `RECONCILIATION_PR` y su reachability desde `main` debe ser `YES`. Cualquier
-otra combinación es no-PASS. El modo `NO_DIFF` exige
+otra combinación es no-PASS. Ambos modos exigen V-017 en `PASS`. El modo
+`NO_DIFF` exige
 `TRUTH_RECONCILIATION_MODE=NO_DIFF`,
-`SOURCE_INTEGRATED_SHA=INTEGRATED_SHA` y justificación/evidencia comprobable no
-vacías; no inventa un PR. Sin cualquiera de esas condiciones también es
+`TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA=INTEGRATED_SHA` y
+justificación/evidencia comprobable no vacías; no inventa un PR. El source
+identifica la implementación; `RECONCILIATION_INTEGRATED_SHA` identifica el
+resultado del PR posterior. Sin cualquiera de esas condiciones también es
 no-PASS.
 
 El auditor entrega el dictamen sin ejecutar correcciones. Ready, merge,
 aceptación post-merge, reconciliación de truth y cierre explícito permanecen
-eventos posteriores e independientes.
+eventos separados y posteriores, pero conservan la dependencia de V-014 y de la
+autorización humana del gate y del merge para el HEAD exacto. Un merge no sana
+un dictamen fallido y V-017 usa sólo
+`POST_MERGE_ACCEPTANCE_SHA=INTEGRATED_SHA`.

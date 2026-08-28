@@ -8,23 +8,37 @@ Refs #N
 - Parent/dependencies:
 - Base branch and `BASE_SHA`:
 - Branch:
-- Previous `HEAD` for a repair, if applicable:
+- Candidate kind: `INITIAL | REPAIR`
+- Candidate `HEAD` committed locally and captured immediately after commit:
+- Remote branch `HEAD`:
+- PR `HEAD`:
+- V-011 observed PR number:
+- V-011 `PR_IS_OPEN`: `true | false`
+- V-011 `PR_IS_DRAFT`: `true | false`
+- V-011 Draft PR `HEAD`:
+- V-011 observed at/evidence:
+- Current PR state: `OPEN_DRAFT | OPEN_READY | MERGED | CLOSED_UNMERGED`
+- Exact `HEAD` reviewed:
+- Risk: `LIGHT | STANDARD | HIGH | CRITICAL`
+
+Complete the following fields only when candidate kind is `REPAIR`; do not
+invent them for an initial candidate:
+
+- Previous `HEAD`:
 - `REPAIR_EDIT` candidate paths/reference:
-- `PRE_GATE_WORKTREE_INDEX_ALIGNMENT`: `PASS | FAIL | NOT_APPLICABLE`
+- `GATE_EXECUTION_SOURCE`:
+  `INDEXED_CANDIDATE_IN_WORKTREE | ISOLATED_VALIDATED_TREE`
+- `UNTRACKED_FILES`: `NONE | inventory outside isolated tree`
+- `ISOLATED_VALIDATION_TREE_SHA`: `tree SHA | NOT_APPLICABLE`
+- `PRE_GATE_WORKTREE_INDEX_ALIGNMENT`: `PASS | FAIL`
 - `PRE_GATE_STAGED_TREE_SHA`:
-- `POST_GATE_WORKTREE_INDEX_RECHECK`: `PASS | FAIL | NOT_APPLICABLE` — `NOT_APPLICABLE` only when this is not a repair
+- `POST_GATE_WORKTREE_INDEX_RECHECK`: `PASS | FAIL`
 - `POST_GATE_CURRENT_INDEX_TREE_SHA`:
 - `VALIDATED_STAGED_TREE_SHA` captured only after post-gate recheck `PASS`:
-- `COMMIT_CANDIDATE`:
 - `CAPTURE_NEW_HEAD` — full SHA captured immediately after commit:
 - `NEW_HEAD_TREE_SHA`:
-- `TREE_MATCH`: `PASS | FAIL | NOT_APPLICABLE`
-- Candidate `HEAD` committed locally; equals captured `NEW_HEAD` for a repair:
-- Remote branch `HEAD`:
-- Draft PR `HEAD`:
-- Exact `HEAD` reviewed:
-- Previous `HEAD` evidence reused: `false | NOT_APPLICABLE`
-- Risk: `LIGHT | STANDARD | HIGH | CRITICAL`
+- `TREE_MATCH`: `PASS | FAIL`
+- Previous `HEAD` evidence reused: `false`
 
 If this PR repairs a reviewed commit, record every step for the new candidate:
 
@@ -45,6 +59,13 @@ REPAIR_EDIT
 → INDEPENDENT_REVIEW_REQUEST
 → INDEPENDENT_AUDIT
 ```
+
+An allowlisted untracked file is not part of the candidate. Gates may use the
+worktree only with `UNTRACKED_FILES=NONE`; otherwise they must use an ephemeral
+copy outside the repository created solely from `PRE_GATE_STAGED_TREE_SHA`.
+All ephemeral validators and their evidence or artifacts stay outside the
+repository, and the recheck proves they left no tracked, staged, or untracked
+files. Never add or delete unrelated files automatically.
 
 ## TASK_CONTRACT
 
@@ -116,26 +137,31 @@ in the final column, not in materiality.
 | Command / gate | Result | Evidence or limitation |
 | --- | --- | --- |
 | `git diff --check` | `NOT_RUN` | |
-| Exact staging and staged scope | `NOT_RUN` | |
+| Exact staging and staged scope | `NOT_RUN` | Inventory all untracked; every relevant input is staged |
 | `git diff --cached --check` | `NOT_RUN` | |
 | Secret/privacy scan | `NOT_RUN` | |
 | Affected focal tests | `NOT_RUN` | Pre-gate staged candidate; list every affected test |
 | Affected surface gates | `NOT_RUN` | Same pre-gate staged candidate; list every affected gate |
-| Post-gate worktree/index recheck | `NOT_RUN / NOT_APPLICABLE` | For a repair, run `git diff --quiet`, inventory untracked, repeat cached diff/scope/secrets, and require pre-gate=current-index=validated tree; otherwise justify `NOT_APPLICABLE` |
+| Post-gate worktree/index recheck | `NOT_RUN / NOT_APPLICABLE` | Repair only: worktree requires zero untracked; isolated mode records the staged tree used; then require pre-gate=current-index=validated tree |
 | Unaffected gates | `NOT_APPLICABLE` | Concrete non-materiality reason per gate |
 | Transversal contract matrix | `NOT_RUN / NOT_APPLICABLE` | Full applicable matrix if the contract changed |
-| Commit candidate | `NOT_RUN` | Commit creates the candidate `HEAD` |
-| Capture new `HEAD` | `NOT_RUN` | Full SHA captured immediately after commit |
-| Verify commit tree match | `NOT_RUN` | `TREE_MATCH=PASS` iff new/staged trees are equal |
+| Commit candidate | `NOT_RUN` | Always material; commit creates the candidate `HEAD` |
+| Capture candidate `HEAD` | `NOT_RUN` | Always material; full SHA captured immediately after commit |
+| Verify repair commit tree match | `NOT_RUN / NOT_APPLICABLE` | Repair only: `TREE_MATCH=PASS` iff new/staged trees are equal; initial candidate justifies `NOT_APPLICABLE` without repair fields |
 | Push candidate | `NOT_RUN` | Remote `HEAD` |
-| Draft PR create/update | `NOT_RUN` | Draft PR `HEAD` |
-| Exact-head CI | `NOT_RUN` | |
+| Draft PR create/update | `NOT_RUN` | V-011: open, `PR_IS_DRAFT=true`, exact `HEAD`, time and evidence before human gate |
+| Exact-head CI | `NOT_RUN / CAPABILITY_GAP` | Record `HARNESS_CI_EVIDENCE_USED`; compare real `CI_HEAD` only when true; otherwise `CI_HEAD=NOT_CAPTURED`; Vercel is separate |
 | Independent review request | `REQUIRED` | Exact `HEAD` |
 | Independent review request state | `NOT_RUN` | `PASS / NOT_RUN / CAPABILITY_GAP / AUTH_BLOCKED / BLOCKED` |
 | Independent review execution state | `NOT_RUN` | `PASS / NOT_RUN / CAPABILITY_GAP / AUTH_BLOCKED / BLOCKED` |
 | Independent audit verdict | `NOT_ISSUED` | `PASS / CHANGES_REQUIRED / BLOCKED / NOT_ISSUED` |
 | Audited `HEAD` | `NOT_REVIEWED` | Must equal current `HEAD` |
 | Open material findings | `UNKNOWN` | Must equal `0` for regular human gate |
+
+`RANQUEL-HARNESS-BOOTSTRAP-001` is limited to #3, its sequential closeout and
+the exact HEAD authorized by a human. It preserves `CAPABILITY_GAP`, does not
+turn Vercel contexts into harness CI, and grants neither Ready nor merge to a
+new HEAD.
 
 ## Preview and visual validation
 
@@ -156,6 +182,10 @@ in the final column, not in materiality.
 ## Evidence manifest
 
 - Overall writer state: `SELF_VALIDATED_ONLY`
+- `HARNESS_CI_EVIDENCE_USED`: `false`
+- `HARNESS_CI_EXACT_HEAD`: `CAPABILITY_GAP`
+- `CI_HEAD`: `NOT_CAPTURED`
+- Vercel contexts observed separately from harness CI:
 - `INDEPENDENT_REVIEW_REQUEST=REQUIRED`
 - `INDEPENDENT_REVIEW_REQUESTED`:
 - `INDEPENDENT_REVIEW_REQUEST_STATE`:
@@ -167,6 +197,12 @@ in the final column, not in materiality.
 - `OPEN_MATERIAL_FINDINGS`:
 - Artifacts/links:
 - Known gaps or blocked checks:
+- `HUMAN_GATE_AUTHORIZATION`: `NOT_RUN`
+- `HUMAN_GATE_AUTHORIZED_HEAD`: `NOT_CAPTURED`
+- `HUMAN_GATE_AUTHORIZATION_EVIDENCE`: `NONE`
+- `MERGE_AUTHORIZATION`: `NOT_GRANTED`
+- `MERGE_AUTHORIZED_HEAD`: `NOT_CAPTURED`
+- `MERGE_AUTHORIZATION_EVIDENCE`: `NONE`
 - `HUMAN_MERGE`: `NOT_RUN`
 - `PR_NUMBER`: `NOT_MERGED`
 - `PR_MERGED`: `false`
@@ -180,7 +216,9 @@ in the final column, not in materiality.
 - `INTEGRATED_SHA_REACHABLE_FROM_MAIN`: `NOT_RUN`
 - `MAIN_HEAD_AT_ACCEPTANCE`: `NOT_CAPTURED`
 - `POST_MERGE_ACCEPTANCE_TARGET`: `INTEGRATED_SHA`
-- Post-merge acceptance required:
+- `POST_MERGE_ACCEPTANCE_SHA`: `NOT_RUN`
+- `POST_MERGE_ACCEPTANCE_STATE`: `NOT_RUN`
+- `POST_MERGE_ACCEPTANCE_EVIDENCE`: `NONE`
 - `TRUTH_RECONCILIATION_MODE`: `NOT_RUN`
 - `TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA`: `NOT_RUN`
 - `TRUTH_RECONCILIATION_NO_DIFF_JUSTIFICATION`: `NONE`
@@ -214,12 +252,15 @@ in the final column, not in materiality.
 - [ ] No prohibited external system was mutated.
 - [ ] No secrets, credentials, private URLs, or personal data were committed.
 - [ ] Missing, partial, blocked, unknown, and capability-gap states are not reported as `PASS`.
-- [ ] Local, remote, Draft PR, CI and audit HEADs coincide.
-- [ ] A repair ran from `REPAIR_EDIT` through gates, passed the post-gate worktree/index recheck with pre-gate tree equality, then committed, captured `NEW_HEAD`, verified `TREE_MATCH=PASS` before push, and reused no prior-HEAD evidence.
+- [ ] Local, remote, PR and audit HEADs coincide; `CI_HEAD` also coincides only when a real harness CI run is used as evidence. Otherwise `HARNESS_CI_EXACT_HEAD=CAPABILITY_GAP` and `CI_HEAD=NOT_CAPTURED` remain honest.
+- [ ] V-011 observed the PR open and Draft with its observed HEAD equal to the exact candidate/audited HEAD before the human gate; any later authorized Ready transition is recorded separately.
+- [ ] Every candidate was committed, its HEAD captured and pushed. If and only if this is a repair, it ran from `REPAIR_EDIT` through gates, used a worktree with zero untracked or an isolated staged tree, passed the post-gate recheck, verified `TREE_MATCH=PASS`, and reused no prior-HEAD evidence.
 - [ ] Independent review was requested; request and execution are `PASS`, verdict is `PASS`, audited/current HEADs match, and open material findings are zero before recommending the regular human gate.
-- [ ] Human merge, when run, compares merged, audited and reviewed PR HEADs; integrated SHA comes from the merged PR, not from the current `main` tip.
-- [ ] `NO_DIFF` reconciliation uses `TRUTH_RECONCILIATION_MODE=NO_DIFF`, `SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`, non-empty verifiable justification/evidence, and no fictitious PR.
-- [ ] `MERGED_PR` reconciliation captures the actual merged PR HEAD and proves it equals the PR/request/audit HEADs; request, execution and verdict are `PASS`, findings are zero, and the integrated SHA is the merge result observed from that same `RECONCILIATION_PR`, with source `MERGED_PR` and reachability `YES`; every other combination is non-PASS.
+- [ ] Human merge, when run, preserves V-014 `PASS`, the human gate and a separate `MERGE_AUTHORIZATION=GRANTED` for the same HEAD, then compares merged, audited and reviewed PR HEADs; an observed merge never heals `CHANGES_REQUIRED`.
+- [ ] V-017 uses only `POST_MERGE_ACCEPTANCE_SHA=INTEGRATED_SHA`; no second editable acceptance-SHA key exists.
+- [ ] Both reconciliation modes require V-017 `PASS` and `TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`. `NO_DIFF` adds non-empty evidence/justification and no fictitious PR.
+- [ ] `MERGED_PR` reconciliation captures the actual merged PR HEAD and proves it equals the PR/request/audit HEADs; request, execution and verdict are `PASS`, findings are zero, and `RECONCILIATION_INTEGRATED_SHA` is the merge result observed from that same later PR, with source `MERGED_PR` and reachability `YES`.
+- [ ] V-019 preserves V-014, human authorization and V-015–V-018 in `PASS`; the CI bootstrap exception does not grant Ready or merge automatically.
 - [ ] The PR uses `Refs #N`; no closing keyword can close the issue at merge time.
 - [ ] Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
 
