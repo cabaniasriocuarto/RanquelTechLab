@@ -1,6 +1,6 @@
 # Mapa de capacidades de producto
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/FEATURE_MAP.md` (inventario de capacidades de producto)
 

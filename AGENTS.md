@@ -26,11 +26,13 @@
 6. Report honest evidence states. A writer finishes at
    `SELF_VALIDATED_ONLY`; independent validation and post-merge acceptance are
    separate events.
-7. Open a Draft PR with the owner issue, scope/no-scope, evidence, risk,
-   rollback, and an independent-audit request. Humans decide Ready, merge,
-   deploy, publication, campaigns, secrets, and spending.
-8. After merge, perform acceptance and reconcile affected truth owners before
-   declaring the work done.
+7. Open a Draft PR with a non-closing `Refs #N` reference, the owner issue,
+   scope/no-scope, evidence, risk, rollback, and an independent-audit request.
+   Humans decide Ready, merge, deploy, publication, campaigns, secrets, and
+   spending.
+8. After merge, perform acceptance and reconcile affected truth owners. Only
+   then may an authorized human close the issue explicitly and declare the work
+   done.
 
 ## Universal contracts
 

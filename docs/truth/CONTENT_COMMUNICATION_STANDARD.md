@@ -1,6 +1,6 @@
 # Estándar de contenido, comunicación y marca
 
-Status: CURRENT_IMPLEMENTED_TRUTH
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: docs/truth/CONTENT_COMMUNICATION_STANDARD.md (afirmaciones, fuentes, tono,
 marca y calidad editorial)
@@ -33,9 +33,9 @@ de indexación se consultan en [SEO_CONTRACT.md](SEO_CONTRACT.md).
 
 | Tema | Estado | Regla |
 | --- | --- | --- |
-| Prohibición de afirmaciones inventadas | CURRENT_IMPLEMENTED_TRUTH | Aplica a todo contenido y evidencia |
-| Protección de la identidad de Río Cuarto | CURRENT_IMPLEMENTED_TRUTH | No se diluye ni sustituye por expansión geográfica |
-| Voz y claridad editorial | CURRENT_IMPLEMENTED_TRUTH | Aplica a copy, documentación, formularios y mensajes |
+| Prohibición de afirmaciones inventadas | CURRENT_IN_PROGRESS | Aplica a todo contenido y evidencia cuando el gobierno de #3 sea aceptado |
+| Protección de la identidad de Río Cuarto | CURRENT_IN_PROGRESS | No se diluye ni sustituye por expansión geográfica |
+| Voz y claridad editorial | CURRENT_IN_PROGRESS | Aplica a copy, documentación, formularios y mensajes después de aceptación |
 | Estándar editorial local automatizado | PLANNED_NOT_IMPLEMENTED | #9 debe implementar gates y fixtures |
 | Investigación de las cinco ciudades | PLANNED_NOT_IMPLEMENTED | #13–#18 producen fuentes y briefs aprobados |
 | Imágenes territoriales | PLANNED_NOT_IMPLEMENTED | #10 define origen, licencia, composición y optimización |

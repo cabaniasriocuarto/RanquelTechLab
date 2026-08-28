@@ -1,6 +1,6 @@
 # Start here
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/START_HERE.md` (repository documentation entry point)
 
@@ -38,6 +38,9 @@ media. The canonical code-level inventory is owned by
 The future Geo-SEO platform is planned, not implemented. Its discovery entry is
 [docs/geo-seo/README.md](geo-seo/README.md). Executable harness tooling and CI
 belong to issue #24 and do not exist merely because these governance documents do.
+The mandatory execution order, including the #28 Vercel-topology gate before
+issue #24, is owned only by [NEXT_STEPS.md](truth/NEXT_STEPS.md); an ownership
+reference here never authorizes skipping that gate.
 
 ## Evidence and closeout
 

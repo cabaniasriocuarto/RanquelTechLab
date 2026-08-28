@@ -1,12 +1,12 @@
 # Plantilla de INDEPENDENT_AUDIT
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/harness/INDEPENDENT_AUDIT_TEMPLATE.md` (dictamen independiente exact-head)
 
 La auditoría se realiza en una sesión o agente distinto del writer, sobre exact
 HEAD y en modo read-only. El auditor no repara findings, no amplía scope, no
-marca Ready, no mergea y no muta sistemas externos.
+marca Ready, no mergea, no cierra la issue y no muta sistemas externos.
 
 ## 1. Identidad del dictamen
 
@@ -95,10 +95,8 @@ de capacidad se listan por separado y pueden justificar `BLOCKED`.
 
 ```yaml
 COVERAGE:
-  CHANGED_SURFACES_REVIEWED:
-    - "surface"
-  REQUIRED_DISCIPLINES_COVERED:
-    - "disciplina"
+  DISCIPLINES_D01_D12_REVIEWED:
+    - "D01 | ... | D12 — nombre canónico — MATERIAL | NOT_APPLICABLE"
   OMITTED_OR_BLOCKED_CHECKS:
     - "check, estado y causa | NONE"
 
@@ -114,7 +112,7 @@ Un check bloqueado no se compensa con resultados exitosos de otra superficie.
 
 - `PASS`: exact HEAD revisado, evidencia suficiente, contrato satisfecho y sin
   findings que requieran cambio. Permite registrar `INDEPENDENTLY_VALIDATED`,
-  pero no decide Ready ni merge.
+  pero no decide Ready, merge ni cierre de la issue.
 - `CHANGES_REQUIRED`: existe al menos un finding que debe corregirse. El writer
   crea un HEAD nuevo y la auditoría se repite.
 - `BLOCKED`: no puede emitirse un dictamen fiable por HEAD incorrecto, evidencia
@@ -141,8 +139,10 @@ CONCLUSION:
   HUMAN_DECISION_REQUIRED: true
   READY_RECOMMENDATION: "ELIGIBLE_FOR_HUMAN_REVIEW | DO_NOT_MARK_READY | BLOCKED"
   MERGE_PERFORMED: false
+  ISSUE_CLOSED: false
   EXTERNAL_MUTATIONS_PERFORMED: false
 ```
 
-El auditor entrega el dictamen sin ejecutar correcciones. La decisión humana y
-la aceptación post-merge permanecen eventos posteriores e independientes.
+El auditor entrega el dictamen sin ejecutar correcciones. Ready, merge,
+aceptación post-merge, reconciliación de truth y cierre explícito permanecen
+eventos posteriores e independientes.

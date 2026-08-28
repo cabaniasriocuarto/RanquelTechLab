@@ -94,21 +94,21 @@ body:
     id: changed_surfaces
     attributes:
       label: Changed surfaces
-      description: Select every material surface; justify omissions in the issue body.
+      description: Select every material D01-D12 discipline; the canonical names come from INTERDISCIPLINARY_REVIEW_MATRIX.md.
       multiple: true
       options:
-        - Documentation and governance
-        - Product and commercial behavior
-        - Architecture and generated output
-        - Frontend and UX
-        - Accessibility
-        - SEO and indexation
-        - Content and communication
-        - Marketing and CRO
-        - Analytics and Ads
-        - Performance and media
-        - API, security, and privacy
-        - Release and deployment
+        - D01 — Producto, negocio y estrategia comercial
+        - D02 — Arquitectura de software e información
+        - D03 — Frontend, UX responsive y diseño
+        - D04 — Accesibilidad
+        - D05 — SEO técnico y SEO local
+        - D06 — Contenido, comunicación y marca
+        - D07 — Marketing y CRO
+        - D08 — GA4, GTM, atribución y conversiones
+        - D09 — Google Ads
+        - D10 — Performance y Core Web Vitals
+        - D11 — Seguridad y privacidad
+        - D12 — QA, release, rollback y auditoría independiente
     validations:
       required: true
 
@@ -263,7 +263,7 @@ body:
     id: definition_of_done
     attributes:
       label: Definition of Done
-      description: Include merge, acceptance, and truth reconciliation when applicable.
+      description: "Include merge, post-merge acceptance, truth reconciliation, and explicit human issue close; PRs use non-closing Refs #N."
     validations:
       required: true
 
@@ -274,5 +274,5 @@ body:
       options:
         - label: I did not include secrets, tokens, credentials, or personal data.
           required: true
-        - label: Ready, merge, deploy, publication, campaigns, and spending remain human decisions.
+        - label: Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
           required: true

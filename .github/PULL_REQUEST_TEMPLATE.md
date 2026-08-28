@@ -1,6 +1,6 @@
 # Pull request contract
 
-Closes #
+Refs #N
 
 ## Issue and exact head
 
@@ -34,18 +34,18 @@ Closes #
 
 | Surface | Materiality | Required disciplines/gates | Result and evidence |
 | --- | --- | --- | --- |
-| Documentation/governance | `MATERIAL / NOT_APPLICABLE` | | |
-| Product/commercial | `MATERIAL / NOT_APPLICABLE` | | |
-| Architecture/generated output | `MATERIAL / NOT_APPLICABLE` | | |
-| Frontend/UX | `MATERIAL / NOT_APPLICABLE` | | |
-| Accessibility | `MATERIAL / NOT_APPLICABLE` | | |
-| SEO/indexation | `MATERIAL / NOT_APPLICABLE` | | |
-| Content/communication | `MATERIAL / NOT_APPLICABLE` | | |
-| Marketing/CRO | `MATERIAL / NOT_APPLICABLE` | | |
-| Analytics/Ads | `MATERIAL / NOT_APPLICABLE` | | |
-| Performance/media | `MATERIAL / NOT_APPLICABLE` | | |
-| API/security/privacy | `MATERIAL / NOT_APPLICABLE` | | |
-| Release/deployment | `MATERIAL / NOT_APPLICABLE` | | |
+| D01 — Producto, negocio y estrategia comercial | `MATERIAL / NOT_APPLICABLE` | | |
+| D02 — Arquitectura de software e información | `MATERIAL / NOT_APPLICABLE` | | |
+| D03 — Frontend, UX responsive y diseño | `MATERIAL / NOT_APPLICABLE` | | |
+| D04 — Accesibilidad | `MATERIAL / NOT_APPLICABLE` | | |
+| D05 — SEO técnico y SEO local | `MATERIAL / NOT_APPLICABLE` | | |
+| D06 — Contenido, comunicación y marca | `MATERIAL / NOT_APPLICABLE` | | |
+| D07 — Marketing y CRO | `MATERIAL / NOT_APPLICABLE` | | |
+| D08 — GA4, GTM, atribución y conversiones | `MATERIAL / NOT_APPLICABLE` | | |
+| D09 — Google Ads | `MATERIAL / NOT_APPLICABLE` | | |
+| D10 — Performance y Core Web Vitals | `MATERIAL / NOT_APPLICABLE` | | |
+| D11 — Seguridad y privacidad | `MATERIAL / NOT_APPLICABLE` | | |
+| D12 — QA, release, rollback y auditoría independiente | `MATERIAL / NOT_APPLICABLE` | | |
 
 Declare D01–D12 individually. Every `NOT_APPLICABLE` needs a concrete reason;
 validation results belong in the final column, not in materiality.
@@ -97,6 +97,8 @@ validation results belong in the final column, not in materiality.
 - Artifacts/links:
 - Known gaps or blocked checks:
 - Post-merge acceptance required:
+- Truth reconciliation required:
+- Explicit issue close owner after both steps:
 
 ## Risks and rollback
 
@@ -110,7 +112,8 @@ validation results belong in the final column, not in materiality.
 - [ ] No prohibited external system was mutated.
 - [ ] No secrets, credentials, private URLs, or personal data were committed.
 - [ ] Missing, partial, blocked, unknown, and capability-gap states are not reported as `PASS`.
-- [ ] Ready, merge, deploy, publication, campaigns, and spending remain human decisions.
+- [ ] The PR uses `Refs #N`; no closing keyword can close the issue at merge time.
+- [ ] Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
 
 ## Independent audit request
 

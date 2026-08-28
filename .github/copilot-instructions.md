@@ -12,8 +12,9 @@ path. This file is a compatibility router, not a second policy source.
 - Preserve honest evidence states. Missing or blocked work is never `PASS`.
 - Keep product truth in its canonical owner under `docs/truth/**`; link instead
   of duplicating it here.
-- Agents may prepare a Draft PR. Humans decide Ready, merge, deploy, secrets,
-  publication, campaigns, and spending.
+- Agents may prepare a Draft PR with a non-closing `Refs #N` reference. Humans
+  decide Ready, merge, explicit issue close after post-merge acceptance and
+  truth reconciliation, deploy, secrets, publication, campaigns, and spending.
 
 Routing:
 

@@ -1,18 +1,19 @@
 # Registro de decisiones
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/DECISION_LOG.md` (decisiones durables de ingeniería y gobierno)
 
 Este registro conserva decisiones que cambian autoridad, ownership, secuencia o
-límites del repositorio. No almacena SHAs, previews ni resultados transitorios.
-En una rama o Draft PR, una entrada describe la decisión propuesta hasta que el
-cambio se integra a `main`.
+límites del repositorio. No almacena SHAs, IDs/URLs de preview ni resultados
+transitorios; sí puede registrar una decisión durable sobre un side effect
+acotado sin duplicar sus detalles volátiles. En una rama o Draft PR, una entrada
+describe la decisión propuesta hasta que el cambio se integra a `main`.
 
 ## D-001 — Fuente de verdad y routers jerárquicos
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: agentes y humanos necesitan el mismo punto de entrada sin depender
   de memoria de chats ni repetir contratos mutables.
 - Decisión: la autoridad sigue el orden instrucción humana vigente, issue y
@@ -25,7 +26,7 @@ cambio se integra a `main`.
 ## D-002 — Un owner por tipo de verdad
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: duplicar inventarios y contratos favorece contradicciones.
 - Decisión: [INDEX.md](INDEX.md) registra exactamente un owner por tipo de
   verdad. Los índices y documentos de apoyo enlazan al owner en vez de copiar su
@@ -36,7 +37,7 @@ cambio se integra a `main`.
 ## D-003 — Estados honestos y separación de roles
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: commit, CI parcial o Draft PR no prueban aceptación independiente ni
   funcionamiento externo.
 - Decisión: los estados documentales y de evidencia se usan literalmente. El
@@ -48,12 +49,12 @@ cambio se integra a `main`.
 ## D-004 — Hitos administrativos y ubicación de la épica
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: la épica #2 atraviesa M0–M4, pero GitHub permite asociar una issue a
   un solo milestone.
 - Decisión: asignar #2 a `M0 — Gobierno, harness y baseline`, donde nace y se
-  gobierna la épica. Las issues #3–#26 se asocian al milestone indicado por su
-  bloque de trabajo; #25 pertenece a M4 y #26 a M0.
+  gobierna la épica. Las issues de la épica se asocian al milestone indicado
+  por su bloque de trabajo; #25 pertenece a M4 y #26/#28 a M0.
 - Consecuencia: el milestone de #2 no significa que su alcance termine en M0;
   la cobertura completa se representa mediante sub-issues y
   [NEXT_STEPS.md](NEXT_STEPS.md).
@@ -61,20 +62,20 @@ cambio se integra a `main`.
 ## D-005 — Jerarquía nativa de la épica
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: las checklists textuales no ofrecen por sí solas parenthood nativo ni
   progreso agregado.
 - Decisión: #2 tiene como hijos directos, en este orden,
-  `#3, #24, #4, #26, #5, #6, #7, #8, #9, #10, #13, #19, #20, #11, #12, #21, #22, #23, #25`;
-  #13 tiene `#14, #15, #16, #17, #18`. #24 debe permanecer inmediatamente entre
-  #3 y #4; #26 debe permanecer inmediatamente entre #4 y #5.
+  `#3, #28, #24, #4, #26, #5, #6, #7, #8, #9, #10, #13, #19, #20, #11, #12, #21, #22, #23, #25`;
+  #13 tiene `#14, #15, #16, #17, #18`. La secuencia M0 preserva
+  `#3 → #28 → #24 → #4 → #26 → #5`.
 - Consecuencia: la administración es idempotente y fail-closed: no reemplaza un
   parent inesperado, no elimina relaciones ajenas y no cierra issues.
 
 ## D-006 — Compatibilidad de instrucciones sin segunda autoridad
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: distintas herramientas descubren instrucciones mediante archivos
   diferentes.
 - Decisión: adoptar `.github/copilot-instructions.md` como router de
@@ -87,7 +88,7 @@ cambio se integra a `main`.
 ## D-007 — Separación entre gobierno documental y harness ejecutable
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: #3 define el mapa estable; implementar automatización aquí mezclaría
   scope y adelantaría decisiones de seguridad de CI.
 - Decisión: scripts, schemas ejecutables, fixtures, gates automáticos y workflows
@@ -99,7 +100,7 @@ cambio se integra a `main`.
 ## D-008 — Producto y sistemas externos fuera de #3
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: gobierno documental no debe alterar SEO, producto o producción.
 - Decisión: #3 no modifica HTML, CSS, JavaScript, APIs de producto, Vercel, DNS,
   Search Console, GA4, GTM, Google Ads ni `feat/bilingual-site`.
@@ -109,7 +110,7 @@ cambio se integra a `main`.
 ## D-009 — Golden SEO y paridad como owners separados
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: la decisión humana de #26 exige proteger la configuración ganadora
   de Río Cuarto sin confundir código presente, estado live y causalidad SEO.
 - Decisión: reservar [SEO_GOLDEN_BASELINE.md](SEO_GOLDEN_BASELINE.md) para
@@ -121,6 +122,21 @@ cambio se integra a `main`.
   arquetipo y evidencia aplicables. La interfaz bilingüe presente en `main` se
   clasifica con evidencia; no se presupone como señal ganadora ni se reintegra
   otra rama.
+
+## D-010 — Topología Vercel separada de #3
+
+- Fecha: 2026-08-27.
+- Status: `CURRENT_IN_PROGRESS`.
+- Contexto: la integración preexistente generó cinco previews automáticos para
+  el Draft PR #27 y originó `F-PR-001`; la decisión humana vigente creó #28 para
+  aislar esa topología antes del harness ejecutable.
+- Decisión: los cinco previews actuales se conservan. #3 no los limpia, borra,
+  promueve ni reconfigura. La prueba de proyecto canónico, la topología Vercel y
+  cualquier remediación pertenecen exclusivamente a #28, ubicada entre #3 y
+  #24.
+- Consecuencia: #3 mantiene cero mutaciones Vercel y no ejecuta #28. Proyecto
+  canónico, lineage de producción y equivalencia de configuración permanecen
+  sin afirmar en estos owners hasta que #28 produzca evidencia y aceptación.
 
 ## Cómo agregar una decisión
 

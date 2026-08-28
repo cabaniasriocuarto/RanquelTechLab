@@ -1,6 +1,6 @@
 # Matriz de pruebas
 
-Status: CURRENT_IMPLEMENTED_TRUTH
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: docs/truth/TESTING_MATRIX.md (selección de pruebas por superficie)
 
@@ -178,5 +178,6 @@ El auditor independiente revisa; no repara dentro del dictamen.
 
 La matriz final del manifest debe enumerar criterio, prueba, entorno, resultado,
 estado de evidencia, artefacto y limitación. SELF_VALIDATED_ONLY es el máximo
-estado emitido por el writer. Merge, deploy y aceptación post-merge son eventos
-humanos separados.
+estado emitido por el writer. Merge, deploy, aceptación post-merge,
+reconciliación de truth y cierre explícito de la issue son eventos humanos
+separados.

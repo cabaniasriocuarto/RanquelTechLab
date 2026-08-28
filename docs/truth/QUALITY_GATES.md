@@ -1,6 +1,6 @@
 # Gates de calidad, riesgo y evidencia
 
-Status: CURRENT_IMPLEMENTED_TRUTH
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: docs/truth/QUALITY_GATES.md (niveles de riesgo, secuencia de gates y
 semántica de evidencia)
@@ -32,6 +32,7 @@ Toda tarea sigue este orden:
 11. HUMAN_GATE
 12. POST_MERGE_ACCEPTANCE
 13. TRUTH_RECONCILIATION
+14. EXPLICIT_ISSUE_CLOSE
 
 Un paso posterior no sana uno anterior fallido. Commit, push, Draft PR, CI verde
 o preview aislado no equivalen a DONE.
@@ -175,13 +176,16 @@ BLOCKED, con severidad, evidencia, path y criterio de cierre.
 
 ### HUMAN_GATE
 
-Una persona decide Ready, merge, deploy, secretos, DNS, Search Console,
-Analytics, Ads, publicación y gasto. El silencio no es autorización.
+Una persona decide Ready, merge, cierre explícito de la issue, deploy, secretos,
+DNS, Search Console, Analytics, Ads, publicación y gasto. El silencio no es
+autorización.
 
-### POST_MERGE_ACCEPTANCE y TRUTH_RECONCILIATION
+### POST_MERGE_ACCEPTANCE, TRUTH_RECONCILIATION y EXPLICIT_ISSUE_CLOSE
 
 Verifican lo integrado o publicado, no el Draft PR. Se actualizan owners e
-historia sin anticipar resultados externos.
+historia sin anticipar resultados externos. Sólo después una persona autorizada
+cierra la issue explícitamente. Los PRs usan `Refs #N`; las closing keywords no
+son compatibles con esta secuencia.
 
 ## Evidencia requerida
 
@@ -226,4 +230,5 @@ Detenerse ante:
 - El writer termina en SELF_VALIDATED_ONLY.
 - Ready, merge y publicación continúan siendo humanos incluso con
   INDEPENDENTLY_VALIDATED.
-- DONE exige aceptación post-merge y truth reconciliada, no sólo cierre técnico.
+- DONE exige aceptación post-merge, truth reconciliada y cierre humano
+  explícito, no sólo merge o cierre técnico automático.

@@ -1,8 +1,10 @@
 # SEO parity and Home regression contract
 
-Status: `PLANNED_NOT_IMPLEMENTED`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/SEO_PARITY_CONTRACT.md` (golden SEO comparison and publication decisions)
+
+Implementation state: `PLANNED_NOT_IMPLEMENTED`
 
 ## Ownership boundary
 

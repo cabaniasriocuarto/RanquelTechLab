@@ -1,6 +1,6 @@
 # Próximos pasos
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/NEXT_STEPS.md` (orden del backlog, puertas y bloqueos)
 
@@ -12,25 +12,31 @@ el cambio todavía no es verdad de `main`.
 
 | Orden | Issue | Estado documental | Condición para avanzar |
 | --- | --- | --- | --- |
-| 1 | #3 — Gobierno y documentación | `CURRENT_IN_PROGRESS` | Merge humano, aceptación post-merge y reconciliación de truth |
-| 2 | #24 — Harness ejecutable | `BLOCKED` | #3 integrada; es el siguiente bloque obligatorio |
-| 3 | #4 — Baseline de producción | `BLOCKED` | #24 integrada y operativa |
-| 4 | #26 — Golden SEO y paridad | `BLOCKED` | #4 integrada y baseline bruto disponible |
+| 1 | #3 — Gobierno y documentación | `CURRENT_IN_PROGRESS` | Merge humano, aceptación post-merge, reconciliación de truth y cierre explícito |
+| 2 | #28 — Topología Vercel | `BLOCKED` | #3 aceptada; conservar los cinco previews y ejecutar #28 en scope propio |
+| 3 | #24 — Harness ejecutable | `BLOCKED` | #28 integrada y su topología aceptada |
+| 4 | #4 — Baseline de producción | `BLOCKED` | #24 integrada y operativa |
+| 5 | #26 — Golden SEO y paridad | `BLOCKED` | #4 integrada y baseline bruto disponible |
+| 6 | #5 — Arquitectura de localidades | `BLOCKED` | #26 integrada y sus gates aplicables definidos |
+
+La secuencia M0 canónica es `#3 → #28 → #24 → #4 → #26 → #5`.
 
 No debe comenzar implementación de producto Geo-SEO antes de integrar las
-issues #3 y #24. La issue #4 no puede adelantarse a #24 ni ejecutarse en
-paralelo con ella. Las issues #5, #7, #19 y #20 no pueden avanzar sin integrar
-la issue #26.
+issues #3, #28 y #24. #28 no se ejecuta dentro de #3 y #24 no se adelanta a la
+issue #28. La issue #4 no puede adelantarse a #24 ni ejecutarse en paralelo con ella.
+Las issues #5, #7, #19 y #20 no pueden avanzar sin integrar la issue #26.
 
 ## Backlog ordenado
 
 ### M0 — Gobierno, harness y baseline
 
 1. #3 — Instalar gobierno, `AGENTS.md` y documentación fuente de verdad.
-2. #24 — Implementar contratos, gates, CI y auditoría independiente.
-3. #4 — Capturar baseline SEO, analítica, rutas, seguridad, performance y
+2. #28 — Auditar y consolidar la topología Vercel en scope externo propio,
+   conservando los cinco previews actuales.
+3. #24 — Implementar contratos, gates, CI y auditoría independiente.
+4. #4 — Capturar baseline SEO, analítica, rutas, seguridad, performance y
    rollback de producción.
-4. #26 — Congelar el Golden SEO Baseline de Río Cuarto y definir el contrato de
+5. #26 — Congelar el Golden SEO Baseline de Río Cuarto y definir el contrato de
    paridad sin cambiar producto.
 
 ### M1 — Plataforma Geo-SEO
@@ -73,6 +79,7 @@ con dependencias:
 ```text
 #2
 ├── #3
+├── #28
 ├── #24
 ├── #4
 ├── #26
@@ -99,7 +106,7 @@ con dependencias:
 ```
 
 El orden directo requerido de #2 es
-`#3, #24, #4, #26, #5, #6, #7, #8, #9, #10, #13, #19, #20, #11, #12, #21, #22, #23, #25`.
+`#3, #28, #24, #4, #26, #5, #6, #7, #8, #9, #10, #13, #19, #20, #11, #12, #21, #22, #23, #25`.
 El orden directo de #13 es `#14, #15, #16, #17, #18`. La relación nativa se
 crea de forma idempotente: consultar, agregar sólo faltantes, no reemplazar un
 parent inesperado y verificar el orden final. No se cierran issues como parte de
@@ -111,6 +118,9 @@ esa administración.
   propios.
 - Las dependencias declaradas en la issue mandan aunque el orden visual de la
   jerarquía sea distinto.
+- #28 depende de #3 y bloquea #24. Los cinco previews actuales de PR #27 se
+  conservan; cleanup, borrado, promoción o reconfiguración están prohibidos en
+  #3. La topología Vercel y su eventual remediación pertenecen a #28.
 - #26 depende de #3, #24 y #4; bloquea #5, #7, #19 y #20. Sus owners de baseline
   y paridad permanecen planificados hasta ejecutar esa issue.
 - #14–#18 pueden avanzar en paralelo sólo después de integrar #9 y #10 y
@@ -126,6 +136,7 @@ esa administración.
 ## Reconciliación
 
 Después de cada merge, confirmar el estado real de la issue, sus dependencias y
-la aceptación post-merge. Actualizar este owner sólo cuando cambie la secuencia
-canónica; resultados volátiles, SHAs y URLs de preview permanecen en la issue,
-el PR o su manifiesto de evidencia.
+la aceptación post-merge; reconciliar truth y sólo entonces habilitar el cierre
+humano explícito. Actualizar este owner sólo cuando cambie la secuencia canónica;
+resultados volátiles, SHAs y URLs de preview permanecen en la issue, el PR o su
+manifiesto de evidencia.

@@ -1,6 +1,6 @@
 # Contrato de marketing, analítica y publicidad
 
-Status: CURRENT_IMPLEMENTED_TRUTH
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: docs/truth/MARKETING_ANALYTICS_CONTRACT.md (CRO, eventos, atribución,
 conversiones, GA4, GTM y Google Ads)
@@ -41,7 +41,7 @@ siempre son decisiones humanas.
 | --- | --- | --- |
 | Presencia de etiquetas y hooks de eventos en código | CURRENT_IMPLEMENTED_TRUTH | FEATURE_MAP inventaría la capacidad observable |
 | Baseline exhaustivo y recepción externa de eventos | PENDING_TO_VALIDATE | #4 registra código, configuración y observación por separado |
-| Contrato de cero PII y deduplicación | CURRENT_IMPLEMENTED_TRUTH | Este documento y SECURITY_PRIVACY_MODEL |
+| Contrato de cero PII y deduplicación | CURRENT_IN_PROGRESS | Este documento y SECURITY_PRIVACY_MODEL dentro del Draft de #3 |
 | Taxonomía por ciudad, provincia, servicio y CTA | PLANNED_NOT_IMPLEMENTED | #11 |
 | Dimensiones y key events en GA4 | PLANNED_NOT_IMPLEMENTED | #11 con aprobación humana externa |
 | Conversiones importadas o nativas de Ads | PLANNED_NOT_IMPLEMENTED | #11/#12 con aprobación humana |

@@ -1,6 +1,6 @@
 # Plantilla de TASK_CONTRACT
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/harness/TASK_CONTRACT_TEMPLATE.md` (estructura canónica del contrato de tarea)
 
@@ -70,21 +70,17 @@ TASK_CONTRACT:
     - "sistema y mutaciones prohibidas"
 
   8_CHANGED_SURFACES:
-    - SURFACE: "docs | content | frontend_ui | seo | analytics | ads | api | security | generated_output | deployment"
-      MATERIALITY: "MATERIAL | NOT_APPLICABLE"
-      RATIONALE: "por qué"
-      REQUIRED_DISCIPLINES:
-        - "disciplina seleccionada por la matriz"
-
-  INTERDISCIPLINARY_CLASSIFICATION:
-    - DISCIPLINE_ID: "D01 | D02 | ... | D12; incluir las doce filas"
-      MATERIALITY: "MATERIAL | NOT_APPLICABLE"
-      ACTIVATING_SURFACE: "changed surface o justificación concreta"
-      CONTRACT_AND_ACCEPTANCE: "owner y criterio"
-      RISK_AND_GATE: "nivel/gate seleccionado"
-      REQUIRED_EVIDENCE: "evidencia esperada"
-      REVIEWER_OR_AUTHORITY: "rol requerido"
-      STOP_CONDITION: "condición específica"
+    CANONICAL_OWNER: "docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md"
+    DISCIPLINES:
+      - DISCIPLINE_ID: "D01 | D02 | ... | D12; incluir exactamente las doce filas en orden"
+        DISCIPLINE_NAME: "nombre canónico copiado del owner"
+        MATERIALITY: "MATERIAL | NOT_APPLICABLE"
+        ACTIVATING_EFFECT: "efecto real o justificación concreta"
+        CONTRACT_AND_ACCEPTANCE: "owner y criterio"
+        RISK_AND_GATE: "nivel/gate seleccionado"
+        REQUIRED_EVIDENCE: "evidencia esperada"
+        REVIEWER_OR_AUTHORITY: "rol requerido"
+        STOP_CONDITION: "condición específica"
 
   SEO_INDEXABLE_CONTEXT:
     APPLIES: "true | false con justificación"
@@ -153,9 +149,9 @@ TASK_CONTRACT:
     - "staging exacto y rechecks completados"
     - "validaciones con estados honestos"
     - "manifiesto de evidencia completo"
-    - "Draft PR con issue owner, scope/no-scope, riesgo y rollback"
+    - "Draft PR con Refs #N no autocerrante, issue owner, scope/no-scope, riesgo y rollback"
     - "auditoría independiente solicitada cuando corresponda"
-    - "sin Ready, merge, deploy o cierre no autorizados"
+    - "sin Ready, merge, deploy o cierre no autorizados; cierre humano sólo después de aceptación y reconciliación"
 ```
 
 ## Reglas de completado
@@ -173,8 +169,9 @@ TASK_CONTRACT:
 7. **Sistemas prohibidos:** incluye deploy, DNS, Analytics, Ads y secretos cuando
    no son scope.
 8. **Changed surfaces:** se determina por efecto real, no por extensión del
-   archivo. Toda marca `NOT_APPLICABLE` se justifica y D01–D12 se declaran
-   individualmente según la
+   archivo. No se mantiene un enum paralelo: D01–D12 son las únicas claves de
+   clasificación, toda marca `NOT_APPLICABLE` se justifica y las doce se
+   declaran individualmente según la
    [matriz interdisciplinaria](../truth/INTERDISCIPLINARY_REVIEW_MATRIX.md). Si
    SEO/indexación es material, completa además los campos de
    [SEO_PARITY_CONTRACT.md](../truth/SEO_PARITY_CONTRACT.md); un gate todavía no

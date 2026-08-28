@@ -1,12 +1,13 @@
 # Changelog de documentación canónica
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/CHANGELOG.md` (historial de cambios en truth e instrucciones)
 
 Este archivo registra cambios durables de los owners documentales. No reemplaza
-el historial Git ni almacena SHAs, previews, conteos de tests o resultados
-volátiles.
+el historial Git ni almacena SHAs, IDs/URLs de preview, conteos de tests o
+resultados volátiles. Puede registrar una decisión humana durable sobre un side
+effect acotado sin copiar sus detalles operativos.
 
 ## Unreleased — issue #3
 
@@ -20,23 +21,28 @@ Status: `CURRENT_IN_PROGRESS`
   marketing/analítica, seguridad/privacidad, testing, quality gates, revisión
   interdisciplinaria, backlog, decisiones, workflow y release/rollback.
 - Owners reservados para el Golden SEO Baseline y el contrato de paridad de
-  #26, ambos explícitamente `PLANNED_NOT_IMPLEMENTED`.
+  #26; los owners están `CURRENT_IN_PROGRESS` en este Draft y las capacidades
+  que reservan siguen `PLANNED_NOT_IMPLEMENTED`.
 - Plantillas canónicas de `TASK_CONTRACT`, manifiesto de evidencia y auditoría
   independiente.
 - Frontera de planeamiento Geo-SEO, marcada `PLANNED_NOT_IMPLEMENTED`.
 - Gobierno inicial de GitHub: instrucciones compatibles, issue forms, PR
   template, milestones, labels y jerarquía nativa cuando la API lo permite.
+- Lifecycle no autocerrante: `Refs #N`, aceptación post-merge, reconciliación de
+  truth y cierre humano explícito como eventos separados.
 
 ### Decisions
 
-- #24 es el siguiente bloque obligatorio antes de #4 y conserva ownership de
-  scripts, gates ejecutables y workflows.
+- #28 es el siguiente bloque obligatorio después de #3 y antes de #24; conserva
+  los cinco previews actuales y es el owner de la topología Vercel.
+- #24 sigue después de #28 y antes de #4, con ownership de scripts, gates
+  ejecutables y workflows.
 - #2 se asigna a M0 por la limitación de un milestone por issue; #25 pertenece a
   M4.
 - `.github/copilot-instructions.md` actúa como router; no se agregan por ahora
   `.github/instructions/**` ni `.github/agents/**` para evitar duplicación.
-- La jerarquía nativa coloca #24 inmediatamente entre #3 y #4 y anida #14–#18
-  bajo #13; el addendum vigente agrega #26 inmediatamente entre #4 y #5.
+- La jerarquía nativa preserva `#3 → #28 → #24 → #4 → #26 → #5` y anida
+  #14–#18 bajo #13.
 - #26 pertenece a M0 y bloquea #5, #7, #19 y #20; templates y formularios
   capturan contexto SEO/paridad sin implementar ni aprobar el gate.
 
@@ -44,12 +50,15 @@ Status: `CURRENT_IN_PROGRESS`
 
 - Producto público: HTML, CSS, JavaScript, APIs, rutas y páginas de ciudades.
 - `feat/bilingual-site` y otros PRs o ramas.
-- Vercel, DNS, Search Console, GA4, GTM y Google Ads.
+- Configuración Vercel, DNS, Search Console, GA4, GTM y Google Ads. Los cinco
+  previews de PR #27 se conservan y no se limpian ni promueven dentro de #3.
 - Scripts, schemas, CI o workflows ejecutables del harness.
 
-Este bloque pasa a una entrada integrada sólo después del merge humano y la
-reconciliación post-merge. Mientras el cambio sea Draft PR, no se presenta como
-verdad de `main`.
+Este bloque pasa a una entrada integrada sólo después del merge humano, la
+aceptación y la reconciliación post-merge. Mientras el cambio sea Draft PR, sus
+documentos y decisiones permanecen `CURRENT_IN_PROGRESS`; la promoción de
+estados se prepara, pero no se ejecuta aquí. El cierre de #3 es posterior,
+explícito y humano.
 
 ## Política de actualización
 

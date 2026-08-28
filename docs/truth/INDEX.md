@@ -1,6 +1,6 @@
 # Truth owner registry
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/INDEX.md` (owner registry and discovery only)
 

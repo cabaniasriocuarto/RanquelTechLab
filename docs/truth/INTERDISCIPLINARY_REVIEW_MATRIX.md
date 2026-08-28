@@ -1,6 +1,6 @@
 # Matriz de revisión interdisciplinaria
 
-Status: CURRENT_IMPLEMENTED_TRUTH
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md (selección de disciplinas
 materiales por changed surface)
@@ -87,7 +87,7 @@ Revisa estructura semántica, navegación por teclado, foco visible y lógico,
 nombres accesibles, contraste, alt, zoom y reduced motion. Automatización sola
 no obtiene PASS.
 
-### D05 — SEO técnico y local
+### D05 — SEO técnico y SEO local
 
 Aplica [SEO_CONTRACT.md](SEO_CONTRACT.md). Protege la Home/canonical de Río
 Cuarto, rastreabilidad, indexación coherente y valor local; detiene doorway,

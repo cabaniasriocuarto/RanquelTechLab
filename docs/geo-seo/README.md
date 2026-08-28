@@ -1,8 +1,10 @@
 # Geo-SEO: frontera de planeamiento
 
-Status: `PLANNED_NOT_IMPLEMENTED`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/geo-seo/README.md` (descubrimiento del programa Geo-SEO; no duplica contratos)
+
+Estado de implementación: `PLANNED_NOT_IMPLEMENTED`
 
 La expansión Geo-SEO pertenece a la épica #2. Este directorio sólo orienta
 hacia owners e issues; issue #3 no crea páginas de ciudades, generador, datos de
@@ -31,6 +33,7 @@ Para inventario implementado consultar
 | Issue | Responsabilidad futura |
 | --- | --- |
 | #3 | Gobierno documental y administrativo |
+| #28 | Topología Vercel; conserva los cinco previews actuales y se ejecuta antes de #24 |
 | #24 | Harness ejecutable, gates y CI; obligatorio antes de #4 |
 | #4 | Baseline verificable de producción y rollback |
 | #26 | Golden SEO Baseline, arquetipos y contrato de paridad; bloquea #5/#7/#19/#20 |

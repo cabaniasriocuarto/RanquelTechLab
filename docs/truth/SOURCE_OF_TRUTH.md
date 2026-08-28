@@ -1,6 +1,6 @@
 # Fuente de verdad, estados documentales y evidencia
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/SOURCE_OF_TRUTH.md` (autoridad y semántica de estados)
 
@@ -94,8 +94,12 @@ exactamente como aparecen aquí.
 ### Reglas de uso de estados documentales
 
 - Cada documento canónico lleva `Status` y `Owner` explícitos.
+- Un documento o decisión que existe sólo en una rama o Draft PR conserva
+  `CURRENT_IN_PROGRESS`, aunque inventaríe hechos preexistentes de `main` con
+  `CURRENT_IMPLEMENTED_TRUTH` o capacidades futuras con
+  `PLANNED_NOT_IMPLEMENTED`.
 - Un owner puede inventariar filas con estados diferentes aunque su propio
-  estado sea `CURRENT_IMPLEMENTED_TRUTH`.
+  estado sea `CURRENT_IN_PROGRESS` durante el Draft.
 - `CURRENT_IN_PROGRESS` nunca se presenta como verdad de `main`, merge, deploy o
   aceptación.
 - `CURRENT_IMPLEMENTED_TRUTH` nunca se promueve automáticamente a verificación
@@ -109,6 +113,18 @@ exactamente como aparecen aquí.
   un contrato o autorización.
 - Los claims visibles en HTML son hechos de contenido implementado, no prueba de
   que el claim sea verdadero fuera del repositorio.
+
+### Transición post-merge y cierre
+
+La transición no se ejecuta dentro del Draft que crea el documento. Después del
+merge se identifica el SHA integrado, se completa `POST_MERGE_ACCEPTANCE` y se
+ejecuta `TRUTH_RECONCILIATION`: el gobierno aceptado puede pasar de
+`CURRENT_IN_PROGRESS` a `CURRENT_IMPLEMENTED_TRUTH`, mientras las capacidades
+futuras conservan `PLANNED_NOT_IMPLEMENTED`. No existe promoción automática.
+
+Los PRs usan la referencia no autocerrante `Refs #N`. Sólo después de esa
+aceptación y reconciliación una persona autorizada cierra la issue de forma
+explícita; merge, closing keywords, CI o Draft PR no sustituyen ese paso.
 
 ## Dimensión separada de verificación externa
 

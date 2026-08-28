@@ -1,6 +1,6 @@
 # Flujo de desarrollo
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/DEVELOPMENT_WORKFLOW.md` (proceso desde selección hasta closeout)
 
@@ -14,8 +14,8 @@ no demuestra que exista un script o workflow para él.
   prepara un Draft PR. Su máximo estado propio es `SELF_VALIDATED_ONLY`.
 - **Auditor independiente:** sesión o agente distinto, exact HEAD, read-only,
   sin reparar findings. Emite `PASS`, `CHANGES_REQUIRED` o `BLOCKED`.
-- **Humano:** decide excepciones de scope, Ready, merge, deploy, publicación,
-  secretos, configuración externa y gasto.
+- **Humano:** decide excepciones de scope, Ready, merge, cierre explícito de la
+  issue, deploy, publicación, secretos, configuración externa y gasto.
 
 Writer y auditor no pueden ser la misma sesión ni combinar implementación y
 dictamen.
@@ -36,6 +36,7 @@ PREFLIGHT
 → HUMAN_GATE
 → POST_MERGE_ACCEPTANCE
 → TRUTH_RECONCILIATION
+→ EXPLICIT_ISSUE_CLOSE
 ```
 
 ### 1. PREFLIGHT
@@ -135,8 +136,15 @@ docs-only justifica las validaciones de producto como `NOT_APPLICABLE`.
 ### 13. TRUTH_RECONCILIATION
 
 Actualizar owners afectados, referencias y [CHANGELOG.md](CHANGELOG.md).
-Recién después de aceptación post-merge y reconciliación puede declararse el
-closeout; commit, push, CI o Draft PR aislados no equivalen a `DONE`.
+Los documentos y decisiones que existían sólo en el Draft se reconcilian desde
+`CURRENT_IN_PROGRESS`; no se promueven durante el mismo PR que los crea.
+
+### 14. EXPLICIT_ISSUE_CLOSE
+
+Recién después de aceptación post-merge y reconciliación una persona autorizada
+puede cerrar la issue explícitamente y declarar el closeout. Los PRs usan
+`Refs #N`; una closing keyword, commit, push, CI o Draft PR aislados no
+equivalen a `DONE` ni pueden anticipar el cierre.
 
 ## Riesgo y presupuesto de cambio
 
@@ -159,5 +167,5 @@ destructiva o riesgo para la Home/canonical de Río Cuarto.
 
 Milestones, labels y relaciones se consultan antes de crear o asociar. Se
 reutilizan coincidencias exactas, se evita reemplazar relaciones inesperadas y
-se verifica el resultado. Administrar metadata no autoriza cerrar issues,
-marcar Ready ni mergear.
+se verifica el resultado. Administrar metadata no autoriza cerrar issues, usar
+closing keywords, marcar Ready ni mergear.

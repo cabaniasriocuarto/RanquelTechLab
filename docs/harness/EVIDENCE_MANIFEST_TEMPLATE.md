@@ -1,6 +1,6 @@
 # Plantilla de EVIDENCE_MANIFEST
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/harness/EVIDENCE_MANIFEST_TEMPLATE.md` (estructura canónica de evidencia)
 
@@ -16,6 +16,7 @@ EVIDENCE_MANIFEST:
   ISSUE: "#N"
   PARENT: "#N | NONE"
   PR: "URL/número | NOT_CREATED"
+  PR_ISSUE_REFERENCE: "Refs #N | NOT_CREATED"
   REPOSITORY: "owner/repo"
   BASE_SHA: "sha completo"
   HEAD: "sha completo validado"
@@ -50,7 +51,7 @@ SCOPE:
     - "path"
   FORBIDDEN_PATHS_TOUCHED: false
   CHANGED_SURFACES:
-    - "surface"
+    - "D01 | ... | D12 — nombre canónico — MATERIAL | NOT_APPLICABLE"
   RISK_LEVEL: "LIGHT | STANDARD | HIGH | CRITICAL"
 ```
 
@@ -126,19 +127,21 @@ Reglas:
 
 | Disciplina | Materialidad | Reviewer/owner | Estado | Evidencia o justificación |
 | --- | --- | --- | --- | --- |
-| Producto/negocio | `<MATERIAL/NOT_APPLICABLE>` | `<owner>` | `<estado>` | `<ref>` |
-| Arquitectura | `<...>` | `<...>` | `<...>` | `<...>` |
-| Frontend/UX | `<...>` | `<...>` | `<...>` | `<...>` |
-| Accesibilidad | `<...>` | `<...>` | `<...>` | `<...>` |
-| SEO | `<...>` | `<...>` | `<...>` | `<...>` |
-| Contenido/comunicación | `<...>` | `<...>` | `<...>` | `<...>` |
-| Marketing/CRO | `<...>` | `<...>` | `<...>` | `<...>` |
-| Analítica/atribución | `<...>` | `<...>` | `<...>` | `<...>` |
-| Google Ads | `<...>` | `<...>` | `<...>` | `<...>` |
-| Performance | `<...>` | `<...>` | `<...>` | `<...>` |
-| Seguridad/privacidad | `<...>` | `<...>` | `<...>` | `<...>` |
-| QA/release/rollback | `<...>` | `<...>` | `<...>` | `<...>` |
+| D01 — Producto, negocio y estrategia comercial | `<MATERIAL/NOT_APPLICABLE>` | `<owner>` | `<estado>` | `<ref>` |
+| D02 — Arquitectura de software e información | `<...>` | `<...>` | `<...>` | `<...>` |
+| D03 — Frontend, UX responsive y diseño | `<...>` | `<...>` | `<...>` | `<...>` |
+| D04 — Accesibilidad | `<...>` | `<...>` | `<...>` | `<...>` |
+| D05 — SEO técnico y SEO local | `<...>` | `<...>` | `<...>` | `<...>` |
+| D06 — Contenido, comunicación y marca | `<...>` | `<...>` | `<...>` | `<...>` |
+| D07 — Marketing y CRO | `<...>` | `<...>` | `<...>` | `<...>` |
+| D08 — GA4, GTM, atribución y conversiones | `<...>` | `<...>` | `<...>` | `<...>` |
+| D09 — Google Ads | `<...>` | `<...>` | `<...>` | `<...>` |
+| D10 — Performance y Core Web Vitals | `<...>` | `<...>` | `<...>` | `<...>` |
+| D11 — Seguridad y privacidad | `<...>` | `<...>` | `<...>` | `<...>` |
+| D12 — QA, release, rollback y auditoría independiente | `<...>` | `<...>` | `<...>` | `<...>` |
 
+Los nombres e IDs se copian de
+[INTERDISCIPLINARY_REVIEW_MATRIX.md](../truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
 La selección se justifica mediante
 [INTERDISCIPLINARY_REVIEW_MATRIX.md](../truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
 
@@ -217,6 +220,8 @@ WRITER_DECLARATION:
   EVIDENCE_MATURITY: SELF_VALIDATED_ONLY
   AUDIT_REQUESTED: "true | false | NOT_APPLICABLE con justificación"
   READY_DECISION_OWNER: "humano"
+  AUTO_CLOSE_KEYWORD_PRESENT: false
+  ISSUE_CLOSE_OWNER: "humano después de POST_MERGE_ACCEPTANCE y TRUTH_RECONCILIATION"
   MERGE_PERFORMED: false
   ISSUE_CLOSED: false
 ```

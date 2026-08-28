@@ -12,8 +12,11 @@ These rules apply to `.github/**` and complement the repository router.
 - Native sub-issue changes are fail-closed: do not replace an existing parent,
   delete a relationship, or reorder unexpected children without a separate human
   decision. Verify parents, order, and open/closed state after mutation.
-- Draft is the default for agent-created PRs. Ready, merge, close, deploy, and
-  administrative bypass are human decisions.
+- Draft is the default for agent-created PRs. Use a non-closing `Refs #N`
+  reference; `Closes`, `Fixes`, `Resolves`, and equivalent closing keywords are
+  incompatible with post-merge acceptance and truth reconciliation. Ready,
+  merge, explicit issue close, deploy, and administrative bypass are human
+  decisions.
 
 ## Workflow trust boundary
 

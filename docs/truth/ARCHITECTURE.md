@@ -1,6 +1,6 @@
 # Arquitectura técnica y de integraciones
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/ARCHITECTURE.md` (arquitectura e integraciones)
 
@@ -183,7 +183,7 @@ ventana immutable si se reemplazan sin versionar la URL.
 
 | Sistema | Acoplamiento en repo | Estado que puede afirmarse |
 | --- | --- | --- |
-| Vercel | Convención `api/**` y [vercel.json](../../vercel.json). | `CURRENT_IMPLEMENTED_TRUTH` en repo; proyecto/deploy `UNKNOWN`. |
+| Vercel | Convención `api/**` y [vercel.json](../../vercel.json). | `CURRENT_IMPLEMENTED_TRUTH` sólo para configuración versionada; proyecto canónico, topología y trazabilidad de producción están `PENDING_TO_VALIDATE` bajo #28. |
 | Daily | Rooms y meeting-token APIs; iframe. | Cliente implementado; cuenta, rooms y permisos `UNKNOWN`. |
 | Calendar | Agenda enlazada y lectura mediante Apps Script. | URL/código presentes; agenda y eventos `UNKNOWN`. |
 | Apps Script/MailApp | Script versionado. | Código presente; deploy, trigger, permisos y entrega `UNKNOWN`. |
@@ -191,6 +191,18 @@ ventana immutable si se reemplazan sin versionar la URL.
 | GA4/GTM/Google Ads | Tags e instrumentación en HTML/runtimes. | IDs y eventos presentes; contenedores, recolección y campañas `UNKNOWN`. |
 | Bing | Archivo y meta de verificación. | Artefactos presentes; verificación/indexación `UNKNOWN`. |
 | Redes y Maps | Enlaces y embeds. | Destinos presentes; ownership/disponibilidad `UNKNOWN`. |
+
+### Gobierno de topología Vercel
+
+La decisión humana originada por `F-PR-001` conserva los cinco previews
+actuales de PR #27. #3 no autoriza limpiarlos, borrarlos, promoverlos ni cambiar
+su configuración. La auditoría, prueba de proyecto canónico y remediación de la
+topología externa pertenecen a #28, que se ejecuta en scope propio antes de #24.
+
+Este owner no duplica IDs, URLs ni resultados volátiles de Vercel. Hasta que la
+issue #28 produzca evidencia aceptada, proyecto canónico, trazabilidad de
+producción y equivalencia de configuración permanecen `PENDING_TO_VALIDATE` con
+`External verification: UNKNOWN` en la verdad estable del repositorio.
 
 ## No implementado
 
@@ -237,3 +249,5 @@ específica la autorice.
   [SECURITY_PRIVACY_MODEL.md](SECURITY_PRIVACY_MODEL.md).
 - La implementación de harness/CI no pertenece a estos truth docs y queda en
   issue #24.
+- La topología externa Vercel no se infiere desde `vercel.json`; su owner de
+  auditoría y remediación es #28, sin cleanup dentro de #3.

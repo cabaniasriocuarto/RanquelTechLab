@@ -1,6 +1,6 @@
 # Contrato SEO y de búsqueda local
 
-Status: CURRENT_IMPLEMENTED_TRUTH
+Status: `CURRENT_IN_PROGRESS`
 
 Owner: docs/truth/SEO_CONTRACT.md (reglas SEO, indexación y búsqueda local)
 
@@ -60,8 +60,9 @@ PENDING_TO_VALIDATE.
 
 | Superficie | Estado documental | Interpretación |
 | --- | --- | --- |
-| Home de Río Cuarto y canonical / en el repo | CURRENT_IMPLEMENTED_TRUTH | Contrato y markup protegidos en la base inspeccionada; la respuesta live se valida por separado |
-| Inventario de rutas existente en el repo | CURRENT_IMPLEMENTED_TRUTH | Lo mantiene ROUTE_AND_PAGE_MAP mediante inspección reproducible |
+| Markup de Home de Río Cuarto y canonical / en el repo | CURRENT_IMPLEMENTED_TRUTH | Hecho observado en la base inspeccionada; la respuesta live se valida por separado |
+| Protección de gobierno para Home/canonical | CURRENT_IN_PROGRESS | Contrato propuesto por #3; se promueve sólo tras aceptación y reconciliación post-merge |
+| Archivos de rutas existentes en el repo | CURRENT_IMPLEMENTED_TRUTH | Hecho inspeccionado e inventariado por ROUTE_AND_PAGE_MAP, cuyo owner sigue CURRENT_IN_PROGRESS |
 | Respuestas, canonical e indexación live | PENDING_TO_VALIDATE | Requiere baseline y evidencia externa autorizada de #4/#20 |
 | Golden SEO Baseline versionado | PLANNED_NOT_IMPLEMENTED | #26 lo define después del baseline bruto de #4 |
 | Gate de paridad y regresión de Home | PLANNED_NOT_IMPLEMENTED | #26 define semántica y #7 implementa validación ejecutable |
