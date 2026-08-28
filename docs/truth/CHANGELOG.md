@@ -70,8 +70,13 @@ Status: `CURRENT_IN_PROGRESS`
   CI/auditoría, repite el ciclo completo ante `NEW_HEAD` y separa el merge
   humano de la captura del SHA realmente integrado.
 - Todo Draft PR implementable solicita auditoría independiente. La intensidad
-  es proporcional al riesgo y `INDEPENDENTLY_VALIDATED` exige todos los checks
-  materiales en `PASS` o `NOT_APPLICABLE` con justificación válida.
+  es proporcional al riesgo y `INDEPENDENTLY_VALIDATED` exige exactamente
+  `MATERIAL`/`PASS` o `NOT_APPLICABLE`/`NOT_APPLICABLE` justificado por fila;
+  una pareja inválida nunca eleva la madurez.
+- El manifiesto separa obligación, resultado, causa, evidencia y HEAD de la
+  solicitud independiente; una solicitud bloqueada no puede declararse
+  realizada. También registra en orden aceptación post-merge, reconciliación de
+  truth y cierre explícito después de capturar el SHA integrado.
 - El formulario de tarea implementable presenta en español todo texto humano y
   conserva sin traducir sólo IDs, enums, paths y labels GitHub contractuales.
 - El router común aplica procedencia y gates de medios tanto a `media/**` como a

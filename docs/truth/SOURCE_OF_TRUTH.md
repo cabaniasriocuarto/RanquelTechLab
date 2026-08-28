@@ -181,7 +181,7 @@ check.
 | Estado de evidencia | Criterio |
 | --- | --- |
 | `SELF_VALIDATED_ONLY` | La sesión autora ejecutó y registró sus validaciones sobre el HEAD indicado. Es el máximo estado que puede autoasignarse. |
-| `INDEPENDENTLY_VALIDATED` | Otra sesión o agente revisó read-only el mismo HEAD, no reparó hallazgos y verificó que todos los checks `MATERIAL` requeridos sean `PASS` o `NOT_APPLICABLE` con justificación válida. |
+| `INDEPENDENTLY_VALIDATED` | Otra sesión o agente revisó read-only el mismo HEAD, no reparó hallazgos y verificó un inventario requerido completo donde cada fila satisface exactamente una pareja válida: clasificación `MATERIAL` con resultado `PASS`, o clasificación `NOT_APPLICABLE` con resultado `NOT_APPLICABLE` y justificación concreta de no materialidad. |
 | `POST_MERGE_ACCEPTED` | Se verificó el commit efectivamente integrado y, cuando aplica, el objetivo publicado correspondiente. Es posterior al merge. |
 
 Un cambio con evidencia `SELF_VALIDATED_ONLY` no está independientemente
@@ -190,11 +190,16 @@ auditoría se registra `FAIL`/`BLOCKED` y no permite usar
 `INDEPENDENTLY_VALIDATED`.
 
 Tampoco permiten elevar esa madurez `NOT_RUN`, `PARTIAL`, `UNKNOWN`,
-`AUTH_BLOCKED`, `PREVIEW_BLOCKED`, `CAPABILITY_GAP`, un check `MATERIAL`
-omitido, una fila duplicada o un `NOT_APPLICABLE` sin justificación concreta.
-Esos estados conservan su causa original; no se degradan ni se ocultan bajo un
-resultado global. `NOT_APPLICABLE` es elegible para esta evaluación sólo cuando
-el check no es material y la justificación demuestra por qué.
+`AUTH_BLOCKED`, `PREVIEW_BLOCKED`, `CAPABILITY_GAP`, un check requerido omitido,
+una fila duplicada o un `NOT_APPLICABLE` sin justificación concreta. Una fila
+clasificada `MATERIAL` queda bloqueada con cualquier resultado distinto de
+`PASS`, incluido `NOT_APPLICABLE`. La pareja `NOT_APPLICABLE`/
+`NOT_APPLICABLE` es elegible sólo cuando la justificación demuestra por qué el
+check no es material. Las dos parejas válidas son mutuamente excluyentes; todo
+emparejamiento distinto impide `INDEPENDENTLY_VALIDATED`.
+
+Los estados conservan su causa original; no se degradan ni se ocultan bajo un
+resultado global.
 
 `POST_MERGE_ACCEPTED` sólo puede declararse después de identificar el commit y
 el objetivo realmente aceptados.

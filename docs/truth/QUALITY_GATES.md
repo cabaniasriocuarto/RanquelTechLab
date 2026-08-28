@@ -109,17 +109,21 @@ niveles de riesgo sin crear valores alternativos.
 | Estado | Significado |
 | --- | --- |
 | SELF_VALIDATED_ONLY | El writer completó su validación; no hubo auditoría independiente |
-| INDEPENDENTLY_VALIDATED | Un auditor distinto revisó el HEAD exacto y todos los checks MATERIAL requeridos son PASS o NOT_APPLICABLE con justificación válida |
+| INDEPENDENTLY_VALIDATED | Un auditor distinto revisó el HEAD exacto y el inventario requerido completo contiene sólo parejas válidas: MATERIAL/PASS o NOT_APPLICABLE/NOT_APPLICABLE con justificación concreta de no materialidad |
 | POST_MERGE_ACCEPTED | El resultado integrado/publicado fue aceptado según el runbook |
 
 Reglas de interpretación:
 
 - NOT_RUN, PARTIAL, UNKNOWN, AUTH_BLOCKED, PREVIEW_BLOCKED y CAPABILITY_GAP nunca
   son PASS.
-- NOT_APPLICABLE exige superficie inspeccionada y razón; no significa no mirado.
+- NOT_APPLICABLE exige superficie inspeccionada y razón concreta de no
+  materialidad; no significa no mirado.
 - NOT_RUN, PARTIAL, UNKNOWN, AUTH_BLOCKED, PREVIEW_BLOCKED, CAPABILITY_GAP,
   FAIL y BLOCKED impiden conceder INDEPENDENTLY_VALIDATED. También lo impiden
-  un check MATERIAL omitido o un NOT_APPLICABLE sin justificación válida.
+  un check requerido omitido, una fila duplicada, un NOT_APPLICABLE sin
+  justificación válida o cualquier pareja distinta de MATERIAL/PASS y
+  NOT_APPLICABLE/NOT_APPLICABLE justificado. Un check MATERIAL con resultado
+  NOT_APPLICABLE siempre bloquea la madurez.
 - SELF_VALIDATED_ONLY, INDEPENDENTLY_VALIDATED y POST_MERGE_ACCEPTED son etapas,
   no sustitutos de los resultados de cada gate.
 - Un resultado aplica sólo al HEAD, entorno, paths y momento registrados.

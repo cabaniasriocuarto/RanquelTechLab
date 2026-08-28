@@ -107,8 +107,8 @@ COVERAGE:
     - "D01 | ... | D12 — nombre canónico — MATERIAL | NOT_APPLICABLE — Sxx activadoras"
   OMITTED_OR_BLOCKED_CHECKS:
     - "check, estado y causa | NONE"
-  REQUIRED_MATERIAL_CHECK_INVENTORY_COMPLETE: "true | false"
-  ALL_MATERIAL_CHECKS_ELIGIBLE_FOR_MATURITY: "true | false"
+  REQUIRED_CHECK_ROW_INVENTORY_COMPLETE: "true | false"
+  ALL_CHECK_ROWS_ELIGIBLE_FOR_MATURITY: "true | false"
 
 RESIDUAL_RISK:
   LEVEL: "CRITICAL | HIGH | MEDIUM | LOW | INFORMATIONAL"
@@ -118,18 +118,22 @@ RESIDUAL_RISK:
 
 Un check bloqueado no se compensa con resultados exitosos de otra superficie.
 Para conceder `INDEPENDENTLY_VALIDATED`, el inventario requerido debe estar
-completo, sin IDs omitidos o duplicados, y cada check `MATERIAL` debe ser
-`PASS` o `NOT_APPLICABLE` con justificación válida. `NOT_RUN`, `PARTIAL`,
-`UNKNOWN`, `AUTH_BLOCKED`, `PREVIEW_BLOCKED`, `CAPABILITY_GAP`, `FAIL`,
-`BLOCKED`, un check omitido/duplicado o un `NOT_APPLICABLE` injustificado
-obligan a usar `INDEPENDENT_VALIDATION_GRANTED: NONE`.
+completo, sin IDs omitidos o duplicados, y cada fila debe satisfacer exactamente
+una pareja mutuamente excluyente: clasificación `MATERIAL` con resultado `PASS`,
+o clasificación `NOT_APPLICABLE` con resultado `NOT_APPLICABLE` y justificación
+concreta de no materialidad. `NOT_RUN`, `PARTIAL`, `UNKNOWN`, `AUTH_BLOCKED`,
+`PREVIEW_BLOCKED`, `CAPABILITY_GAP`, `FAIL`, `BLOCKED`, un check
+omitido/duplicado, un `NOT_APPLICABLE` injustificado o cualquier pairing
+distinto —incluido `MATERIAL`/`NOT_APPLICABLE`— obligan a usar
+`INDEPENDENT_VALIDATION_GRANTED: NONE`.
 
 ## 7. Reglas de veredicto
 
 - `PASS`: exact HEAD revisado, evidencia suficiente, contrato satisfecho y sin
   findings que requieran cambio. Permite registrar `INDEPENDENTLY_VALIDATED`
-  sólo si todos los checks `MATERIAL` son `PASS` o `NOT_APPLICABLE` con
-  justificación válida; no decide Ready, merge ni cierre de la issue.
+  sólo si todas las filas requeridas usan `MATERIAL`/`PASS` o
+  `NOT_APPLICABLE`/`NOT_APPLICABLE` con justificación concreta de no
+  materialidad; no decide Ready, merge ni cierre de la issue.
 - `CHANGES_REQUIRED`: existe al menos un finding que debe corregirse. El writer
   crea un HEAD nuevo, repite push, actualiza el Draft PR, obtiene CI exact-head
   y solicita una auditoría nueva. El dictamen anterior no aplica al nuevo HEAD.

@@ -188,8 +188,10 @@ intensidad es proporcional en `LIGHT`/`STANDARD` y exact-head completa en
 `HIGH`/`CRITICAL`. Sólo un dictamen `PASS` del HEAD actual permite el avance
 regular a `HUMAN_GATE`. Si no puede completarse, registrar `CAPABILITY_GAP`,
 `AUTH_BLOCKED` o `BLOCKED` según la causa y no tratarla como `PASS`. La madurez
-`INDEPENDENTLY_VALIDATED` exige que todos los checks `MATERIAL` requeridos sean
-`PASS` o `NOT_APPLICABLE` con justificación válida.
+`INDEPENDENTLY_VALIDATED` exige inventario requerido completo y exactamente una
+pareja válida por fila: `MATERIAL`/`PASS` o `NOT_APPLICABLE`/
+`NOT_APPLICABLE` con justificación concreta de no materialidad. Un check
+`MATERIAL` nunca puede usar resultado `NOT_APPLICABLE` para obtener madurez.
 
 ### 14. HUMAN_GATE
 
