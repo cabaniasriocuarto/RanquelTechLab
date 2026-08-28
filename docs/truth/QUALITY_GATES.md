@@ -43,16 +43,19 @@ Toda tarea sigue este orden:
 Un paso posterior no sana uno anterior fallido. Commit, push, Draft PR, CI verde
 o preview aislado no equivalen a DONE.
 
-Una reparación que crea `NEW_HEAD` repite obligatoriamente:
+El orden de reparación definido por
+[DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) se proyecta sin variantes:
 
 ```text
-NEW_HEAD
+REPAIR_EDIT
 → DIFF_CHECK
 → EXACT_STAGE
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
 → COMMIT_CANDIDATE
+→ CAPTURE_NEW_HEAD
+→ VERIFY_COMMIT_TREE_MATCH
 → PUSH_CANDIDATE
 → DRAFT_PR_UPDATE
 → CI_EXACT_HEAD
@@ -60,11 +63,15 @@ NEW_HEAD
 → INDEPENDENT_AUDIT
 ```
 
-Toda evidencia del HEAD anterior queda obsoleta. Los gates no afectados sólo
-pueden usar `NOT_APPLICABLE` con justificación concreta; un cambio de contrato
-transversal repite la matriz contractual completa aplicable. El árbol del nuevo
-commit debe coincidir con el staged tree validado. Omitir un paso bloquea el
-ciclo; publicación, CI o auditoría posteriores no sanan checks locales faltantes.
+`REPAIR_EDIT` todavía no es `NEW_HEAD`. Registrar
+`VALIDATED_STAGED_TREE_SHA` después del staging y los gates locales, pero antes
+de `COMMIT_CANDIDATE`. El commit crea el SHA; `CAPTURE_NEW_HEAD` lo registra y
+`VERIFY_COMMIT_TREE_MATCH` exige que `NEW_HEAD_TREE_SHA` sea igual al staged tree
+validado. Una diferencia produce `TREE_MATCH=FAIL` y prohíbe push y auditoría;
+sólo `TREE_MATCH=PASS` permite continuar. Toda evidencia del HEAD anterior queda
+obsoleta. Los gates no afectados sólo pueden usar `NOT_APPLICABLE` con
+justificación concreta; un cambio de contrato transversal repite la matriz
+contractual completa aplicable. Omitir un paso bloquea el ciclo.
 
 ## Niveles de riesgo
 
@@ -200,15 +207,14 @@ Cada contrato material tiene criterio y resultado.
 
 ### COMMIT_CANDIDATE, PUSH_CANDIDATE y DRAFT_PR_CREATE_OR_UPDATE
 
-El staged set validado se convierte en un commit con SHA completo, se publica
-mediante push normal y se crea o actualiza el Draft PR. Antes de CI, el HEAD
-local, el remote head y el head del Draft PR deben coincidir. Un índice sin
-commit o un commit sólo local no puede recibir evidencia exact-head remota.
-
-Cuando una reparación produce `NEW_HEAD`, se repite el ciclo completo definido
-arriba y se prueba
-`NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA`. Ningún resultado local, remoto ni
-independiente se hereda del HEAD anterior.
+El staged set validado se convierte en un commit con SHA completo. En una
+reparación, primero se captura ese `NEW_HEAD`, luego se obtiene su tree y se
+exige `TREE_MATCH=PASS`; recién entonces se publica mediante push normal y se
+crea o actualiza el Draft PR. Antes de CI, el HEAD local, el remote head y el
+head del Draft PR deben coincidir. Un índice sin commit, un commit sólo local o
+`TREE_MATCH=FAIL` no pueden recibir evidencia exact-head remota. A partir de
+`CAPTURE_NEW_HEAD`, cada prueba remota y auditoría debe citar ese SHA. Ningún
+resultado local, remoto ni independiente se hereda del HEAD anterior.
 
 ### CI_EXACT_HEAD
 
@@ -279,13 +285,30 @@ PR.
 PR ni un PR head no integrado. Se actualizan owners e historia sin anticipar
 resultados externos.
 
-`TRUTH_RECONCILIATION=PASS` sólo admite `NO_DIFF`, con justificación/evidencia y
-el mismo source integrated SHA, o `MERGED_PR`, con PR de reconciliación mergeado,
-exact HEAD auditado, integration SHA obtenido de ese PR y alcanzable desde
-`main`. Draft, Ready y cerrado sin merge no satisfacen `MERGED_PR`. Sólo después
-de aceptación y una de esas dos rutas completas una persona autorizada cierra la
-issue explícitamente. Los PRs usan `Refs #N`; las closing keywords no son
-compatibles con esta secuencia.
+`TRUTH_RECONCILIATION=PASS` sólo admite `NO_DIFF`, con justificación y evidencia
+no vacías y `SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`, o `MERGED_PR`. Este segundo
+modo requiere V-017 en `PASS`, número y HEAD reales del PR de reconciliación y la
+conjunción exacta:
+
+```text
+RECONCILIATION_REVIEW_REQUESTED=true
+AND RECONCILIATION_REVIEW_REQUEST_STATE=PASS
+AND RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_PR_HEAD
+AND RECONCILIATION_REVIEW_EXECUTION_STATE=PASS
+AND RECONCILIATION_AUDIT_VERDICT=PASS
+AND RECONCILIATION_AUDITED_HEAD=RECONCILIATION_PR_HEAD
+AND RECONCILIATION_OPEN_MATERIAL_FINDINGS=0
+AND RECONCILIATION_PR_MERGED=true
+AND RECONCILIATION_INTEGRATED_SHA_SOURCE=MERGED_PR
+AND RECONCILIATION_INTEGRATED_SHA=<sha real>
+AND RECONCILIATION_SHA_REACHABLE_FROM_MAIN=YES
+```
+
+Toda otra combinación mantiene la reconciliación fuera de `PASS`. `NO_DIFF` no
+requiere un PR ficticio. Draft, Ready y cerrado sin merge no satisfacen
+`MERGED_PR`. Sólo después de aceptación y una de esas dos rutas completas una
+persona autorizada cierra la issue explícitamente. Los PRs usan `Refs #N`; las
+closing keywords no son compatibles con esta secuencia.
 
 ## Evidencia requerida
 

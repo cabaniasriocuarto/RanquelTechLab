@@ -8,27 +8,32 @@ Refs #N
 - Parent/dependencies:
 - Base branch and `BASE_SHA`:
 - Branch:
-- Candidate `HEAD` committed locally:
+- Previous `HEAD` for a repair, if applicable:
+- `REPAIR_EDIT` candidate paths/reference:
+- `VALIDATED_STAGED_TREE_SHA` captured after local gates and before commit:
+- `COMMIT_CANDIDATE`:
+- `CAPTURE_NEW_HEAD` — full SHA captured immediately after commit:
+- `NEW_HEAD_TREE_SHA`:
+- `TREE_MATCH`: `PASS | FAIL | NOT_APPLICABLE`
+- Candidate `HEAD` committed locally; equals captured `NEW_HEAD` for a repair:
 - Remote branch `HEAD`:
 - Draft PR `HEAD`:
 - Exact `HEAD` reviewed:
-- Previous `HEAD` for a repair, if applicable:
-- Validated staged tree SHA:
-- New `HEAD` tree SHA:
-- New `HEAD` tree matches validated staged tree: `true | false | NOT_APPLICABLE`
 - Previous `HEAD` evidence reused: `false | NOT_APPLICABLE`
 - Risk: `LIGHT | STANDARD | HIGH | CRITICAL`
 
 If this PR repairs a reviewed commit, record every step for the new candidate:
 
 ```text
-NEW_HEAD
+REPAIR_EDIT
 → DIFF_CHECK
 → EXACT_STAGE
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
 → COMMIT_CANDIDATE
+→ CAPTURE_NEW_HEAD
+→ VERIFY_COMMIT_TREE_MATCH
 → PUSH_CANDIDATE
 → DRAFT_PR_UPDATE
 → CI_EXACT_HEAD
@@ -109,11 +114,13 @@ in the final column, not in materiality.
 | Exact staging and staged scope | `NOT_RUN` | |
 | `git diff --cached --check` | `NOT_RUN` | |
 | Secret/privacy scan | `NOT_RUN` | |
-| Affected focal tests | `NOT_RUN` | New `HEAD`; list every affected test |
-| Affected surface gates | `NOT_RUN` | New `HEAD`; list every affected gate |
+| Affected focal tests | `NOT_RUN` | Validated staged tree; list every affected test |
+| Affected surface gates | `NOT_RUN` | Validated staged tree; list every affected gate |
 | Unaffected gates | `NOT_APPLICABLE` | Concrete non-materiality reason per gate |
 | Transversal contract matrix | `NOT_RUN / NOT_APPLICABLE` | Full applicable matrix if the contract changed |
-| Commit candidate | `NOT_RUN` | Candidate `HEAD` |
+| Commit candidate | `NOT_RUN` | Commit creates the candidate `HEAD` |
+| Capture new `HEAD` | `NOT_RUN` | Full SHA captured immediately after commit |
+| Verify commit tree match | `NOT_RUN` | `TREE_MATCH=PASS` iff new/staged trees are equal |
 | Push candidate | `NOT_RUN` | Remote `HEAD` |
 | Draft PR create/update | `NOT_RUN` | Draft PR `HEAD` |
 | Exact-head CI | `NOT_RUN` | |
@@ -168,16 +175,24 @@ in the final column, not in materiality.
 - `MAIN_HEAD_AT_ACCEPTANCE`: `NOT_CAPTURED`
 - `POST_MERGE_ACCEPTANCE_TARGET`: `INTEGRATED_SHA`
 - Post-merge acceptance required:
-- Truth reconciliation mode: `NOT_RUN | NO_DIFF | MERGED_PR`
-- Truth reconciliation source integrated SHA:
-- `NO_DIFF` justification/evidence, if selected:
-- `RECONCILIATION_PR`:
-- `RECONCILIATION_PR_MERGED`:
-- `RECONCILIATION_PR_HEAD`:
-- `RECONCILIATION_AUDITED_HEAD`:
-- `RECONCILIATION_INTEGRATED_SHA_SOURCE`:
-- `RECONCILIATION_INTEGRATED_SHA`:
-- `RECONCILIATION_SHA_REACHABLE_FROM_MAIN`:
+- `TRUTH_RECONCILIATION_MODE`: `NOT_RUN`
+- `TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA`: `NOT_RUN`
+- `TRUTH_RECONCILIATION_NO_DIFF_JUSTIFICATION`: `NONE`
+- `RECONCILIATION_PR`: `NOT_RUN`
+- `RECONCILIATION_PR_MERGED`: `false`
+- `RECONCILIATION_PR_HEAD`: `NOT_CAPTURED`
+- `RECONCILIATION_REVIEW_REQUESTED`: `false`
+- `RECONCILIATION_REVIEW_REQUEST_STATE`: `NOT_RUN`
+- `RECONCILIATION_REVIEW_REQUEST_HEAD`: `NOT_REQUESTED`
+- `RECONCILIATION_REVIEW_EXECUTION_STATE`: `NOT_RUN`
+- `RECONCILIATION_AUDIT_VERDICT`: `NOT_ISSUED`
+- `RECONCILIATION_AUDITED_HEAD`: `NOT_REVIEWED`
+- `RECONCILIATION_OPEN_MATERIAL_FINDINGS`: `UNKNOWN`
+- `RECONCILIATION_INTEGRATED_SHA_SOURCE`: `NOT_CAPTURED`
+- `RECONCILIATION_INTEGRATED_SHA`: `NOT_CAPTURED`
+- `RECONCILIATION_SHA_REACHABLE_FROM_MAIN`: `NOT_RUN`
+- `TRUTH_RECONCILIATION_STATE`: `NOT_RUN`
+- `TRUTH_RECONCILIATION_EVIDENCE`: `NONE`
 - Explicit issue close owner after both steps:
 
 ## Risks and rollback
@@ -193,10 +208,11 @@ in the final column, not in materiality.
 - [ ] No secrets, credentials, private URLs, or personal data were committed.
 - [ ] Missing, partial, blocked, unknown, and capability-gap states are not reported as `PASS`.
 - [ ] Local, remote, Draft PR, CI and audit HEADs coincide.
-- [ ] If a repair created `NEW_HEAD`, the complete local-to-audit cycle was repeated in canonical order; staged/new trees match and no prior-HEAD evidence was reused.
+- [ ] A repair ran from `REPAIR_EDIT` through commit, captured `NEW_HEAD` only after that commit, verified `TREE_MATCH=PASS` before push, and reused no prior-HEAD evidence.
 - [ ] Independent review was requested; request and execution are `PASS`, verdict is `PASS`, audited/current HEADs match, and open material findings are zero before recommending the regular human gate.
 - [ ] Human merge, when run, compares merged, audited and reviewed PR HEADs; integrated SHA comes from the merged PR, not from the current `main` tip.
-- [ ] Truth reconciliation passes only by justified `NO_DIFF` or an audited and merged reconciliation PR reachable from `main`.
+- [ ] `NO_DIFF` reconciliation uses `TRUTH_RECONCILIATION_MODE=NO_DIFF`, `SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`, non-empty verifiable justification/evidence, and no fictitious PR.
+- [ ] `MERGED_PR` reconciliation uses a real PR/HEAD, `RECONCILIATION_REVIEW_REQUESTED=true`, request state `PASS`, request HEAD equal to its PR HEAD, execution state `PASS`, audit verdict `PASS`, audited HEAD equal to its PR HEAD, zero material findings, `RECONCILIATION_PR_MERGED=true`, a real integrated SHA with source `MERGED_PR`, and reachability `YES` from `main`; every other combination is non-PASS.
 - [ ] The PR uses `Refs #N`; no closing keyword can close the issue at merge time.
 - [ ] Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
 

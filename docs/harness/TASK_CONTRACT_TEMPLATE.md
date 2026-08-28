@@ -135,19 +135,25 @@ TASK_CONTRACT:
     CANDIDATE_PUBLICATION:
       COMMIT_CANDIDATE:
         - "crear el HEAD real desde el staged set validado"
+      CAPTURE_NEW_HEAD:
+        - "registrar el SHA completo inmediatamente después del commit"
+      VERIFY_COMMIT_TREE_MATCH:
+        - "exigir NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA antes del push"
       PUSH_CANDIDATE:
         - "push normal y remote head igual al HEAD local"
       DRAFT_PR_CREATE_OR_UPDATE:
         - "Draft PR head igual al commit publicado"
-      NEW_HEAD_REVALIDATION:
+      REPAIR_CYCLE:
         REQUIRED_SEQUENCE:
-          - NEW_HEAD
+          - REPAIR_EDIT
           - DIFF_CHECK
           - EXACT_STAGE
           - STAGED_SCOPE_SECRET_RECHECK
           - AFFECTED_FOCAL_TESTS
           - AFFECTED_SURFACE_GATES
           - COMMIT_CANDIDATE
+          - CAPTURE_NEW_HEAD
+          - VERIFY_COMMIT_TREE_MATCH
           - PUSH_CANDIDATE
           - DRAFT_PR_UPDATE
           - CI_EXACT_HEAD
@@ -157,7 +163,7 @@ TASK_CONTRACT:
         VALIDATED_STAGED_TREE_SHA: "tree sha"
         NEW_HEAD: "sha completo"
         NEW_HEAD_TREE_SHA: "tree sha"
-        NEW_HEAD_TREE_MATCHES_VALIDATED_STAGED_TREE: "true | false"
+        TREE_MATCH: "PASS | FAIL"
         PREVIOUS_HEAD_EVIDENCE_REUSED: false
         AFFECTED_FOCAL_TESTS: "lista y resultado"
         AFFECTED_SURFACE_GATES: "lista y resultado"
@@ -201,8 +207,23 @@ TASK_CONTRACT:
       - "verificación posterior contra INTEGRATED_SHA y owner humano"
     TRUTH_RECONCILIATION:
       VALID_MODES:
-        NO_DIFF: "justificación y SOURCE_INTEGRATED_SHA igual a INTEGRATED_SHA"
-        MERGED_PR: "PR mergeado; exact HEAD auditado; RECONCILIATION_INTEGRATED_SHA_SOURCE=MERGED_PR y RECONCILIATION_INTEGRATED_SHA alcanzable desde main"
+        NO_DIFF: "justificación/evidencia no vacías y SOURCE_INTEGRATED_SHA igual a INTEGRATED_SHA; sin PR ficticio"
+        MERGED_PR: "V-017 PASS y conjunción completa de MERGED_PR_PASS_REQUIRES"
+      MERGED_PR_PASS_REQUIRES:
+        RECONCILIATION_PR: "N real"
+        RECONCILIATION_PR_HEAD: "sha completo"
+        RECONCILIATION_REVIEW_REQUESTED: true
+        RECONCILIATION_REVIEW_REQUEST_STATE: PASS
+        RECONCILIATION_REVIEW_REQUEST_HEAD: "igual a RECONCILIATION_PR_HEAD"
+        RECONCILIATION_REVIEW_EXECUTION_STATE: PASS
+        RECONCILIATION_AUDIT_VERDICT: PASS
+        RECONCILIATION_AUDITED_HEAD: "igual a RECONCILIATION_PR_HEAD"
+        RECONCILIATION_OPEN_MATERIAL_FINDINGS: 0
+        RECONCILIATION_PR_MERGED: true
+        RECONCILIATION_INTEGRATED_SHA_SOURCE: MERGED_PR
+        RECONCILIATION_INTEGRATED_SHA: "sha real"
+        RECONCILIATION_SHA_REACHABLE_FROM_MAIN: "YES"
+        ALL_OTHER_COMBINATIONS: "TRUTH_RECONCILIATION_STATE != PASS"
       INVALID_AS_PASS: "Draft | Ready | CLOSED_UNMERGED | PR creado/revisado sin merge"
     EXPLICIT_ISSUE_CLOSE:
       REQUIRES: "POST_MERGE_ACCEPTANCE=PASS y TRUTH_RECONCILIATION=PASS por uno de los dos modos válidos"
@@ -231,7 +252,7 @@ TASK_CONTRACT:
     - "manifiesto de evidencia completo"
     - "Draft PR con Refs #N no autocerrante, issue owner, scope/no-scope, riesgo y rollback"
     - "INDEPENDENT_REVIEW_REQUEST=REQUIRED y solicitud registrada para el exact HEAD"
-    - "si cambia HEAD, se repite el ciclo completo NEW_HEAD y no se hereda evidencia"
+    - "toda reparación repite REPAIR_EDIT hasta auditoría; commit crea el NEW_HEAD, luego se captura/verifica su tree y no se hereda evidencia"
     - "HUMAN_GATE regular sólo con request true/PASS, execution PASS, verdict PASS, AUDITED_HEAD=HEAD y cero findings materiales abiertos"
     - "sin Ready, merge, deploy o cierre no autorizados; cierre humano sólo después de aceptación y reconciliación"
 ```

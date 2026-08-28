@@ -43,13 +43,15 @@ queda `BLOCKED` hasta auditar el commit publicado correcto. Un commit nuevo
 invalida toda evidencia anterior. El writer debe repetir:
 
 ```text
-NEW_HEAD
+REPAIR_EDIT
 → DIFF_CHECK
 → EXACT_STAGE
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
 → COMMIT_CANDIDATE
+→ CAPTURE_NEW_HEAD
+→ VERIFY_COMMIT_TREE_MATCH
 → PUSH_CANDIDATE
 → DRAFT_PR_UPDATE
 → CI_EXACT_HEAD
@@ -82,9 +84,12 @@ auditor debe revisar el resultado nuevo.
 - [ ] Inventario de superficies `Sxx` y derivación separada de D01–D12.
 - [ ] EVIDENCE_MANIFEST y comandos sanitizados.
 - [ ] Resultados de focal tests y surface gates.
-- [ ] Si hubo `NEW_HEAD`, ledger de reparación completo y en el orden canónico.
+- [ ] Si hubo reparación, ledger completo desde `REPAIR_EDIT` y en el orden canónico.
 - [ ] `PREVIOUS_HEAD_EVIDENCE_REUSED=false` y evidencia local ligada al nuevo HEAD.
-- [ ] `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` sin drift de índice/worktree.
+- [ ] `COMMIT_CANDIDATE` precede a `CAPTURE_NEW_HEAD`, que registra el SHA completo.
+- [ ] `VERIFY_COMMIT_TREE_MATCH` precede al push y deja `TREE_MATCH=PASS` sólo si
+  `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` sin drift de índice/worktree.
+- [ ] Push, CI, request y auditoría citan `NEW_HEAD`, nunca `PREVIOUS_HEAD`.
 - [ ] Gates afectados repetidos; gates no afectados `NOT_APPLICABLE` y justificados.
 - [ ] Si cambió un contrato transversal, matriz contractual completa reejecutada.
 - [ ] CI/preview exact-head cuando aplican.
@@ -196,6 +201,20 @@ CONCLUSION:
   AUDITED_PR_HEAD: "sha completo igual a AUDITED_HEAD"
   INDEPENDENT_REVIEW_HEAD: "sha completo igual a AUDITED_HEAD"
   OPEN_MATERIAL_FINDINGS: "entero >= 0 | UNKNOWN"
+  RECONCILIATION_PR_AUDIT:
+    RECONCILIATION_PR: "N | NOT_RUN"
+    RECONCILIATION_PR_MERGED: "true | false"
+    RECONCILIATION_PR_HEAD: "sha completo | NOT_CAPTURED"
+    RECONCILIATION_REVIEW_REQUESTED: "true | false"
+    RECONCILIATION_REVIEW_REQUEST_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
+    RECONCILIATION_REVIEW_REQUEST_HEAD: "sha completo | NOT_REQUESTED"
+    RECONCILIATION_REVIEW_EXECUTION_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
+    RECONCILIATION_AUDIT_VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED | NOT_ISSUED"
+    RECONCILIATION_AUDITED_HEAD: "sha completo | NOT_REVIEWED"
+    RECONCILIATION_OPEN_MATERIAL_FINDINGS: "entero >= 0 | UNKNOWN"
+    RECONCILIATION_INTEGRATED_SHA_SOURCE: "MERGED_PR | NOT_CAPTURED"
+    RECONCILIATION_INTEGRATED_SHA: "sha real | NOT_CAPTURED"
+    RECONCILIATION_SHA_REACHABLE_FROM_MAIN: "YES | NO | NOT_RUN"
   SUMMARY: "conclusión breve sustentada"
   FINDING_COUNT:
     CRITICAL: 0
@@ -212,6 +231,22 @@ CONCLUSION:
   ISSUE_CLOSED: false
   EXTERNAL_MUTATIONS_PERFORMED: false
 ```
+
+Cuando el objeto auditado es un PR de reconciliación, el bloque
+`RECONCILIATION_PR_AUDIT` proyecta el dictamen exact-head sin anticipar merge ni
+integración; se omite para otros PRs. Antes de ejecutar cada fase, sus valores
+copian literalmente los `PRE_MERGE_DEFAULTS` del manifiesto. Un handoff favorable
+de auditoría exige request `true`/`PASS`,
+request HEAD igual a `RECONCILIATION_PR_HEAD`, execution `PASS`, audit verdict
+`PASS`, audited HEAD igual al PR HEAD y cero findings materiales. Aun con ese
+handoff, `TRUTH_RECONCILIATION_STATE` no puede ser `PASS` hasta que
+`RECONCILIATION_PR_MERGED=true`, el source sea `MERGED_PR`, exista un integrated
+SHA real y su reachability desde `main` sea `YES`. Cualquier otra combinación es
+no-PASS. El modo `NO_DIFF` exige
+`TRUTH_RECONCILIATION_MODE=NO_DIFF`,
+`SOURCE_INTEGRATED_SHA=INTEGRATED_SHA` y justificación/evidencia comprobable no
+vacías; no inventa un PR. Sin cualquiera de esas condiciones también es
+no-PASS.
 
 El auditor entrega el dictamen sin ejecutar correcciones. Ready, merge,
 aceptación post-merge, reconciliación de truth y cierre explícito permanecen
