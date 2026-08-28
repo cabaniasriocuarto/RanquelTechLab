@@ -98,6 +98,10 @@ exactamente como aparecen aquí.
   `CURRENT_IN_PROGRESS`, aunque inventaríe hechos preexistentes de `main` con
   `CURRENT_IMPLEMENTED_TRUTH` o capacidades futuras con
   `PLANNED_NOT_IMPLEMENTED`.
+- El lenguaje normativo dentro de un owner `CURRENT_IN_PROGRESS` describe el
+  contrato propuesto por la issue/Draft actual; no lo presenta como gobierno
+  vigente de `main`. La vigencia se declara sólo después del vehículo de
+  aceptación y reconciliación correspondiente.
 - Un owner puede inventariar filas con estados diferentes aunque su propio
   estado sea `CURRENT_IN_PROGRESS` durante el Draft.
 - `CURRENT_IN_PROGRESS` nunca se presenta como verdad de `main`, merge, deploy o
@@ -117,10 +121,14 @@ exactamente como aparecen aquí.
 ### Transición post-merge y cierre
 
 La transición no se ejecuta dentro del Draft que crea el documento. Después del
-merge se identifica el SHA integrado, se completa `POST_MERGE_ACCEPTANCE` y se
-ejecuta `TRUTH_RECONCILIATION`: el gobierno aceptado puede pasar de
+merge se identifica el SHA integrado y la issue permanece abierta mientras se
+completa `POST_MERGE_ACCEPTANCE`. Cuando la reconciliación requiere un delta
+versionado, se usa el único Draft PR secuencial, state-only y no autocerrante
+definido por [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md), desde `main`
+integrado y sin push directo. Allí el gobierno ya aceptado puede pasar de
 `CURRENT_IN_PROGRESS` a `CURRENT_IMPLEMENTED_TRUTH`, mientras las capacidades
-futuras conservan `PLANNED_NOT_IMPLEMENTED`. No existe promoción automática.
+futuras conservan `PLANNED_NOT_IMPLEMENTED`. No existe promoción automática ni
+un segundo PR de implementación concurrente.
 
 Los PRs usan la referencia no autocerrante `Refs #N`. Sólo después de esa
 aceptación y reconciliación una persona autorizada cierra la issue de forma

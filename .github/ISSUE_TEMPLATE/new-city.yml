@@ -61,6 +61,29 @@ body:
       required: true
 
   - type: textarea
+    id: changed_surfaces
+    attributes:
+      label: Changed surfaces inventory
+      description: Use task-local Sxx IDs. Include every exact applicable matrix row—at least Página/hub de ciudad—and list domain owners separately; D01-D12 are not surface names.
+      placeholder: |
+        S01 — city-page effect — planned paths/systems — Página/hub de ciudad — domain owner(s)
+        S02 — other effect — paths/systems — exact matrix row(s) — domain owner(s)
+    validations:
+      required: true
+
+  - type: textarea
+    id: interdisciplinary_classification
+    attributes:
+      label: Interdisciplinary classification D01-D12
+      description: Declare D01-D12 with canonical name, Sxx, criterion, risk/gate, evidence, reviewer and STOP. City rows make D01-D08 and D10-D12 MATERIAL; justify D09.
+      placeholder: |
+        D01 — canonical name — MATERIAL — S01 — criterion — risk/gate — evidence — reviewer — STOP
+        D09 — MATERIAL or NOT_APPLICABLE — activating Sxx or concrete reason
+        Continue individually through D12.
+    validations:
+      required: true
+
+  - type: textarea
     id: intent_audience
     attributes:
       label: Search intent and audience

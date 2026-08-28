@@ -12,9 +12,10 @@ titular, licencia o permiso, transformaciones —incluido uso de IA—, responsa
 propósito semántico y evidencia. No certifica por presencia de archivo que esos
 datos existan o sean válidos fuera del repositorio.
 
-[media/AGENTS.md](../../media/AGENTS.md) enruta el trabajo y fija gates, pero no
-es un registro mutable. El texto alternativo, los claims y la función editorial
-pertenecen a
+[AGENTS.md](../../AGENTS.md) eleva el contrato mínimo para `media/**` e
+`images/**` y enruta ambos árboles al checklist de
+[media/AGENTS.md](../../media/AGENTS.md); ninguno es un registro mutable. El
+texto alternativo, los claims y la función editorial pertenecen a
 [CONTENT_COMMUNICATION_STANDARD.md](CONTENT_COMMUNICATION_STANDARD.md); los
 tests técnicos se seleccionan desde [TESTING_MATRIX.md](TESTING_MATRIX.md).
 

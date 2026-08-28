@@ -30,20 +30,30 @@
    scope/no-scope, evidence, risk, rollback, and an independent-audit request.
    Humans decide Ready, merge, deploy, publication, campaigns, secrets, and
    spending.
-8. After merge, perform acceptance and reconcile affected truth owners. Only
-   then may an authorized human close the issue explicitly and declare the work
-   done.
+8. After merge, follow the sequential closeout vehicle in
+   [DEVELOPMENT_WORKFLOW.md](docs/truth/DEVELOPMENT_WORKFLOW.md): accept the
+   integrated SHA, reconcile affected truth owners without direct push, and
+   only then allow an authorized human to close the issue explicitly.
 
 ## Universal contracts
 
-- One coherent issue, one branch, one Draft PR. No direct push to `main`,
-  force-push, auto-merge, bypass, or unrelated branch/PR changes.
+- One coherent issue and one active branch/Draft PR per workflow phase. The only
+  later PR for the same still-open issue is the sequential, state-only
+  post-merge reconciliation PR defined by `DEVELOPMENT_WORKFLOW.md`; it starts
+  after the implementation PR is merged and cannot add implementation scope.
+  No direct push to `main`, force-push, auto-merge, bypass, concurrent second PR,
+  or unrelated branch/PR changes.
 - Protect Río Cuarto's Home and canonical `/` unless an explicit issue changes
   them. Do not invent offices, clients, testimonials, figures, sources, or local
   experience.
 - Do not edit generated output manually; update its source or generator.
 - Never expose secrets or put personal data in URLs, analytics, evidence, logs,
   fixtures, or commits. Minimize and redact personal data everywhere.
+- Every new or replaced asset under `media/**` or `images/**` requires a
+  documented source/right or license, responsible owner, semantic purpose,
+  dimensions, format and size in
+  [MEDIA_PROVENANCE.md](docs/truth/MEDIA_PROVENANCE.md), plus applicable
+  accessibility, performance and cache gates.
 - `NOT_RUN`, `PARTIAL`, `UNKNOWN`, `AUTH_BLOCKED`, `PREVIEW_BLOCKED`, and
   `CAPABILITY_GAP` are never `PASS`.
 - Public HTML must be verified on the exact-head preview in desktop and mobile
@@ -56,6 +66,8 @@
 - Documentation rules: [docs/AGENTS.md](docs/AGENTS.md).
 - GitHub governance rules: [.github/AGENTS.md](.github/AGENTS.md).
 - Serverless API rules: [api/AGENTS.md](api/AGENTS.md).
-- Media rules: [media/AGENTS.md](media/AGENTS.md).
+- Media rules for both `media/**` and `images/**`:
+  [media/AGENTS.md](media/AGENTS.md). This root rule incorporates that checklist
+  for the sibling `images/**` tree.
 - `scripts/AGENTS.md` belongs to issue #24 when executable harness tooling exists.
 - `argentina/AGENTS.md` belongs to issue #6 when generated Geo-SEO output exists.

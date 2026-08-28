@@ -62,6 +62,16 @@ Status: `CURRENT_IN_PROGRESS`
   `PENDING_TO_VALIDATE`, con baseline en #4 y resolución en #11.
 - Procedencia, licencia y responsable por asset enrutan al owner único
   `MEDIA_PROVENANCE.md`.
+- Los resultados globales del manifest derivan del vocabulario canónico completo
+  y conservan causas específicas de ausencia o bloqueo.
+- El lifecycle define un único Draft PR state-only de reconciliación después del
+  merge/aceptación, sin push directo ni nuevo scope de implementación.
+- El router común aplica procedencia y gates de medios tanto a `media/**` como a
+  `images/**` sin crear un router hermano fuera de la allowlist de #3.
+- Los owners `CURRENT_IN_PROGRESS` se describen como propuestas del Draft, no
+  como gobierno vigente de `main`.
+- El formulario de nueva ciudad exige inventario `Sxx` separado y clasificación
+  D01–D12 completa, incluida la decisión explícita sobre D09.
 
 ### Explicitly unchanged
 

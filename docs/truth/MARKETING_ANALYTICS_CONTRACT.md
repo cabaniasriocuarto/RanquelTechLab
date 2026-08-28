@@ -11,6 +11,10 @@ Este archivo fija límites de gobierno y medición. No acredita que GA4, GTM,
 Google Ads, conversiones, dimensiones, consentimientos o dashboards externos
 estén configurados o funcionando.
 
+Mientras el owner esté `CURRENT_IN_PROGRESS`, esos límites son la propuesta de
+la issue #3 y no gobierno vigente de `main`; sólo serán aplicables tras merge
+humano, aceptación y reconciliación versionada.
+
 Hasta completar el baseline autorizado de #4, las condiciones externas usan
 External verification: UNKNOWN y el trabajo que depende de comprobarlas
 permanece PENDING_TO_VALIDATE. El diseño de medición por ciudad pertenece a #11
@@ -18,7 +22,7 @@ y las landings y convenciones de campañas a #12; ambos son
 PLANNED_NOT_IMPLEMENTED. La activación de campañas, gasto y cambios en cuentas
 siempre son decisiones humanas.
 
-## Principios vigentes
+## Principios propuestos
 
 - Medir sólo lo necesario para una decisión definida.
 - Una acción de negocio tiene una única fuente canónica de conversión y no se

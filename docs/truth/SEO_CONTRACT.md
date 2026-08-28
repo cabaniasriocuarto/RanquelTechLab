@@ -10,9 +10,11 @@ Este archivo es el owner de las reglas generales de SEO, indexación y búsqueda
 local. El Golden SEO Baseline y su lineage pertenecen a
 [SEO_GOLDEN_BASELINE.md](SEO_GOLDEN_BASELINE.md); la comparación de paridad y
 regresión de Home pertenece a [SEO_PARITY_CONTRACT.md](SEO_PARITY_CONTRACT.md).
-Su estado indica que las reglas de gobierno están vigentes; no afirma que la
-plataforma Geo-SEO, sus rutas, un generador, un sitemap ni integraciones externas
-ya estén implementados.
+Mientras su estado sea `CURRENT_IN_PROGRESS`, estas reglas son la propuesta de
+la issue #3 y no gobierno vigente de `main`; sólo pasan a ser aplicables después
+del merge humano, la aceptación y la reconciliación versionada. Tampoco afirman
+que la plataforma Geo-SEO, sus rutas, un generador, un sitemap ni integraciones
+externas ya estén implementados.
 
 La arquitectura Geo-SEO nacional continúa como PLANNED_NOT_IMPLEMENTED. Las
 issues #5 a #10 deben convertir ese plan en contratos técnicos e implementación
@@ -36,7 +38,7 @@ usan External verification: UNKNOWN hasta observarse con acceso autorizado. Si
 esa observación es requisito de una tarea, su estado documental permanece
 PENDING_TO_VALIDATE.
 
-## Invariantes actuales
+## Hechos actuales e invariantes propuestas
 
 - El dominio canónico del producto es `https://www.ranquel.com.ar/`.
 - La Home representa a Río Cuarto y conserva el contrato de canonical en /.

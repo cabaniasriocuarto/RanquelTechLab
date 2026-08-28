@@ -7,10 +7,11 @@ marca y calidad editorial)
 
 ## Alcance
 
-Este owner define cómo Ranquel Tech Lab comunica hechos, capacidades y contexto
-local. Es un contrato vigente para cambios documentales y públicos; no declara
-que el contenido Geo-SEO futuro ya exista ni reemplaza investigación, aprobación
-humana o gates ejecutables.
+Este owner propone cómo Ranquel Tech Lab comunicará hechos, capacidades y
+contexto local. Mientras permanezca `CURRENT_IN_PROGRESS`, no es gobierno
+vigente de `main`; sólo será aplicable después del merge humano, la aceptación y
+la reconciliación versionada. No declara que el contenido Geo-SEO futuro ya
+exista ni reemplaza investigación, aprobación humana o gates ejecutables.
 
 Los criterios automáticos anti-doorway pertenecen a #9 y continúan como
 PLANNED_NOT_IMPLEMENTED. Los assets territoriales pertenecen a #10. Las reglas
@@ -29,7 +30,7 @@ de indexación se consultan en [SEO_CONTRACT.md](SEO_CONTRACT.md).
 - Privacidad por defecto: no publicar datos personales sin base, necesidad y
   autorización.
 
-## Contratos vigentes y planes
+## Contratos propuestos y planes
 
 | Tema | Estado | Regla |
 | --- | --- | --- |
@@ -124,7 +125,8 @@ evaluar utilidad e intención, no sólo coincidencia léxica.
 - Un experimento no altera afirmaciones materiales sin nueva revisión.
 
 El owner de producto define qué capacidades están implementadas en
-[FEATURE_MAP.md](FEATURE_MAP.md). Este documento gobierna cómo se comunican.
+[FEATURE_MAP.md](FEATURE_MAP.md). Una vez aceptado y reconciliado, este documento
+gobierna cómo se comunican.
 
 ## Accesibilidad editorial y medios
 
@@ -138,9 +140,9 @@ El owner de producto define qué capacidades están implementadas en
   inaccesible.
 
 La procedencia, titularidad y licencia por asset pertenecen al
-[registro canónico de medios](MEDIA_PROVENANCE.md). `media/AGENTS.md` enruta los
-gates técnicos; este owner conserva alt, claims, función editorial y veracidad
-del uso.
+[registro canónico de medios](MEDIA_PROVENANCE.md). El router raíz aplica el
+contrato a `media/**` e `images/**` y remite al checklist de `media/AGENTS.md`;
+este owner conserva alt, claims, función editorial y veracidad del uso.
 
 ## Revisión editorial proporcional
 

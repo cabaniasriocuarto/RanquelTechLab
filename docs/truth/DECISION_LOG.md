@@ -147,11 +147,29 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
   truth owner alojaba el registro mutable por asset.
 - Decisión: [MEDIA_PROVENANCE.md](MEDIA_PROVENANCE.md) es el owner de
   procedencia, titularidad, derechos, transformaciones, responsable y evidencia
-  por asset. Los routers y owners editoriales/técnicos enlazan ese registro sin
-  duplicarlo.
+  por asset. El router raíz aplica el contrato a `media/**` e `images/**` y
+  remite al checklist detallado de `media/AGENTS.md`; los owners enlazan el
+  registro sin duplicarlo.
 - Consecuencia: el inventario heredado permanece `PENDING_TO_VALIDATE`; #3 no
   inventaría licencias ni cambia assets, y #10 debe reconciliar este owner si
   integra sidecars `source.json`.
+
+## D-012 — Vehículo secuencial de reconciliación post-merge
+
+- Fecha: 2026-08-28.
+- Status: `CURRENT_IN_PROGRESS`.
+- Contexto: el PR que crea owners no puede promoverlos dentro del mismo Draft,
+  pero un push directo a `main` y un segundo PR de implementación concurrente
+  están prohibidos. Sin un vehículo explícito, #3 no podría reconciliar estados
+  después de aceptar el SHA integrado.
+- Decisión: [DEVELOPMENT_WORKFLOW.md](DEVELOPMENT_WORKFLOW.md) permite, después
+  del merge y la aceptación read-only, un único Draft PR secuencial y state-only
+  desde `main` para la misma issue todavía abierta. Usa `Refs #N`, no agrega
+  producto ni verdad sustantiva y conserva gate humano para merge y cierre.
+- Consecuencia: la regla se interpreta como una rama/PR activa por fase, nunca
+  como permiso para PRs paralelos o push directo. #3 requiere ese closeout para
+  promover sus owners aceptados y actualizar el changelog antes del cierre
+  explícito.
 
 ## Cómo agregar una decisión
 

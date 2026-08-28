@@ -1,6 +1,8 @@
 # Media instructions
 
-These rules apply to `media/**` and complement the repository router.
+These rules apply directly to `media/**`. The common-ancestor
+[repository router](../AGENTS.md) makes the same asset contract and this detailed
+checklist applicable to the sibling `images/**` tree.
 
 - Every new or replaced asset needs a documented source, usage right or license,
   responsible owner, semantic purpose, dimensions, format, and size. Record that
@@ -12,8 +14,9 @@ These rules apply to `media/**` and complement the repository router.
 - Optimize responsive delivery, intrinsic dimensions, loading priority, motion,
   reduced-motion behavior, and Core Web Vitals impact before approval.
 - The versioned `vercel.json` declares long-lived immutable caching for
-  `/media`; application on the live deployment remains externally unverified.
-  Replacing a file at the same URL requires an explicit cache/versioning plan.
+  `/media` and `/images`; application on the live deployment remains externally
+  unverified. Replacing a file at the same URL requires an explicit
+  cache/versioning plan.
 - Do not add synthetic local imagery that implies a real office, client,
   landmark, team, or presence without verified provenance and approval.
 - Media changes are product changes: run visual, accessibility, performance,

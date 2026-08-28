@@ -23,7 +23,8 @@ EVIDENCE_MANIFEST:
   BRANCH: "rama"
   WRITER: "sesión/agente"
   RECORDED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ"
-  OVERALL_VALIDATION_RESULT: "PASS | FAIL | BLOCKED | PARTIAL"
+  VALIDATION_RESULT_OWNER: "docs/truth/SOURCE_OF_TRUTH.md#resultados-de-validación-permitidos"
+  OVERALL_VALIDATION_RESULT: "resultado exacto definido por VALIDATION_RESULT_OWNER"
   EVIDENCE_MATURITY: SELF_VALIDATED_ONLY
 ```
 
@@ -117,6 +118,12 @@ SELF_VALIDATED_ONLY
 INDEPENDENTLY_VALIDATED
 POST_MERGE_ACCEPTED
 ```
+
+`OVERALL_VALIDATION_RESULT` y `FINAL_VALIDATION_RESULT` aceptan cualquiera de
+los diez resultados del owner canónico. La agregación nunca degrada
+`NOT_RUN`, `UNKNOWN`, `AUTH_BLOCKED`, `PREVIEW_BLOCKED` o `CAPABILITY_GAP` a
+`BLOCKED`/`PARTIAL`; si coexisten causas distintas, se conservan en sus filas y
+limitaciones y se justifica el resultado global más conservador.
 
 Reglas:
 
@@ -224,7 +231,7 @@ WRITER_DECLARATION:
   CONTRACT_SATISFIED: "true | false | partial"
   ZERO_PRODUCT_CHANGES: "true | false"
   ZERO_UNAUTHORIZED_EXTERNAL_MUTATIONS: "true | false"
-  FINAL_VALIDATION_RESULT: "PASS | FAIL | BLOCKED | PARTIAL"
+  FINAL_VALIDATION_RESULT: "resultado exacto definido por EVIDENCE_MANIFEST.VALIDATION_RESULT_OWNER"
   EVIDENCE_MATURITY: SELF_VALIDATED_ONLY
   AUDIT_REQUESTED: "true | false | NOT_APPLICABLE con justificación"
   READY_DECISION_OWNER: "humano"

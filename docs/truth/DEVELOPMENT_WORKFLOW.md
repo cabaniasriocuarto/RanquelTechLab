@@ -4,9 +4,13 @@ Status: `CURRENT_IN_PROGRESS`
 
 Owner: `docs/truth/DEVELOPMENT_WORKFLOW.md` (proceso desde selección hasta closeout)
 
-Este flujo gobierna toda tarea implementable. La automatización que lo hará
-ejecutable pertenece a #24 y está `PLANNED_NOT_IMPLEMENTED`; documentar un paso
-no demuestra que exista un script o workflow para él.
+Mientras este owner permanezca `CURRENT_IN_PROGRESS`, el archivo describe el
+flujo propuesto por #3 y no gobierno vigente de `main`. La tarea actual lo sigue
+por autoridad de la issue e instrucción humana. Después de integración,
+aceptación y reconciliación podrá gobernar tareas implementables. La
+automatización que lo hará ejecutable pertenece a #24 y está
+`PLANNED_NOT_IMPLEMENTED`; documentar un paso no demuestra que exista un script
+o workflow para él.
 
 ## Roles
 
@@ -39,6 +43,22 @@ PREFLIGHT
 → EXPLICIT_ISSUE_CLOSE
 ```
 
+## Vehículo y owner por fase
+
+| Fase | Vehículo permitido | Owner y límite |
+| --- | --- | --- |
+| Implementación | Una rama y un Draft PR activos con `Refs #N` | Writer de la issue; scope implementable original |
+| `POST_MERGE_ACCEPTANCE` | Inspección read-only de `main` y del SHA integrado; evidencia en la issue/manifest | Humano o sesión de aceptación autorizada; ninguna promoción automática |
+| `TRUTH_RECONCILIATION` | Si hay delta versionado, un único Draft PR secuencial desde `main`, por ejemplo `reconcile/issue-N-truth`, con `Refs #N`; si no lo hay, manifest `NO_DIFF` justificado | Writer de closeout autorizado por la misma issue todavía OPEN; sólo estados, owners, referencias y changelog afectados |
+| `EXPLICIT_ISSUE_CLOSE` | Acción humana en GitHub después de confirmar el PR de reconciliación integrado o la evidencia `NO_DIFF` | Humano autorizado; sin closing keyword |
+
+Cuando existe un delta, la rama/PR de reconciliación es la única continuación
+permitida para la misma issue después del merge del PR de implementación. Nunca
+convive con ese PR activo, no reabre scope de producto, no permite push directo
+a `main` y no autoriza sistemas externos. Si la aceptación descubre que hace
+falta cambiar verdad sustantiva, producto o un owner ajeno, se detiene y se abre
+una issue implementable nueva; no se oculta dentro del closeout.
+
 ### 1. PREFLIGHT
 
 1. Leer issue owner completa, parent nativo, dependencias y comentarios
@@ -63,7 +83,8 @@ de continuar.
 
 ### 3. EDIT
 
-- Aplicar el cambio mínimo coherente con una issue, una rama y un PR.
+- Aplicar el cambio mínimo coherente con una issue y una rama/PR activos por
+  fase. La única continuación secuencial es el closeout state-only anterior.
 - Respetar la allowlist y las instrucciones más cercanas.
 - No editar output generado manualmente ni incorporar cambios de otra rama.
 - No mutar un sistema externo salvo que el contrato lo permita de forma
@@ -128,22 +149,30 @@ secretos o gasto.
 
 ### 12. POST_MERGE_ACCEPTANCE
 
-Después del merge, validar el resultado en el entorno que realmente corresponda
-y contra el SHA integrado. Para HTML público, verificar exact-head en desktop y
-móvil antes de publicación y volver a comprobar producción después. Una tarea
-docs-only justifica las validaciones de producto como `NOT_APPLICABLE`.
+Después del merge humano, mantener la issue abierta e identificar el SHA
+integrado en `main`. Validar el resultado en el entorno que realmente
+corresponda y registrar evidencia read-only. Para HTML público, verificar
+exact-head en desktop y móvil antes de publicación y volver a comprobar
+producción después. Una tarea docs-only justifica las validaciones de producto
+como `NOT_APPLICABLE`.
 
 ### 13. TRUTH_RECONCILIATION
 
-Actualizar owners afectados, referencias y [CHANGELOG.md](CHANGELOG.md).
-Los documentos y decisiones que existían sólo en el Draft se reconcilian desde
-`CURRENT_IN_PROGRESS`; no se promueven durante el mismo PR que los crea.
+Si la aceptación requiere actualizar owners, referencias o
+[CHANGELOG.md](CHANGELOG.md), crear desde el `main` integrado el único Draft PR
+de reconciliación descrito arriba. Su TASK_CONTRACT es state-only/docs-only,
+con allowlist literal, cero producto y cero mutaciones externas. Los documentos
+y decisiones que existían sólo en el Draft se reconcilian desde
+`CURRENT_IN_PROGRESS`; no se promueven durante el mismo PR que los crea. La
+issue #3 requiere ese PR de closeout porque los owners y decisiones creados por
+PR #27 necesitan una transición versionada después de la aceptación.
 
 ### 14. EXPLICIT_ISSUE_CLOSE
 
-Recién después de aceptación post-merge y reconciliación una persona autorizada
-puede cerrar la issue explícitamente y declarar el closeout. Los PRs usan
-`Refs #N`; una closing keyword, commit, push, CI o Draft PR aislados no
+Recién después de aceptación post-merge y de confirmar en `main` el PR de
+reconciliación —o la evidencia `NO_DIFF` cuando no hubo delta—, una persona
+autorizada puede cerrar la issue explícitamente y declarar el closeout. Los PRs
+usan `Refs #N`; una closing keyword, commit, push, CI o Draft PR aislados no
 equivalen a `DONE` ni pueden anticipar el cierre.
 
 ## Riesgo y presupuesto de cambio
