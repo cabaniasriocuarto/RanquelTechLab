@@ -156,7 +156,7 @@ in the final column, not in materiality.
 - Known gaps or blocked checks:
 - `HUMAN_MERGE`: `NOT_RUN`
 - `PR_NUMBER`: `NOT_MERGED`
-- `PR_MERGED`: `NO`
+- `PR_MERGED`: `false`
 - `MERGED_PR_HEAD`: `NOT_CAPTURED`
 - `AUDITED_PR_HEAD`: `NOT_CAPTURED`
 - `INDEPENDENT_REVIEW_HEAD`: `NOT_CAPTURED`
