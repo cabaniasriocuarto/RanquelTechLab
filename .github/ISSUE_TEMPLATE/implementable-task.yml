@@ -10,6 +10,8 @@ body:
       value: |
         Do not include secrets or personal data. Repository truth, the current
         issue, `AGENTS.md`, and `docs/truth/**` override old chat context.
+        Build the Sxx inventory and D01-D12 classification from the
+        [canonical interdisciplinary review matrix](https://github.com/cabaniasriocuarto/RanquelTechLab/blob/main/docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
 
   - type: input
     id: parent_issue
