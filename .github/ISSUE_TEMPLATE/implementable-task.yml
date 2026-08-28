@@ -1,0 +1,293 @@
+name: Implementable task
+description: Define an executable, bounded task contract for Ranquel Tech Lab.
+title: "[TASK] "
+labels:
+  - codex-ready
+  - needs-evidence
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Do not include secrets or personal data. Repository truth, the current
+        issue, `AGENTS.md`, and `docs/truth/**` override old chat context.
+        Build the Sxx inventory and D01-D12 classification from the
+        [canonical interdisciplinary review matrix](https://github.com/cabaniasriocuarto/RanquelTechLab/blob/main/docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md).
+
+  - type: input
+    id: parent_issue
+    attributes:
+      label: Parent issue
+      description: Use an issue reference such as #2, or explain why there is no parent.
+      placeholder: "#2"
+    validations:
+      required: true
+
+  - type: input
+    id: milestone
+    attributes:
+      label: Milestone
+      description: Use the exact M0-M4 milestone name.
+    validations:
+      required: true
+
+  - type: textarea
+    id: dependencies
+    attributes:
+      label: Dependencies and blockers
+      description: List issue references and the required ordering.
+      placeholder: "Depends on #N. Blocks #M."
+    validations:
+      required: true
+
+  - type: textarea
+    id: objective
+    attributes:
+      label: Objective
+      description: State the observable outcome, not just the implementation idea.
+    validations:
+      required: true
+
+  - type: textarea
+    id: baseline
+    attributes:
+      label: Observed baseline
+      description: Record current repository behavior and external unknowns separately.
+    validations:
+      required: true
+
+  - type: textarea
+    id: allowed_paths
+    attributes:
+      label: Allowed paths and symbols
+      description: Use the narrowest explicit allowlist that can complete the task.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: forbidden_paths
+    attributes:
+      label: Forbidden paths
+      description: Include sensitive and adjacent surfaces that must remain unchanged.
+      render: text
+    validations:
+      required: true
+
+  - type: textarea
+    id: external_systems
+    attributes:
+      label: External systems
+      description: Separate allowed read/write operations from prohibited mutations.
+      placeholder: |
+        Allowed:
+        Prohibited:
+    validations:
+      required: true
+
+  - type: textarea
+    id: preserved_contracts
+    attributes:
+      label: Contracts to preserve
+      description: Include routes, data, SEO, privacy, analytics, API, or release invariants.
+    validations:
+      required: true
+
+  - type: textarea
+    id: changed_surfaces
+    attributes:
+      label: Changed surfaces inventory
+      description: List each effect with an Sxx ID and every exact applicable matrix row; list domain owners separately because they cannot replace matrix rows.
+      placeholder: |
+        S01 — effect — paths/symbols/systems — exact matrix row(s) — domain owner(s)
+        S02 — effect — paths/symbols/systems — exact matrix row(s) — domain owner(s)
+    validations:
+      required: true
+
+  - type: textarea
+    id: interdisciplinary_classification
+    attributes:
+      label: Interdisciplinary classification D01-D12
+      description: Classify every discipline as MATERIAL or NOT_APPLICABLE with criterion, evidence, reviewer, and STOP condition.
+      placeholder: |
+        D01 — MATERIAL — surface — contract/criterion — evidence — reviewer — STOP
+        D02 — NOT_APPLICABLE — concrete reason
+        Continue through D12.
+    validations:
+      required: true
+
+  - type: dropdown
+    id: risk
+    attributes:
+      label: Risk
+      options:
+        - LIGHT
+        - STANDARD
+        - HIGH
+        - CRITICAL
+    validations:
+      required: true
+
+  - type: markdown
+    attributes:
+      value: |
+        For an SEO/indexable surface, complete the Golden SEO fields below.
+        Otherwise select or enter NOT_APPLICABLE and justify that classification.
+
+  - type: input
+    id: seoArchetype
+    attributes:
+      label: seoArchetype
+      description: Use the archetype approved by #26, or NOT_APPLICABLE with a reason.
+      placeholder: "NOT_APPLICABLE — no SEO/indexable surface"
+    validations:
+      required: true
+
+  - type: input
+    id: goldenBaselineVersion
+    attributes:
+      label: goldenBaselineVersion
+      description: Use the approved baseline version, NOT_AVAILABLE, or NOT_APPLICABLE with a reason.
+      placeholder: "NOT_APPLICABLE — no SEO/indexable surface"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: SEO_GOLDEN_PARITY
+    attributes:
+      label: SEO_GOLDEN_PARITY
+      options:
+        - PASS
+        - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
+    validations:
+      required: true
+
+  - type: dropdown
+    id: HOME_SEO_REGRESSION
+    attributes:
+      label: HOME_SEO_REGRESSION
+      options:
+        - PASS
+        - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
+    validations:
+      required: true
+
+  - type: dropdown
+    id: LOCAL_CONTENT_UTILITY
+    attributes:
+      label: LOCAL_CONTENT_UTILITY
+      options:
+        - PASS
+        - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
+    validations:
+      required: true
+
+  - type: dropdown
+    id: MOBILE_SEO_PARITY
+    attributes:
+      label: MOBILE_SEO_PARITY
+      options:
+        - PASS
+        - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
+    validations:
+      required: true
+
+  - type: dropdown
+    id: MULTILINGUAL_SEO
+    attributes:
+      label: MULTILINGUAL_SEO
+      description: Existing client-side language UI is not proof of multilingual SEO parity.
+      options:
+        - PASS
+        - FAIL
+        - BLOCKED
+        - PARTIAL
+        - NOT_RUN
+        - UNKNOWN
+        - AUTH_BLOCKED
+        - PREVIEW_BLOCKED
+        - CAPABILITY_GAP
+        - NOT_APPLICABLE
+    validations:
+      required: true
+
+  - type: textarea
+    id: tests_gates
+    attributes:
+      label: Tests and gates
+      description: List focal tests, regression checks, surface gates, and exact-head needs.
+    validations:
+      required: true
+
+  - type: textarea
+    id: visual_validation
+    attributes:
+      label: Visual validation
+      description: Define desktop/mobile coverage or justify NOT_APPLICABLE.
+    validations:
+      required: true
+
+  - type: textarea
+    id: evidence
+    attributes:
+      label: Required evidence
+      description: Define commands, artifacts, SHAs, previews, logs, and honest states.
+    validations:
+      required: true
+
+  - type: textarea
+    id: stop_conditions
+    attributes:
+      label: STOP conditions
+      description: List events that require stopping instead of expanding scope.
+    validations:
+      required: true
+
+  - type: textarea
+    id: definition_of_done
+    attributes:
+      label: Definition of Done
+      description: "Include merge, post-merge acceptance, truth reconciliation, and explicit human issue close; PRs use non-closing Refs #N."
+    validations:
+      required: true
+
+  - type: checkboxes
+    id: acknowledgements
+    attributes:
+      label: Human-governed workflow
+      options:
+        - label: I did not include secrets, tokens, credentials, or personal data.
+          required: true
+        - label: Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
+          required: true
