@@ -130,11 +130,15 @@ TASK_CONTRACT:
       - "prueba y criterio | NOT_APPLICABLE con justificación"
     SURFACE_GATES:
       - "gate y criterio | NOT_APPLICABLE con justificación"
+    POST_GATE_WORKTREE_INDEX_RECHECK:
+      - "en REPAIR_CYCLE, repetir git diff --quiet, inventario untracked, cached diff, scope y secrets"
+      - "exigir PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS y PRE_GATE_STAGED_TREE_SHA=POST_GATE_CURRENT_INDEX_TREE_SHA=VALIDATED_STAGED_TREE_SHA"
+      - "fuera de reparación, NOT_APPLICABLE con justificación y sin alterar el lifecycle primario"
     VISUAL_VALIDATION:
       - "desktop/móvil exact-head | NOT_APPLICABLE con justificación"
     CANDIDATE_PUBLICATION:
       COMMIT_CANDIDATE:
-        - "crear el HEAD real desde el staged set validado"
+        - "en una reparación, crear el HEAD real sólo después de POST_GATE_WORKTREE_INDEX_RECHECK=PASS"
       CAPTURE_NEW_HEAD:
         - "registrar el SHA completo inmediatamente después del commit"
       VERIFY_COMMIT_TREE_MATCH:
@@ -151,6 +155,7 @@ TASK_CONTRACT:
           - STAGED_SCOPE_SECRET_RECHECK
           - AFFECTED_FOCAL_TESTS
           - AFFECTED_SURFACE_GATES
+          - POST_GATE_WORKTREE_INDEX_RECHECK
           - COMMIT_CANDIDATE
           - CAPTURE_NEW_HEAD
           - VERIFY_COMMIT_TREE_MATCH
@@ -160,7 +165,11 @@ TASK_CONTRACT:
           - INDEPENDENT_REVIEW_REQUEST
           - INDEPENDENT_AUDIT
         PREVIOUS_HEAD: "sha anterior | NOT_APPLICABLE"
-        VALIDATED_STAGED_TREE_SHA: "tree sha"
+        PRE_GATE_WORKTREE_INDEX_ALIGNMENT: "PASS | FAIL"
+        PRE_GATE_STAGED_TREE_SHA: "tree sha"
+        POST_GATE_WORKTREE_INDEX_RECHECK: "PASS | FAIL"
+        POST_GATE_CURRENT_INDEX_TREE_SHA: "tree sha"
+        VALIDATED_STAGED_TREE_SHA: "tree sha; igual a los trees pre/post cuando el recheck es PASS"
         NEW_HEAD: "sha completo"
         NEW_HEAD_TREE_SHA: "tree sha"
         TREE_MATCH: "PASS | FAIL"
@@ -212,16 +221,18 @@ TASK_CONTRACT:
       MERGED_PR_PASS_REQUIRES:
         RECONCILIATION_PR: "N real"
         RECONCILIATION_PR_HEAD: "sha completo"
+        RECONCILIATION_MERGED_PR_HEAD: "sha completo capturado del PR ya mergeado"
         RECONCILIATION_REVIEW_REQUESTED: true
         RECONCILIATION_REVIEW_REQUEST_STATE: PASS
-        RECONCILIATION_REVIEW_REQUEST_HEAD: "igual a RECONCILIATION_PR_HEAD"
+        RECONCILIATION_REVIEW_REQUEST_HEAD: "igual a RECONCILIATION_MERGED_PR_HEAD"
         RECONCILIATION_REVIEW_EXECUTION_STATE: PASS
         RECONCILIATION_AUDIT_VERDICT: PASS
-        RECONCILIATION_AUDITED_HEAD: "igual a RECONCILIATION_PR_HEAD"
+        RECONCILIATION_AUDITED_HEAD: "igual a RECONCILIATION_MERGED_PR_HEAD"
+        REQUIRED_HEAD_EQUALITY: "RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD"
         RECONCILIATION_OPEN_MATERIAL_FINDINGS: 0
         RECONCILIATION_PR_MERGED: true
         RECONCILIATION_INTEGRATED_SHA_SOURCE: MERGED_PR
-        RECONCILIATION_INTEGRATED_SHA: "sha real"
+        RECONCILIATION_INTEGRATED_SHA: "mergeCommit.oid/merge_commit_sha real observado en RECONCILIATION_PR"
         RECONCILIATION_SHA_REACHABLE_FROM_MAIN: "YES"
         ALL_OTHER_COMBINATIONS: "TRUTH_RECONCILIATION_STATE != PASS"
       INVALID_AS_PASS: "Draft | Ready | CLOSED_UNMERGED | PR creado/revisado sin merge"

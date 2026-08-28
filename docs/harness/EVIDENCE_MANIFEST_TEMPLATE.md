@@ -42,6 +42,7 @@ REPAIR_CYCLE:
     - STAGED_SCOPE_SECRET_RECHECK
     - AFFECTED_FOCAL_TESTS
     - AFFECTED_SURFACE_GATES
+    - POST_GATE_WORKTREE_INDEX_RECHECK
     - COMMIT_CANDIDATE
     - CAPTURE_NEW_HEAD
     - VERIFY_COMMIT_TREE_MATCH
@@ -50,7 +51,11 @@ REPAIR_CYCLE:
     - CI_EXACT_HEAD
     - INDEPENDENT_REVIEW_REQUEST
     - INDEPENDENT_AUDIT
-  VALIDATED_STAGED_TREE_SHA: "tree sha"
+  PRE_GATE_WORKTREE_INDEX_ALIGNMENT: "PASS | FAIL"
+  PRE_GATE_STAGED_TREE_SHA: "tree sha"
+  POST_GATE_WORKTREE_INDEX_RECHECK: "PASS | FAIL"
+  POST_GATE_CURRENT_INDEX_TREE_SHA: "tree sha"
+  VALIDATED_STAGED_TREE_SHA: "tree sha; igual a los trees pre/post cuando el recheck es PASS"
   NEW_HEAD: "sha completo"
   NEW_HEAD_TREE_SHA: "tree sha"
   TREE_MATCH: "PASS | FAIL"
@@ -66,8 +71,16 @@ REPAIR_CYCLE:
 ```
 
 `REPAIR_EDIT` identifica un cambio candidato todavía sin commit ni `NEW_HEAD`.
-`VALIDATED_STAGED_TREE_SHA` se captura después del staging y los gates locales,
-antes de `COMMIT_CANDIDATE`. El commit crea el SHA; `CAPTURE_NEW_HEAD` lo
+`STAGED_SCOPE_SECRET_RECHECK` ejecuta `git diff --quiet`, inventaría untracked
+`git ls-files --others --exclude-standard`, repite cached diff/scope/secrets y
+sólo con `PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS` captura
+`PRE_GATE_STAGED_TREE_SHA`. Después de los gates,
+`POST_GATE_WORKTREE_INDEX_RECHECK` repite esos controles y captura
+`POST_GATE_CURRENT_INDEX_TREE_SHA`; exige cero drift y que ese tree conserve el
+SHA pre-gate. Sólo un recheck `PASS` captura el mismo tree como
+`VALIDATED_STAGED_TREE_SHA` antes de `COMMIT_CANDIDATE`. Omitirlo o fallarlo
+bloquea commit, push y auditoría y obliga a volver a `DIFF_CHECK`, staging y
+gates. El commit crea el SHA; `CAPTURE_NEW_HEAD` lo
 registra inmediatamente y `VERIFY_COMMIT_TREE_MATCH` obtiene
 `NEW_HEAD_TREE_SHA`. Sólo la igualdad exacta con el staged tree validado permite
 `TREE_MATCH=PASS`; `TREE_MATCH=FAIL` bloquea push y auditoría.
@@ -127,8 +140,9 @@ de no materialidad.
 | V-005 | Secrets/privacy | `MATERIAL` | `<inspección>` | `<n>` | `<estado>` | `<resultado sanitizado>` | `<ref>` | `<detalle>` |
 | V-006 | Focal tests | `<MATERIAL/NOT_APPLICABLE>` | `<comando>` | `<n>` | `<estado>` | `<resultado>` | `<ref>` | `<detalle>` |
 | V-007 | Surface gates | `<MATERIAL/NOT_APPLICABLE>` | `<comando/inspección>` | `<n>` | `<estado>` | `<resultado>` | `<ref>` | `<detalle>` |
+| V-R01 | Post-gate worktree/index recheck | `<MATERIAL/NOT_APPLICABLE>` | `git diff --quiet; git ls-files --others --exclude-standard; git diff --cached --check; scope; secrets; git write-tree` | `<n>` | `<estado>` | `PRE_GATE_WORKTREE_INDEX_ALIGNMENT=<PASS/FAIL>; PRE_GATE_STAGED_TREE_SHA=<tree>; POST_GATE_WORKTREE_INDEX_RECHECK=<PASS/FAIL>; POST_GATE_CURRENT_INDEX_TREE_SHA=<tree>; VALIDATED_STAGED_TREE_SHA=<tree>` | `<ref>` | `MATERIAL en REPAIR_CYCLE; PASS exige PRE_GATE=POST_GATE=VALIDATED, cero drift y cero untracked no autorizado; fuera de reparación, NOT_APPLICABLE justificado` |
 | V-008 | Preview/visual | `<MATERIAL/NOT_APPLICABLE>` | `<URL redactada/ref>` | `N/A` | `<estado>` | `<desktop/móvil>` | `<ref>` | `<detalle>` |
-| V-009 | Commit, captura y tree match | `MATERIAL` | `git commit`; capturar `HEAD` y su tree | `<n>` | `<estado>` | `VALIDATED_STAGED_TREE_SHA=<tree>; NEW_HEAD=<sha>; NEW_HEAD_TREE_SHA=<tree>; TREE_MATCH=<PASS/FAIL>` | `<ref>` | `COMMIT_CANDIDATE → CAPTURE_NEW_HEAD → VERIFY_COMMIT_TREE_MATCH` |
+| V-009 | Commit, captura y tree match | `MATERIAL` | `git commit`; capturar `HEAD` y su tree | `<n>` | `<estado>` | `VALIDATED_STAGED_TREE_SHA=<tree>; NEW_HEAD=<sha>; NEW_HEAD_TREE_SHA=<tree>; TREE_MATCH=<PASS/FAIL>` | `<ref>` | `Si REPAIR_CYCLE: REQUIRES=V-R01:PASS; si no, V-R01:NOT_APPLICABLE justificado; COMMIT_CANDIDATE → CAPTURE_NEW_HEAD → VERIFY_COMMIT_TREE_MATCH` |
 | V-010 | Push candidato | `MATERIAL` | `git push` | `<n>` | `<estado>` | `<REMOTE_HEAD>` | `<ref>` | `REQUIRES=V-009:PASS,TREE_MATCH:PASS` |
 | V-011 | Draft PR create/update | `MATERIAL` | `<inspección GitHub>` | `N/A` | `<estado>` | `<DRAFT_PR_HEAD>` | `<ref>` | `<detalle>` |
 | V-012 | CI exact-head | `<MATERIAL/NOT_APPLICABLE>` | `<job/run>` | `N/A` | `<estado>` | `<sha/result>` | `<ref>` | `<detalle>` |
@@ -170,6 +184,7 @@ PRE_MERGE_DEFAULTS:
   RECONCILIATION_PR: NOT_RUN
   RECONCILIATION_PR_MERGED: false
   RECONCILIATION_PR_HEAD: NOT_CAPTURED
+  RECONCILIATION_MERGED_PR_HEAD: NOT_CAPTURED
   RECONCILIATION_REVIEW_REQUESTED: false
   RECONCILIATION_REVIEW_REQUEST_STATE: NOT_RUN
   RECONCILIATION_REVIEW_REQUEST_HEAD: NOT_REQUESTED
@@ -192,7 +207,7 @@ PRE_MERGE_DEFAULTS:
 | V-015 | Human merge | `<inspección del PR en GitHub>` | `HUMAN_MERGE=<NOT_RUN/PASS/BLOCKED>` | `PR_NUMBER=<N/NOT_MERGED>; PR_MERGED=<YES/NO/false>; MERGED_PR_HEAD=<sha/NOT_CAPTURED>; AUDITED_PR_HEAD=<sha/NOT_CAPTURED>; INDEPENDENT_REVIEW_HEAD=<sha/NOT_CAPTURED>; MERGE_ACCEPTANCE=<NOT_RUN/PASS/BLOCKED_HEAD_DRIFT>` | `<ref/NONE>` | `PRE_MERGE_DEFAULTS literal; PASS exige tres SHA reales e iguales; drift bloquea V-016` |
 | V-016 | Integrated SHA | `<inspección del resultado del PR y main>` | `<estado>` | `INTEGRATED_SHA_SOURCE=<MERGED_PR/NOT_CAPTURED>; INTEGRATED_SHA=<sha/NOT_CAPTURED>; MERGE_METHOD=<MERGE/SQUASH/REBASE/NOT_OBSERVABLE/NOT_RUN>; INTEGRATED_SHA_REACHABLE_FROM_MAIN=<YES/NO/NOT_RUN>; MAIN_HEAD_AT_ACCEPTANCE=<sha/NOT_CAPTURED>` | `<ref/NONE>` | `PRE_MERGE_DEFAULTS literal; REQUIRES=V-015:PASS; main tip no identifica el merge` |
 | V-017 | Post-merge acceptance | `<inspección contra INTEGRATED_SHA>` | `<estado>` | `TARGET=INTEGRATED_SHA; ACCEPTED_SHA=<sha/NOT_RUN>` | `<ref/NONE>` | `REQUIRES=V-015:PASS,V-016:PASS` |
-| V-018 | Truth reconciliation | `<MERGED_PR/inspección NO_DIFF>` | `TRUTH_RECONCILIATION_STATE=<NOT_RUN/PASS/BLOCKED>` | `MODE=<NO_DIFF/MERGED_PR/NOT_RUN>; SOURCE_INTEGRATED_SHA=<sha/NOT_RUN>; NO_DIFF_JUSTIFICATION=<detalle/NONE>; RECONCILIATION_PR=<N/NOT_RUN>; RECONCILIATION_PR_MERGED=<true/false>; RECONCILIATION_PR_HEAD=<sha/NOT_CAPTURED>; RECONCILIATION_REVIEW_REQUESTED=<true/false>; RECONCILIATION_REVIEW_REQUEST_STATE=<PASS/NOT_RUN/AUTH_BLOCKED/CAPABILITY_GAP/BLOCKED>; RECONCILIATION_REVIEW_REQUEST_HEAD=<sha/NOT_REQUESTED>; RECONCILIATION_REVIEW_EXECUTION_STATE=<PASS/NOT_RUN/AUTH_BLOCKED/CAPABILITY_GAP/BLOCKED>; RECONCILIATION_AUDIT_VERDICT=<PASS/CHANGES_REQUIRED/BLOCKED/NOT_ISSUED>; RECONCILIATION_AUDITED_HEAD=<sha/NOT_REVIEWED>; RECONCILIATION_OPEN_MATERIAL_FINDINGS=<n/UNKNOWN>; RECONCILIATION_INTEGRATED_SHA_SOURCE=<MERGED_PR/NOT_CAPTURED>; RECONCILIATION_INTEGRATED_SHA=<sha/NOT_CAPTURED>; RECONCILIATION_SHA_REACHABLE_FROM_MAIN=<YES/NO/NOT_RUN>` | `TRUTH_RECONCILIATION_EVIDENCE=<ref/NONE>` | `PRE_MERGE_DEFAULTS literal; REQUIRES=V-017:PASS; sólo uno de los dos modos válidos` |
+| V-018 | Truth reconciliation | `<MERGED_PR/inspección NO_DIFF>` | `TRUTH_RECONCILIATION_STATE=<NOT_RUN/PASS/BLOCKED>` | `MODE=<NO_DIFF/MERGED_PR/NOT_RUN>; SOURCE_INTEGRATED_SHA=<sha/NOT_RUN>; NO_DIFF_JUSTIFICATION=<detalle/NONE>; RECONCILIATION_PR=<N/NOT_RUN>; RECONCILIATION_PR_MERGED=<true/false>; RECONCILIATION_PR_HEAD=<sha/NOT_CAPTURED>; RECONCILIATION_MERGED_PR_HEAD=<sha/NOT_CAPTURED>; RECONCILIATION_REVIEW_REQUESTED=<true/false>; RECONCILIATION_REVIEW_REQUEST_STATE=<PASS/NOT_RUN/AUTH_BLOCKED/CAPABILITY_GAP/BLOCKED>; RECONCILIATION_REVIEW_REQUEST_HEAD=<sha/NOT_REQUESTED>; RECONCILIATION_REVIEW_EXECUTION_STATE=<PASS/NOT_RUN/AUTH_BLOCKED/CAPABILITY_GAP/BLOCKED>; RECONCILIATION_AUDIT_VERDICT=<PASS/CHANGES_REQUIRED/BLOCKED/NOT_ISSUED>; RECONCILIATION_AUDITED_HEAD=<sha/NOT_REVIEWED>; RECONCILIATION_OPEN_MATERIAL_FINDINGS=<n/UNKNOWN>; RECONCILIATION_INTEGRATED_SHA_SOURCE=<MERGED_PR/NOT_CAPTURED>; RECONCILIATION_INTEGRATED_SHA=<sha/NOT_CAPTURED>; RECONCILIATION_SHA_REACHABLE_FROM_MAIN=<YES/NO/NOT_RUN>` | `TRUTH_RECONCILIATION_EVIDENCE=<ref/NONE>` | `PRE_MERGE_DEFAULTS literal; REQUIRES=V-017:PASS; sólo uno de los dos modos válidos` |
 | V-019 | Explicit issue close | `<inspección GitHub>` | `<estado>` | `ISSUE_CLOSED=<true/false>` | `<ref/NONE>` | `REQUIRES=V-017:PASS,V-018:PASS; OWNER=humano` |
 
 Antes de ejecutar esas fases, V-015 usa `PR_MERGED=false`, no `NO`; `NO` queda
@@ -218,19 +233,20 @@ exactamente uno de estos caminos:
 
 - `NO_DIFF`: justificación/evidencia no vacía y
   `SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`.
-- `MERGED_PR`: número y HEAD reales del PR de reconciliación, más exactamente:
+- `MERGED_PR`: número y HEAD auditado reales del PR de reconciliación, más el
+  HEAD efectivamente mergeado capturado y exactamente:
 
 ```text
 RECONCILIATION_REVIEW_REQUESTED=true
 AND RECONCILIATION_REVIEW_REQUEST_STATE=PASS
-AND RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_PR_HEAD
 AND RECONCILIATION_REVIEW_EXECUTION_STATE=PASS
 AND RECONCILIATION_AUDIT_VERDICT=PASS
-AND RECONCILIATION_AUDITED_HEAD=RECONCILIATION_PR_HEAD
 AND RECONCILIATION_OPEN_MATERIAL_FINDINGS=0
 AND RECONCILIATION_PR_MERGED=true
+AND RECONCILIATION_MERGED_PR_HEAD=<sha real observado del PR mergeado>
+AND RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD
 AND RECONCILIATION_INTEGRATED_SHA_SOURCE=MERGED_PR
-AND RECONCILIATION_INTEGRATED_SHA=<sha real>
+AND RECONCILIATION_INTEGRATED_SHA=<mergeCommit.oid/merge_commit_sha real observado en RECONCILIATION_PR>
 AND RECONCILIATION_SHA_REACHABLE_FROM_MAIN=YES
 ```
 
@@ -238,8 +254,10 @@ Draft, Ready, cerrado sin merge y el valor heredado `RESULT=PR` son inválidos
 como reconciliación. `TRUTH_RECONCILIATION_MODE=NOT_RUN` y cualquier otro default
 pre-merge nunca permiten `V-018=PASS`; tampoco lo permite ninguna combinación
 que omita o contradiga una dimensión del predicado `MERGED_PR`. `NO_DIFF` no
-requiere un PR ficticio. `V-019=PASS` e `ISSUE_CLOSED=true` exigen V-017, uno de
-los dos modos V-018 en PASS, evidencia y cierre humano explícito.
+requiere un PR ficticio. Un HEAD mergeado no capturado o diferente, o un
+integrated SHA que no sea el resultado observado del mismo `RECONCILIATION_PR`,
+también bloquean. `V-019=PASS` e `ISSUE_CLOSED=true` exigen V-017, uno de los
+dos modos V-018 en PASS, evidencia y cierre humano explícito.
 
 Cuando SEO/indexación sea material, agregar estas filas y enlazar el owner de
 [paridad](../truth/SEO_PARITY_CONTRACT.md):
@@ -460,6 +478,7 @@ WRITER_DECLARATION:
   RECONCILIATION_PR: NOT_RUN
   RECONCILIATION_PR_MERGED: false
   RECONCILIATION_PR_HEAD: NOT_CAPTURED
+  RECONCILIATION_MERGED_PR_HEAD: NOT_CAPTURED
   RECONCILIATION_REVIEW_REQUESTED: false
   RECONCILIATION_REVIEW_REQUEST_STATE: NOT_RUN
   RECONCILIATION_REVIEW_REQUEST_HEAD: NOT_REQUESTED
@@ -493,10 +512,12 @@ aceptación sobre el mismo SHA.
 `TRUTH_RECONCILIATION_STATE=PASS` depende de esa aceptación y de `NO_DIFF` con
 source igual a `INTEGRATED_SHA` y justificación/evidencia no vacías, o de un PR
 de reconciliación que satisfaga toda la conjunción: request `true`/`PASS` y exact
-HEAD, execution `PASS`, verdict `PASS`, audited HEAD exacto, cero findings
-materiales, merge real, integrated SHA real con source `MERGED_PR` y
-reachability `YES`. Draft, Ready, cerrado sin merge o cualquier dimensión no
-favorable permanecen no-PASS. `EXPLICIT_ISSUE_CLOSE_STATE=PASS` e
+HEAD, execution `PASS`, verdict `PASS`, audited HEAD exacto, cero findings y
+merge real cuyo HEAD capturado sea el mismo auditado. El integrated SHA debe ser
+el resultado de merge observado en ese mismo `RECONCILIATION_PR`, con source
+`MERGED_PR` y reachability `YES`. Draft, Ready, cerrado sin merge, HEAD drift,
+resultado de otro PR o cualquier dimensión no favorable permanecen no-PASS.
+`EXPLICIT_ISSUE_CLOSE_STATE=PASS` e
 `ISSUE_CLOSED=true` dependen de las dos fases anteriores y de una acción humana
 explícita.
 

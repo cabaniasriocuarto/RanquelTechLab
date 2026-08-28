@@ -49,6 +49,7 @@ REPAIR_EDIT
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
+→ POST_GATE_WORKTREE_INDEX_RECHECK
 → COMMIT_CANDIDATE
 → CAPTURE_NEW_HEAD
 → VERIFY_COMMIT_TREE_MATCH
@@ -91,6 +92,14 @@ auditor debe revisar el resultado nuevo.
   `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` sin drift de índice/worktree.
 - [ ] Push, CI, request y auditoría citan `NEW_HEAD`, nunca `PREVIOUS_HEAD`.
 - [ ] Gates afectados repetidos; gates no afectados `NOT_APPLICABLE` y justificados.
+- [ ] `STAGED_SCOPE_SECRET_RECHECK` prueba con `git diff --quiet` e inventario
+  untracked que `PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS`, repite cached
+  diff/scope/secrets y captura `PRE_GATE_STAGED_TREE_SHA`.
+- [ ] Después de los gates, `POST_GATE_WORKTREE_INDEX_RECHECK=PASS` repite esos
+  controles, prueba cero drift y fija
+  `POST_GATE_CURRENT_INDEX_TREE_SHA=PRE_GATE_STAGED_TREE_SHA=VALIDATED_STAGED_TREE_SHA`.
+- [ ] Un recheck omitido o `FAIL` bloquea commit/push/auditoría y vuelve a
+  `DIFF_CHECK`, staging y gates; `TREE_MATCH=PASS` posterior no lo compensa.
 - [ ] Si cambió un contrato transversal, matriz contractual completa reejecutada.
 - [ ] CI/preview exact-head cuando aplican.
 - [ ] Solicitud, ejecución y dictamen registrados como dimensiones separadas.
@@ -109,6 +118,7 @@ Material ausente se registra como finding o causa de `BLOCKED`; no se presume.
 | Semántica | ¿El cambio cumple el objetivo y DoD? | `<estado>` | `<ref>` |
 | Contratos | ¿Se preservan owners y contratos declarados? | `<estado>` | `<ref>` |
 | Tests | ¿Las pruebas son suficientes para changed surfaces/riesgo? | `<estado>` | `<ref>` |
+| Repair integrity | ¿El tree pre-gate sigue idéntico después de los gates y no existe drift de worktree/índice/untracked? | `<estado>` | `<ref>` |
 | Estados | ¿No se presentó falta de evidencia como `PASS`? | `<estado>` | `<ref>` |
 | Seguridad/privacidad | ¿No hay secretos, PII o trust-boundary drift? | `<estado>` | `<ref>` |
 | Producto/SEO | ¿Se preservan Home/canonical y no-scope público? | `<estado>` | `<ref>` |
@@ -205,6 +215,7 @@ CONCLUSION:
     RECONCILIATION_PR: "N | NOT_RUN"
     RECONCILIATION_PR_MERGED: "true | false"
     RECONCILIATION_PR_HEAD: "sha completo | NOT_CAPTURED"
+    RECONCILIATION_MERGED_PR_HEAD: "sha completo | NOT_CAPTURED"
     RECONCILIATION_REVIEW_REQUESTED: "true | false"
     RECONCILIATION_REVIEW_REQUEST_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
     RECONCILIATION_REVIEW_REQUEST_HEAD: "sha completo | NOT_REQUESTED"
@@ -237,12 +248,18 @@ Cuando el objeto auditado es un PR de reconciliación, el bloque
 integración; se omite para otros PRs. Antes de ejecutar cada fase, sus valores
 copian literalmente los `PRE_MERGE_DEFAULTS` del manifiesto. Un handoff favorable
 de auditoría exige request `true`/`PASS`,
-request HEAD igual a `RECONCILIATION_PR_HEAD`, execution `PASS`, audit verdict
-`PASS`, audited HEAD igual al PR HEAD y cero findings materiales. Aun con ese
-handoff, `TRUTH_RECONCILIATION_STATE` no puede ser `PASS` hasta que
-`RECONCILIATION_PR_MERGED=true`, el source sea `MERGED_PR`, exista un integrated
-SHA real y su reachability desde `main` sea `YES`. Cualquier otra combinación es
-no-PASS. El modo `NO_DIFF` exige
+`RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_PR_HEAD`, execution `PASS`,
+audit verdict `PASS`,
+`RECONCILIATION_AUDITED_HEAD=RECONCILIATION_PR_HEAD` y cero findings materiales.
+Aun con ese handoff,
+`TRUTH_RECONCILIATION_STATE` no puede ser `PASS` hasta que
+`RECONCILIATION_PR_MERGED=true`, se capture el HEAD efectivamente mergeado y se
+pruebe
+`RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD`.
+El source debe ser `MERGED_PR`; el integrated SHA debe ser el
+`mergeCommit.oid`/`merge_commit_sha` observado en ese mismo
+`RECONCILIATION_PR` y su reachability desde `main` debe ser `YES`. Cualquier
+otra combinación es no-PASS. El modo `NO_DIFF` exige
 `TRUTH_RECONCILIATION_MODE=NO_DIFF`,
 `SOURCE_INTEGRATED_SHA=INTEGRATED_SHA` y justificación/evidencia comprobable no
 vacías; no inventa un PR. Sin cualquiera de esas condiciones también es

@@ -67,9 +67,10 @@ Status: `CURRENT_IN_PROGRESS`
 - El lifecycle define un único Draft PR state-only de reconciliación después del
   merge/aceptación, sin push directo ni nuevo scope de implementación.
 - El lifecycle de reparación parte de `REPAIR_EDIT`, valida y stagea el cambio,
-  crea el commit y recién entonces captura `NEW_HEAD`; verifica igualdad entre
-  staged tree y commit tree antes de push, Draft, CI, solicitud y auditoría, sin
-  heredar evidencia del HEAD anterior.
+  conserva el tree pre-gate y revalida diff, índice, scope, secrets y ausencia de
+  drift después de los gates. Sólo entonces crea el commit, captura `NEW_HEAD` y
+  verifica igualdad entre staged tree y commit tree antes de push, Draft, CI,
+  solicitud y auditoría, sin heredar evidencia del HEAD anterior.
 - Todo Draft PR implementable solicita auditoría independiente. La intensidad
   es proporcional al riesgo y `INDEPENDENTLY_VALIDATED` exige exactamente
   `MATERIAL`/`PASS` o `NOT_APPLICABLE`/`NOT_APPLICABLE` justificado por fila;
@@ -82,8 +83,10 @@ Status: `CURRENT_IN_PROGRESS`
   integrado del resultado del PR y registra el tip de `main` por separado. Truth
   sólo se reconcilia mediante `NO_DIFF` con source igual al integrated SHA y
   justificación/evidencia comprobable no vacías, o un PR state-only solicitado
-  (`true`/`PASS`) con ejecución/verdict `PASS`, request/audit HEAD exacto, cero
-  findings, merge real e integrated SHA alcanzable antes del cierre explícito.
+  (`true`/`PASS`) con ejecución/verdict `PASS`, cero findings y HEAD
+  efectivamente mergeado igual a los HEAD de PR/request/auditoría. Su integrated
+  SHA debe provenir del resultado observable de ese mismo PR y ser alcanzable
+  antes del cierre explícito.
 - El formulario de tarea implementable presenta en español todo texto humano y
   conserva sin traducir sólo IDs, enums, paths y labels GitHub contractuales.
 - El router común aplica procedencia y gates de medios tanto a `media/**` como a

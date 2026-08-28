@@ -59,6 +59,7 @@ REPAIR_EDIT
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
+→ POST_GATE_WORKTREE_INDEX_RECHECK
 → COMMIT_CANDIDATE
 → CAPTURE_NEW_HEAD
 → VERIFY_COMMIT_TREE_MATCH
@@ -70,8 +71,22 @@ REPAIR_EDIT
 ```
 
 `REPAIR_EDIT` significa que existe un cambio candidato en worktree, todavía sin
-commit ni `NEW_HEAD`. Después del staging exacto, los checks locales y los gates
-afectados, registrar `VALIDATED_STAGED_TREE_SHA` antes del commit.
+commit ni `NEW_HEAD`. `STAGED_SCOPE_SECRET_RECHECK` ejecuta
+`git diff --quiet`, inventaría `git ls-files --others --exclude-standard`,
+repite cached diff, scope y secrets y sólo declara
+`PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS` si el worktree está alineado con el
+índice y no hay untracked no autorizados. Entonces captura
+`PRE_GATE_STAGED_TREE_SHA`. Los focal tests y surface gates afectados se
+ejecutan sobre ese candidato.
+
+Después de los gates y antes del commit,
+`POST_GATE_WORKTREE_INDEX_RECHECK` repite `git diff --quiet`, el inventario
+untracked, staged diff, scope y secret/privacy scan; captura
+`POST_GATE_CURRENT_INDEX_TREE_SHA` y exige que siga igual a
+`PRE_GATE_STAGED_TREE_SHA`. Sólo un recheck `PASS` registra ese mismo tree como
+`VALIDATED_STAGED_TREE_SHA`. Un recheck
+omitido o `FAIL` bloquea commit, push y auditoría y obliga a volver a
+`DIFF_CHECK`, repetir staging y volver a ejecutar los gates.
 `COMMIT_CANDIDATE` crea el commit; inmediatamente después,
 `CAPTURE_NEW_HEAD` registra su SHA completo y `VERIFY_COMMIT_TREE_MATCH` obtiene
 `NEW_HEAD_TREE_SHA`. Sólo `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` permite
@@ -94,7 +109,7 @@ candidato nuevo.
 | `HUMAN_MERGE` | Acción humana en GitHub sobre el PR revisado | Humano autorizado; registra número, merge y `MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD` |
 | `CAPTURE_INTEGRATED_SHA` | Inspección read-only del resultado del PR mergeado y reachability desde `main` | Sesión de aceptación; toma `INTEGRATED_SHA` del PR, registra método observable y `MAIN_HEAD_AT_ACCEPTANCE` por separado |
 | `POST_MERGE_ACCEPTANCE` | Inspección read-only de `main` y del `INTEGRATED_SHA`; evidencia en la issue/manifest | Humano o sesión de aceptación autorizada; exige merge y captura previos, sin promoción automática |
-| `TRUTH_RECONCILIATION` | `NO_DIFF` con source igual al integrated SHA y justificación/evidencia no vacías, o un único PR state-only secuencial desde `main`, por ejemplo `reconcile/issue-N-truth`, con `Refs #N`, request/ejecución/verdict `PASS`, exact HEAD, cero findings y merge real | Writer de closeout autorizado por la misma issue todavía OPEN; sólo estados, owners, referencias y changelog afectados |
+| `TRUTH_RECONCILIATION` | `NO_DIFF` con source igual al integrated SHA y justificación/evidencia no vacías, o un único PR state-only secuencial desde `main`, por ejemplo `reconcile/issue-N-truth`, con `Refs #N`, request/ejecución/verdict `PASS`, cero findings, HEAD efectivamente mergeado igual al auditado y SHA integrado obtenido de ese mismo PR | Writer de closeout autorizado por la misma issue todavía OPEN; sólo estados, owners, referencias y changelog afectados |
 | `EXPLICIT_ISSUE_CLOSE` | Acción humana en GitHub después de confirmar el PR de reconciliación integrado o la evidencia `NO_DIFF` | Humano autorizado; sin closing keyword |
 
 Cuando existe un delta, la rama/PR de reconciliación es la única continuación
@@ -171,13 +186,17 @@ Aplicar riesgo y gates de [QUALITY_GATES.md](QUALITY_GATES.md), más las
 disciplinas requeridas por
 [INTERDISCIPLINARY_REVIEW_MATRIX.md](INTERDISCIPLINARY_REVIEW_MATRIX.md).
 `NOT_APPLICABLE` necesita justificación por gate; no se usa como atajo.
+En una reparación, `AFFECTED_SURFACE_GATES` no habilita el commit hasta que
+`POST_GATE_WORKTREE_INDEX_RECHECK=PASS` pruebe que el mismo staged tree
+inspeccionado antes de los gates permanece intacto y que no existe drift.
 
 ### 9. COMMIT_CANDIDATE
 
 Crear el commit que convierte el contenido staged validado en un `HEAD` real.
 En una reparación, `VALIDATED_STAGED_TREE_SHA` ya debe estar registrado después
-de los gates locales y antes del commit. Inmediatamente después de crear el
-commit, `CAPTURE_NEW_HEAD` registra el SHA completo y
+de `POST_GATE_WORKTREE_INDEX_RECHECK=PASS` y antes del commit, y debe ser igual a
+`PRE_GATE_STAGED_TREE_SHA`. Inmediatamente después de crear el commit,
+`CAPTURE_NEW_HEAD` registra el SHA completo y
 `VERIFY_COMMIT_TREE_MATCH` obtiene `NEW_HEAD_TREE_SHA`. Sólo
 `TREE_MATCH=PASS`, que exige igualdad exacta entre ambos trees, habilita el push.
 Un worktree o índice sin commit no es `NEW_HEAD` ni candidato para CI o
@@ -292,29 +311,33 @@ PR #27 necesitan una transición versionada después de la aceptación.
 
 - `NO_DIFF`: justificación verificable, evidencia y
   `SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`.
-- `MERGED_PR`: V-017 en `PASS`, número real del PR de reconciliación y
-  `RECONCILIATION_PR_HEAD` como SHA completo, más toda esta conjunción:
+- `MERGED_PR`: V-017 en `PASS`, número real del PR de reconciliación,
+  `RECONCILIATION_PR_HEAD` como SHA completo auditado y
+  `RECONCILIATION_MERGED_PR_HEAD` capturado del PR ya mergeado, más toda esta
+  conjunción:
 
 ```text
 RECONCILIATION_REVIEW_REQUESTED=true
 AND RECONCILIATION_REVIEW_REQUEST_STATE=PASS
-AND RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_PR_HEAD
 AND RECONCILIATION_REVIEW_EXECUTION_STATE=PASS
 AND RECONCILIATION_AUDIT_VERDICT=PASS
-AND RECONCILIATION_AUDITED_HEAD=RECONCILIATION_PR_HEAD
 AND RECONCILIATION_OPEN_MATERIAL_FINDINGS=0
 AND RECONCILIATION_PR_MERGED=true
+AND RECONCILIATION_MERGED_PR_HEAD=<sha real observado del PR mergeado>
+AND RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD
 AND RECONCILIATION_INTEGRATED_SHA_SOURCE=MERGED_PR
-AND RECONCILIATION_INTEGRATED_SHA=<sha real>
+AND RECONCILIATION_INTEGRATED_SHA=<mergeCommit.oid/merge_commit_sha real observado en RECONCILIATION_PR>
 AND RECONCILIATION_SHA_REACHABLE_FROM_MAIN=YES
 ```
 
 `NO_DIFF` no crea ni exige un PR ficticio. Un PR Draft, Ready o cerrado sin
 merge no satisface `MERGED_PR`. Tampoco lo satisfacen un request o execution no
-`PASS`, un verdict distinto de `PASS`, cualquier HEAD diferente, findings
-materiales abiertos, un SHA no real o no alcanzable, ni la mera creación,
-revisión o clausura administrativa del PR. Toda combinación distinta de la
-conjunción anterior mantiene `TRUTH_RECONCILIATION_STATE` fuera de `PASS`.
+`PASS`, un verdict distinto de `PASS`, cualquier HEAD diferente o no
+capturado, findings materiales abiertos, ni un SHA no real, no alcanzable o
+obtenido de otro PR. La evidencia debe identificar la lectura del resultado de
+merge del mismo `RECONCILIATION_PR`; la mera creación, revisión o clausura
+administrativa del PR no alcanza. Toda combinación distinta de la conjunción
+anterior mantiene `TRUTH_RECONCILIATION_STATE` fuera de `PASS`.
 
 ### 20. EXPLICIT_ISSUE_CLOSE
 

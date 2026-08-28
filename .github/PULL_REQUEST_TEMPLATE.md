@@ -10,7 +10,11 @@ Refs #N
 - Branch:
 - Previous `HEAD` for a repair, if applicable:
 - `REPAIR_EDIT` candidate paths/reference:
-- `VALIDATED_STAGED_TREE_SHA` captured after local gates and before commit:
+- `PRE_GATE_WORKTREE_INDEX_ALIGNMENT`: `PASS | FAIL | NOT_APPLICABLE`
+- `PRE_GATE_STAGED_TREE_SHA`:
+- `POST_GATE_WORKTREE_INDEX_RECHECK`: `PASS | FAIL | NOT_APPLICABLE` — `NOT_APPLICABLE` only when this is not a repair
+- `POST_GATE_CURRENT_INDEX_TREE_SHA`:
+- `VALIDATED_STAGED_TREE_SHA` captured only after post-gate recheck `PASS`:
 - `COMMIT_CANDIDATE`:
 - `CAPTURE_NEW_HEAD` — full SHA captured immediately after commit:
 - `NEW_HEAD_TREE_SHA`:
@@ -31,6 +35,7 @@ REPAIR_EDIT
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
+→ POST_GATE_WORKTREE_INDEX_RECHECK
 → COMMIT_CANDIDATE
 → CAPTURE_NEW_HEAD
 → VERIFY_COMMIT_TREE_MATCH
@@ -114,8 +119,9 @@ in the final column, not in materiality.
 | Exact staging and staged scope | `NOT_RUN` | |
 | `git diff --cached --check` | `NOT_RUN` | |
 | Secret/privacy scan | `NOT_RUN` | |
-| Affected focal tests | `NOT_RUN` | Validated staged tree; list every affected test |
-| Affected surface gates | `NOT_RUN` | Validated staged tree; list every affected gate |
+| Affected focal tests | `NOT_RUN` | Pre-gate staged candidate; list every affected test |
+| Affected surface gates | `NOT_RUN` | Same pre-gate staged candidate; list every affected gate |
+| Post-gate worktree/index recheck | `NOT_RUN / NOT_APPLICABLE` | For a repair, run `git diff --quiet`, inventory untracked, repeat cached diff/scope/secrets, and require pre-gate=current-index=validated tree; otherwise justify `NOT_APPLICABLE` |
 | Unaffected gates | `NOT_APPLICABLE` | Concrete non-materiality reason per gate |
 | Transversal contract matrix | `NOT_RUN / NOT_APPLICABLE` | Full applicable matrix if the contract changed |
 | Commit candidate | `NOT_RUN` | Commit creates the candidate `HEAD` |
@@ -181,6 +187,7 @@ in the final column, not in materiality.
 - `RECONCILIATION_PR`: `NOT_RUN`
 - `RECONCILIATION_PR_MERGED`: `false`
 - `RECONCILIATION_PR_HEAD`: `NOT_CAPTURED`
+- `RECONCILIATION_MERGED_PR_HEAD`: `NOT_CAPTURED`
 - `RECONCILIATION_REVIEW_REQUESTED`: `false`
 - `RECONCILIATION_REVIEW_REQUEST_STATE`: `NOT_RUN`
 - `RECONCILIATION_REVIEW_REQUEST_HEAD`: `NOT_REQUESTED`
@@ -208,11 +215,11 @@ in the final column, not in materiality.
 - [ ] No secrets, credentials, private URLs, or personal data were committed.
 - [ ] Missing, partial, blocked, unknown, and capability-gap states are not reported as `PASS`.
 - [ ] Local, remote, Draft PR, CI and audit HEADs coincide.
-- [ ] A repair ran from `REPAIR_EDIT` through commit, captured `NEW_HEAD` only after that commit, verified `TREE_MATCH=PASS` before push, and reused no prior-HEAD evidence.
+- [ ] A repair ran from `REPAIR_EDIT` through gates, passed the post-gate worktree/index recheck with pre-gate tree equality, then committed, captured `NEW_HEAD`, verified `TREE_MATCH=PASS` before push, and reused no prior-HEAD evidence.
 - [ ] Independent review was requested; request and execution are `PASS`, verdict is `PASS`, audited/current HEADs match, and open material findings are zero before recommending the regular human gate.
 - [ ] Human merge, when run, compares merged, audited and reviewed PR HEADs; integrated SHA comes from the merged PR, not from the current `main` tip.
 - [ ] `NO_DIFF` reconciliation uses `TRUTH_RECONCILIATION_MODE=NO_DIFF`, `SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`, non-empty verifiable justification/evidence, and no fictitious PR.
-- [ ] `MERGED_PR` reconciliation uses a real PR/HEAD, `RECONCILIATION_REVIEW_REQUESTED=true`, request state `PASS`, request HEAD equal to its PR HEAD, execution state `PASS`, audit verdict `PASS`, audited HEAD equal to its PR HEAD, zero material findings, `RECONCILIATION_PR_MERGED=true`, a real integrated SHA with source `MERGED_PR`, and reachability `YES` from `main`; every other combination is non-PASS.
+- [ ] `MERGED_PR` reconciliation captures the actual merged PR HEAD and proves it equals the PR/request/audit HEADs; request, execution and verdict are `PASS`, findings are zero, and the integrated SHA is the merge result observed from that same `RECONCILIATION_PR`, with source `MERGED_PR` and reachability `YES`; every other combination is non-PASS.
 - [ ] The PR uses `Refs #N`; no closing keyword can close the issue at merge time.
 - [ ] Ready, merge, explicit issue close, deploy, publication, campaigns, and spending remain human decisions.
 
