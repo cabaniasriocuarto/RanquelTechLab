@@ -1,6 +1,6 @@
 # Truth owner registry
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/INDEX.md` (owner registry and discovery only)
 
@@ -32,10 +32,14 @@ detail. If two files claim the same type, stop and resolve ownership explicitly.
 ## Supporting entry points
 
 - [Repository start](../START_HERE.md)
+- [Issue #3 closeout and bootstrap boundary](../closeouts/issue-3.md)
 - [Geo-SEO plan boundary](../geo-seo/README.md)
 - [Task contract template](../harness/TASK_CONTRACT_TEMPLATE.md)
 - [Evidence manifest template](../harness/EVIDENCE_MANIFEST_TEMPLATE.md)
 - [Independent audit template](../harness/INDEPENDENT_AUDIT_TEMPLATE.md)
+
+The closeout record is supporting evidence, not a new truth owner. Detailed
+executable enforcement and its semantic fixtures remain owned by issue #24.
 
 ## Routing rules
 
