@@ -167,28 +167,9 @@ parte de `main`; la evidencia de ejecución permanece en issues, PRs o manifests
   desde `main` para la misma issue todavía abierta. Usa `Refs #N`, no agrega
   producto ni verdad sustantiva y conserva gate humano para merge y cierre.
 - Consecuencia: la regla se interpreta como una rama/PR activa por fase, nunca
-  como permiso para PRs paralelos o push directo. #3 usa ese closeout para
-  registrar la frontera aceptada antes del cierre explícito.
-
-## D-013 — Límite bootstrap y transferencia del hardening a #24
-
-- Fecha: 2026-08-29.
-- Status: `CURRENT_IN_PROGRESS`.
-- Contexto: el PR #29 intentó convertir el scaffold de #3 en una state machine
-  documental completa. Las revisiones demostraron que el enforcement exact-head,
-  previews, actores, cronología y fixtures semánticos necesitan implementación y
-  pruebas ejecutables, no más microparches de documentación.
-- Decisión: cerrar PR #29 sin merge y tratar la rama observada, commits, reviews
-  y findings como corpus histórico para #24, sin presumir la retención futura
-  de esa rama externa. El closeout limpio de #3 sólo
-  reconcilia el scaffold realmente integrado por PR #27, registra
-  `RANQUEL-HARNESS-BOOTSTRAP-001` y mantiene el enforcement como
-  `PLANNED_NOT_IMPLEMENTED`.
-- Consecuencia: `HARNESS_CI_EXACT_HEAD=CAPABILITY_GAP` durante el closeout de #3;
-  Vercel no cuenta como CI; la excepción no concede validación independiente,
-  Ready, merge ni cierre. #24 debe implementar scripts, schemas, CI, preview
-  exact-head, validadores, fixtures y closeout enforcement antes de que esas
-  capacidades puedan declararse operativas.
+  como permiso para PRs paralelos o push directo. Cuando hay delta de truth, la
+  reconciliación state-only debe integrarse antes del cierre explícito de la
+  issue.
 
 ## Cómo agregar una decisión
 

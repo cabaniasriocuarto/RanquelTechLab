@@ -12,7 +12,7 @@ el cambio todavía no es verdad de `main`.
 
 | Orden | Issue | Estado documental | Condición para avanzar |
 | --- | --- | --- | --- |
-| 1 | #3 — Gobierno y documentación | `CURRENT_IMPLEMENTED_TRUTH` para el scaffold integrado; issue aún en closeout | Revisar y mergear el PR state-only, ejecutar aceptación post-merge y cerrar #3 explícitamente |
+| 1 | #3 — Gobierno y documentación | `CURRENT_IMPLEMENTED_TRUTH` para el scaffold integrado | Completar la reconciliación state-only, la aceptación post-merge y el cierre explícito de #3 |
 | 2 | #28 — Topología Vercel | `BLOCKED` | #3 cerrada; conservar los previews inventariados en la evidencia de PR #27 y ejecutar #28 en scope propio |
 | 3 | #24 — Harness ejecutable | `BLOCKED` | #28 integrada y su topología aceptada |
 | 4 | #4 — Baseline de producción | `BLOCKED` | #24 integrada y operativa |
@@ -21,10 +21,9 @@ el cambio todavía no es verdad de `main`.
 
 La secuencia M0 canónica es `#3 → #28 → #24 → #4 → #26 → #5`.
 
-El scaffold de #3 ya existe en `main` por el PR #27. El PR #29 fue cerrado sin
-merge y se conserva como evidencia histórica para #24; no gobierna `main`. La
-issue #3 sigue abierta únicamente hasta aceptar el PR limpio de closeout y
-realizar su cierre humano explícito.
+El scaffold de #3 ya existe en `main`. La issue #3 continúa como puerta hasta
+que su reconciliación state-only sea aceptada y la issue se cierre de forma
+humana y explícita. #28 no comienza antes de ese cierre.
 
 No debe comenzar implementación de producto Geo-SEO antes de integrar las
 issues #3, #28 y #24. #28 no se ejecuta dentro de #3 y #24 no se adelanta a la
@@ -36,7 +35,7 @@ Las issues #5, #7, #19 y #20 no pueden avanzar sin integrar la issue #26.
 ### M0 — Gobierno, harness y baseline
 
 1. #3 — Instalar gobierno, `AGENTS.md` y documentación fuente de verdad; el
-   scaffold está integrado y su closeout state-only permanece bajo revisión.
+   scaffold está integrado y la reconciliación state-only precede al cierre.
 2. #28 — Auditar y consolidar la topología Vercel en scope externo propio,
    conservando los previews inventariados en la evidencia volátil de PR #27.
 3. #24 — Implementar contratos, gates, CI y auditoría independiente.
@@ -139,14 +138,6 @@ esa administración.
   `feat/bilingual-site` dentro de otra issue.
 - Un estado `BLOCKED`, `PENDING_TO_VALIDATE` o evidencia incompleta nunca se
   interpreta como autorización para saltar una puerta.
-
-## Bootstrap y enforcement
-
-`RANQUEL-HARNESS-BOOTSTRAP-001` sólo cubre el closeout secuencial de #3. La
-ausencia de CI del harness permanece `CAPABILITY_GAP`; los checks de Vercel no
-son CI. Scripts, schemas, validadores, fixtures y enforcement exact-head se
-implementan en #24, que debe consumir la evidencia histórica del PR #29 sin
-integrar sus commits.
 
 ## Reconciliación
 

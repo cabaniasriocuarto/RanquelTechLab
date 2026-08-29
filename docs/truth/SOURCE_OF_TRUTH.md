@@ -14,24 +14,6 @@ El registro de owners está en [INDEX.md](INDEX.md). Cada tipo de verdad mutable
 tiene un único owner; el resto de los documentos debe enlazarlo en lugar de
 crear una segunda definición.
 
-## Límite de closeout de la issue #3
-
-La jerarquía `AGENTS.md`, los routers, el registro de owners, las plantillas
-iniciales y el gobierno administrativo integrados por el PR #27 son hechos
-presentes en `main`. Su alcance aceptado está resumido en el
-[closeout de la issue #3](../closeouts/issue-3.md).
-
-Esto no convierte en implementados los scripts, schemas, CI, validadores,
-fixtures ni el enforcement exact-head del harness. Esas capacidades permanecen
-`PLANNED_NOT_IMPLEMENTED` y pertenecen a #24. Los gaps y aprendizajes del PR #29
-se conservan como evidencia histórica para esa issue: PR #29 fue cerrado sin
-merge y ninguno de sus commits gobierna `main`.
-
-La excepción `RANQUEL-HARNESS-BOOTSTRAP-001` aplica únicamente a #3 y su closeout
-secuencial. Declara `HARNESS_CI_EXACT_HEAD=CAPABILITY_GAP`; los estados de Vercel
-no cuentan como CI del harness y la excepción no concede `PASS`, Ready, merge,
-publicación ni cierre automático. Expira cuando #24 quede integrada.
-
 ## Dos preguntas diferentes
 
 Toda afirmación debe responder, por separado:

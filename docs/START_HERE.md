@@ -35,18 +35,16 @@ media. The canonical code-level inventory is owned by
 [FEATURE_MAP.md](truth/FEATURE_MAP.md), and
 [ROUTE_AND_PAGE_MAP.md](truth/ROUTE_AND_PAGE_MAP.md).
 
-The governance scaffold integrated by issue #3 is current repository truth. Its
-accepted boundary, bootstrap exception and transfer of executable enforcement
-to issue #24 are recorded in the
-[issue #3 closeout](closeouts/issue-3.md). The closed-unmerged PR #29 is
-historical input for #24 and does not govern `main`.
+The governance scaffold integrated by issue #3 is current repository truth.
+Executable harness tooling, CI and automated enforcement belong to issue #24 and
+are not implemented merely because the governance documents exist. The
+closed-unmerged PR #29 is historical input for #24 and does not govern `main`.
 
 The future Geo-SEO platform is planned, not implemented. Its discovery entry is
-[docs/geo-seo/README.md](geo-seo/README.md). Executable harness tooling and CI
-belong to issue #24 and do not exist merely because these governance documents do.
-The mandatory execution order, including the #28 Vercel-topology gate before
-issue #24, is owned only by [NEXT_STEPS.md](truth/NEXT_STEPS.md); an ownership
-reference here never authorizes skipping that gate.
+[docs/geo-seo/README.md](geo-seo/README.md). The mandatory execution order,
+including the #28 Vercel-topology gate before issue #24, is owned only by
+[NEXT_STEPS.md](truth/NEXT_STEPS.md); an ownership reference here never
+authorizes skipping that gate.
 
 ## Evidence and closeout
 

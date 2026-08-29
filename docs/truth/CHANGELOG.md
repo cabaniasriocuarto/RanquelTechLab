@@ -32,8 +32,6 @@ Status: `CURRENT_IMPLEMENTED_TRUTH`
   template, milestones, labels y jerarquía nativa cuando la API lo permite.
 - Lifecycle no autocerrante: `Refs #N`, aceptación post-merge, reconciliación de
   truth y cierre humano explícito como eventos separados.
-- Registro de closeout de #3 con límite bootstrap y handoff de enforcement a
-  #24.
 
 ### Decisions
 
@@ -50,8 +48,6 @@ Status: `CURRENT_IMPLEMENTED_TRUTH`
   #14–#18 bajo #13.
 - #26 pertenece a M0 y bloquea #5, #7, #19 y #20; templates y formularios
   capturan contexto SEO/paridad sin implementar ni aprobar el gate.
-- `RANQUEL-HARNESS-BOOTSTRAP-001` reconoce que #3 precede al CI de #24; la
-  ausencia de CI permanece `CAPABILITY_GAP` y Vercel no cuenta como CI.
 - PR #29 queda cerrado sin merge y preservado como evidencia histórica para
   #24; ninguno de sus commits gobierna `main`.
 
@@ -97,9 +93,8 @@ Status: `CURRENT_IMPLEMENTED_TRUTH`
   limpian ni promueven dentro de #3.
 - Scripts, schemas, CI o workflows ejecutables del harness.
 
-El scaffold documental queda integrado; la issue #3 permanece abierta sólo
-hasta revisar, mergear y aceptar su PR limpio de closeout y realizar el cierre
-humano explícito. #28 y #24 no se ejecutan en ese vehículo.
+El cierre de #3 es posterior al merge de su reconciliación state-only y a la
+aceptación post-merge. #28 y #24 se ejecutan únicamente en sus issues propias.
 
 ## Política de actualización
 
