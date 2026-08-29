@@ -1,6 +1,6 @@
 # Start here
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/START_HERE.md` (repository documentation entry point)
 
@@ -35,6 +35,12 @@ media. The canonical code-level inventory is owned by
 [FEATURE_MAP.md](truth/FEATURE_MAP.md), and
 [ROUTE_AND_PAGE_MAP.md](truth/ROUTE_AND_PAGE_MAP.md).
 
+The governance scaffold integrated by issue #3 is current repository truth. Its
+accepted boundary, bootstrap exception and transfer of executable enforcement
+to issue #24 are recorded in the
+[issue #3 closeout](closeouts/issue-3.md). The closed-unmerged PR #29 is
+historical input for #24 and does not govern `main`.
+
 The future Geo-SEO platform is planned, not implemented. Its discovery entry is
 [docs/geo-seo/README.md](geo-seo/README.md). Executable harness tooling and CI
 belong to issue #24 and do not exist merely because these governance documents do.
@@ -47,3 +53,7 @@ reference here never authorizes skipping that gate.
 Use the [evidence manifest](harness/EVIDENCE_MANIFEST_TEMPLATE.md) and preserve
 the difference between self-validation, independent audit, and post-merge
 acceptance. A commit, push, or Draft PR alone is not `DONE`.
+
+Until #24 implements executable enforcement, unavailable checks retain their
+honest state—such as `CAPABILITY_GAP`—and Vercel deployment statuses do not count
+as harness CI.
