@@ -1,16 +1,13 @@
 # Flujo de desarrollo
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/DEVELOPMENT_WORKFLOW.md` (proceso desde selección hasta closeout)
 
-Mientras este owner permanezca `CURRENT_IN_PROGRESS`, el archivo describe el
-flujo propuesto por #3 y no gobierno vigente de `main`. La tarea actual lo sigue
-por autoridad de la issue e instrucción humana. Después de integración,
-aceptación y reconciliación podrá gobernar tareas implementables. La
-automatización que lo hará ejecutable pertenece a #24 y está
-`PLANNED_NOT_IMPLEMENTED`; documentar un paso no demuestra que exista un script
-o workflow para él.
+Este owner y el flujo manual/documental que define forman parte del scaffold
+integrado en `main`. La automatización que lo hará ejecutable pertenece a #24 y
+está `PLANNED_NOT_IMPLEMENTED`; documentar un paso no demuestra que exista un
+script o workflow para él.
 
 ## Roles
 

@@ -1,6 +1,6 @@
 # Modelo de seguridad y privacidad
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/SECURITY_PRIVACY_MODEL.md` (seguridad, privacidad y trust boundaries)
 

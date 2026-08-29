@@ -1,6 +1,6 @@
 # SEO parity and Home regression contract
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/SEO_PARITY_CONTRACT.md` (golden SEO comparison and publication decisions)
 

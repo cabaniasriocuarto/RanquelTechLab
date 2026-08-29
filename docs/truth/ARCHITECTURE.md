@@ -1,6 +1,6 @@
 # Arquitectura técnica y de integraciones
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/ARCHITECTURE.md` (arquitectura e integraciones)
 

@@ -1,6 +1,6 @@
 # Geo-SEO: frontera de planeamiento
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/geo-seo/README.md` (descubrimiento del programa Geo-SEO; no duplica contratos)
 

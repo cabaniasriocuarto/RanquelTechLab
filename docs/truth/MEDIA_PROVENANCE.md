@@ -1,6 +1,6 @@
 # Registro de procedencia y derechos de medios
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/MEDIA_PROVENANCE.md` (procedencia, derechos y registro por asset)
 

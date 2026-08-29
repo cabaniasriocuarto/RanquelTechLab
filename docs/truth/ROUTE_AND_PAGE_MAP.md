@@ -1,6 +1,6 @@
 # Mapa de rutas, páginas e indexabilidad
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/ROUTE_AND_PAGE_MAP.md` (rutas, páginas e indexabilidad)
 
