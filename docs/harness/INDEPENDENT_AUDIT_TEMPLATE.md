@@ -20,15 +20,37 @@ INDEPENDENT_AUDIT:
   AUDITED_HEAD: "sha completo"
   REMOTE_HEAD: "sha completo publicado"
   PR_HEAD: "sha completo actual del PR"
-  V011_PR_IS_OPEN: "true | false"
-  V011_PR_IS_DRAFT: "true | false"
-  V011_DRAFT_PR_HEAD: "sha completo igual a AUDITED_HEAD | NOT_CAPTURED"
+  PR_IS_OPEN: "true | false"
+  PR_IS_DRAFT: "true | false"
+  DRAFT_PR_HEAD: "sha completo igual a AUDITED_HEAD | NOT_CAPTURED"
   V011_OBSERVED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
   V011_EVIDENCE: "ref comprobable | NONE"
   PR_CURRENT_STATE: "OPEN_DRAFT | OPEN_READY | MERGED | CLOSED_UNMERGED"
+  READY_TRANSITION_STATE: "NOT_RUN | PASS | BLOCKED"
+  READY_TRANSITION_OCCURRED: "false | true"
+  READY_TRANSITION_HEAD: "sha completo igual a AUDITED_HEAD | NOT_CAPTURED"
+  READY_TRANSITION_ACTOR: "actor observado | NOT_CAPTURED"
+  READY_TRANSITION_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+  READY_TRANSITION_MECHANISM: "mecanismo observado | NOT_CAPTURED"
+  READY_TRANSITION_EVIDENCE: "ref comprobable | NONE"
+  CANDIDATE_KIND: "INITIAL | REPAIR"
+  POST_GATE_CANDIDATE_RECHECK: "PASS | FAIL | NOT_RUN"
+  GATE_EXECUTION_SOURCE: "INDEXED_CANDIDATE_IN_WORKTREE | ISOLATED_VALIDATED_TREE | NOT_RUN"
+  PRE_GATE_UNTRACKED_NON_IGNORED_FILES: "NONE | conteo + SHA-256 estable sanitizado | NOT_CAPTURED"
+  PRE_GATE_IGNORED_FILES: "NONE | conteo + SHA-256 estable sanitizado | NOT_CAPTURED"
+  POST_GATE_UNTRACKED_NON_IGNORED_FILES: "NONE | conteo + SHA-256 estable sanitizado | NOT_CAPTURED"
+  POST_GATE_IGNORED_FILES: "NONE | conteo + SHA-256 estable sanitizado | NOT_CAPTURED"
+  PRE_GATE_CANDIDATE_TREE_SHA: "tree SHA | NOT_CAPTURED"
+  PRE_GATE_EXECUTION_TREE_SHA: "tree SHA | NOT_CAPTURED"
+  POST_GATE_EXECUTION_TREE_SHA: "tree SHA | NOT_CAPTURED"
+  POST_GATE_CANDIDATE_TREE_SHA: "tree SHA | NOT_CAPTURED"
+  VALIDATED_CANDIDATE_TREE_SHA: "tree SHA | NOT_CAPTURED"
+  ISOLATED_VALIDATION_TREE_SHA: "tree SHA | NOT_APPLICABLE en modo worktree | NOT_CAPTURED"
+  CANDIDATE_HEAD_TREE_SHA: "tree SHA | NOT_CAPTURED"
+  CANDIDATE_TREE_MATCH: "PASS | FAIL | NOT_RUN"
   WRITER: "sesión/agente"
   AUDITOR: "sesión/agente diferente"
-  AUDITED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ"
+  INDEPENDENT_AUDITED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ"
   MODE: READ_ONLY
   INDEPENDENT_REVIEW_REQUEST: REQUIRED
   INDEPENDENT_REVIEW_REQUESTED: "true | false"
@@ -46,10 +68,14 @@ INDEPENDENT_AUDIT:
 
 Si `AUDITED_HEAD`, `REMOTE_HEAD` y `PR_HEAD` no coinciden, el dictamen queda
 `BLOCKED` hasta auditar el commit publicado correcto. Antes de `HUMAN_GATE`,
-V-011 también exige PR abierto, `V011_PR_IS_DRAFT=true`,
-`V011_DRAFT_PR_HEAD=AUDITED_HEAD`, instante y evidencia. Una transición Ready
-posterior y autorizada se registra en
-`PR_CURRENT_STATE` sin invalidar esa observación histórica. Un commit nuevo
+V-011 también exige `PR_IS_OPEN=true`, `PR_IS_DRAFT=true`,
+`DRAFT_PR_HEAD=AUDITED_HEAD`, instante y evidencia. Una transición Ready
+posterior sólo pasa si es el primer evento observado para el mismo exact HEAD,
+incluye actor, mecanismo y evidencia, y cumple
+`V011_OBSERVED_AT_UTC < INDEPENDENT_AUDITED_AT_UTC < HUMAN_GATE_AUTHORIZED_AT_UTC < READY_TRANSITION_AT_UTC`.
+Una autorización retroactiva no sana un Ready prematuro: se registra
+`READY_TRANSITION_STATE=BLOCKED`. El estado actual se conserva por separado en
+`PR_CURRENT_STATE` sin invalidar la observación histórica. Un commit nuevo
 invalida toda evidencia anterior y convierte el siguiente ciclo en reparación;
 el writer debe repetir:
 
@@ -60,7 +86,7 @@ REPAIR_EDIT
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
-→ POST_GATE_WORKTREE_INDEX_RECHECK
+→ POST_GATE_CANDIDATE_RECHECK
 → COMMIT_CANDIDATE
 → CAPTURE_NEW_HEAD
 → VERIFY_COMMIT_TREE_MATCH
@@ -96,44 +122,72 @@ auditor debe revisar el resultado nuevo.
 - [ ] Inventario de superficies `Sxx` y derivación separada de D01–D12.
 - [ ] EVIDENCE_MANIFEST y comandos sanitizados.
 - [ ] Resultados de focal tests y surface gates.
-- [ ] Todo candidato fue commiteado, su HEAD completo fue capturado y el push
-  normal publicó ese mismo SHA.
+- [ ] Todo candidato, inicial o reparación, registró V-C01 con
+  `POST_GATE_CANDIDATE_RECHECK=PASS`; después fue commiteado, su HEAD completo
+  fue capturado, `CANDIDATE_TREE_MATCH=PASS` y el push normal publicó ese SHA.
+- [ ] `STAGED_SCOPE_SECRET_RECHECK` inventarió por separado, antes de gates,
+  `PRE_GATE_UNTRACKED_NON_IGNORED_FILES` y `PRE_GATE_IGNORED_FILES`; V-C01 repitió
+  ambos inventarios en sus campos `POST_GATE_*` sin inspeccionar contenido
+  sensible ajeno.
+- [ ] Un candidato inicial usó obligatoriamente
+  `GATE_EXECUTION_SOURCE=ISOLATED_VALIDATED_TREE`; la copia surgió sólo del tree
+  candidato, `ISOLATED_VALIDATION_TREE_SHA` participó de la igualdad completa,
+  quedó fuera del repo y los gates no leyeron el worktree original.
+- [ ] Para todo candidato se probó
+  `PRE_GATE_CANDIDATE_TREE_SHA=PRE_GATE_EXECUTION_TREE_SHA=POST_GATE_EXECUTION_TREE_SHA=POST_GATE_CANDIDATE_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA` y, tras
+  el commit, `CANDIDATE_HEAD_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA`.
+- [ ] En modo aislado, los inventarios pre/post fueron idénticos. El modo
+  `INDEXED_CANDIDATE_IN_WORKTREE` se usó sólo en reparación y sólo si los cuatro
+  inventarios pre/post fueron `NONE`.
 - [ ] Si hubo reparación, el ledger completo parte de `REPAIR_EDIT`, conserva el
-  orden canónico y registra `PREVIOUS_HEAD_EVIDENCE_REUSED=false`.
-- [ ] Sólo si hubo reparación, `COMMIT_CANDIDATE` precede a `CAPTURE_NEW_HEAD` y
-  `VERIFY_COMMIT_TREE_MATCH`; `TREE_MATCH=PASS` exige
-  `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` antes del push.
-- [ ] Un candidato inicial no inventa `PREVIOUS_HEAD`, V-R01, trees validados ni
-  `TREE_MATCH`; su no materialidad no se cuenta como `PASS`.
+  orden canónico, registra `PREVIOUS_HEAD_EVIDENCE_REUSED=false` y proyecta V-C01
+  en V-R01: staged/current/validated/new-head trees y `TREE_MATCH` no son otra
+  fuente editable.
+- [ ] Un candidato inicial no inventa `PREVIOUS_HEAD`, V-R01 ni `TREE_MATCH` de
+  reparación; su V-C01 universal y sus trees candidatos sí son obligatorios.
 - [ ] Si hubo reparación, push, CI, request y auditoría citan `NEW_HEAD`, nunca
   `PREVIOUS_HEAD`; gates afectados se repitieron y los demás se justificaron.
-- [ ] Si hubo reparación, `STAGED_SCOPE_SECRET_RECHECK` inventaría todos los
-  untracked y registra la fuente de gates: worktree con `UNTRACKED_FILES=NONE` o
-  copia aislada con `ISOLATED_VALIDATION_TREE_SHA=PRE_GATE_STAGED_TREE_SHA`.
-- [ ] Ningún untracked relevante participó en gates fuera del candidato, aunque
-  su path estuviera allowlisted; no se agregó ni eliminó contenido ajeno.
-- [ ] Si hubo reparación, `POST_GATE_WORKTREE_INDEX_RECHECK=PASS` prueba cero
-  drift, el mismo objetivo ejecutado y
-  `POST_GATE_CURRENT_INDEX_TREE_SHA=PRE_GATE_STAGED_TREE_SHA=VALIDATED_STAGED_TREE_SHA`.
-- [ ] Un recheck omitido o `FAIL` bloquea commit/push/auditoría y vuelve a
-  `DIFF_CHECK`, staging y gates; `TREE_MATCH=PASS` posterior no lo compensa.
+- [ ] Ningún archivo no trackeado o ignorado participó en gates fuera del
+  candidato, aunque su path estuviera allowlisted; no se agregó ni eliminó
+  contenido ajeno.
+- [ ] Un V-C01 omitido o `FAIL` bloquea commit/push/auditoría y vuelve a
+  `DIFF_CHECK`, staging y gates; un tree match posterior no lo compensa.
 - [ ] Si cambió un contrato transversal, matriz contractual completa reejecutada.
 - [ ] Validadores efímeros, evidencia y artefactos permanecieron fuera del repo;
-  el recheck prueba que no dejaron archivos tracked, staged ni untracked.
+  V-C01 prueba que no dejaron archivos tracked, staged, no trackeados ni
+  ignorados.
 - [ ] `CI_HEAD` se comparó sólo si existió una ejecución real usada como
   evidencia; sin CI del harness se conservan `CAPABILITY_GAP` y `NOT_CAPTURED`,
   y los contextos Vercel permanecen separados.
 - [ ] V-011 demuestra PR abierto y Draft antes de `HUMAN_GATE`, con
-  `V011_DRAFT_PR_HEAD=AUDITED_HEAD`, sin inferirlo del nombre del campo; el
+  `DRAFT_PR_HEAD=AUDITED_HEAD`, sin inferirlo del nombre del campo; el
   estado actual posterior está separado.
+- [ ] Ready sólo usa `READY_TRANSITION_STATE=PASS` para el primer evento, con
+  `READY_TRANSITION_OCCURRED=true`,
+  `READY_TRANSITION_HEAD=HUMAN_GATE_AUTHORIZED_HEAD=HEAD` y
+  `V011_OBSERVED_AT_UTC < INDEPENDENT_AUDITED_AT_UTC < HUMAN_GATE_AUTHORIZED_AT_UTC < READY_TRANSITION_AT_UTC`;
+  actor, mecanismo y evidencia están capturados, y un Ready prematuro permanece
+  `BLOCKED`.
 - [ ] Solicitud, ejecución y dictamen registrados como dimensiones separadas.
 - [ ] La cadena de cierre conserva V-014 favorable y autorización humana para el
   gate, más autorización de merge separada para el mismo HEAD; un merge
   observado no sana `CHANGES_REQUIRED`.
+- [ ] V-015 prueba exactamente
+  `MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD=HEAD=AUDITED_HEAD=HUMAN_GATE_AUTHORIZED_HEAD=MERGE_AUTHORIZED_HEAD` y
+  `INDEPENDENT_AUDITED_AT_UTC < HUMAN_GATE_AUTHORIZED_AT_UTC < MERGE_AUTHORIZED_AT_UTC < MERGED_AT_UTC`; además conserva
+  `READY_TRANSITION_STATE=PASS`, `READY_TRANSITION_HEAD=HEAD` y
+  `READY_TRANSITION_AT_UTC < MERGED_AT_UTC`.
 - [ ] V-017 usa sólo `POST_MERGE_ACCEPTANCE_SHA=INTEGRATED_SHA`, sin alias.
 - [ ] Ambos modos de reconciliación exigen V-017 en `PASS` y
   `TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`; mantienen separado
   `RECONCILIATION_INTEGRATED_SHA` del PR posterior.
+- [ ] `MERGED_PR` conserva autorizaciones humanas específicas de gate y merge
+  para el HEAD del PR y el primer evento Ready, con actor/instante/evidencia, y
+  prueba
+  `RECONCILIATION_AUDITED_AT_UTC < RECONCILIATION_HUMAN_GATE_AUTHORIZED_AT_UTC < RECONCILIATION_READY_TRANSITION_AT_UTC < RECONCILIATION_MERGE_AUTHORIZED_AT_UTC < RECONCILIATION_PR_MERGED_AT_UTC`, con evidencia del merge del mismo PR; `NO_DIFF` no fabrica esos hechos.
+- [ ] El cierre explícito registra `TRUTH_RECONCILIATION_PASSED_AT_UTC`, luego
+  autorización humana y después evento observado con actor/instante/evidencia y
+  mecanismo; sus tres instantes son estrictamente crecientes.
 - [ ] Ledger de mutaciones externas y confirmaciones de no-scope.
 - [ ] Riesgos, rollback y limitaciones declaradas.
 
@@ -149,7 +203,7 @@ Material ausente se registra como finding o causa de `BLOCKED`; no se presume.
 | Semántica | ¿El cambio cumple el objetivo y DoD? | `<estado>` | `<ref>` |
 | Contratos | ¿Se preservan owners y contratos declarados? | `<estado>` | `<ref>` |
 | Tests | ¿Las pruebas son suficientes para changed surfaces/riesgo? | `<estado>` | `<ref>` |
-| Repair integrity | ¿Los gates vieron sólo el candidato indexado —worktree sin untracked o tree aislado— y el mismo tree siguió idéntico después? | `<estado>` | `<ref>` |
+| Candidate integrity | ¿V-C01 prueba antes del commit fuente autorizada, inventarios pre/post e igualdad completa de trees; después V-009 prueba el commit tree idéntico; y V-R01 sólo proyecta reparaciones? | `<estado>` | `<ref>` |
 | Estados | ¿No se presentó falta de evidencia como `PASS`? | `<estado>` | `<ref>` |
 | Lifecycle | ¿Draft observado, CI condicional, V-014, autorización humana, aceptación y reconciliación preservan orden e identidades? | `<estado>` | `<ref>` |
 | Seguridad/privacidad | ¿No hay secretos, PII o trust-boundary drift? | `<estado>` | `<ref>` |
@@ -241,7 +295,9 @@ decisión humana.
 CONCLUSION:
   INDEPENDENT_REVIEW_EXECUTION_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
   INDEPENDENT_AUDIT_VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED | NOT_ISSUED"
+  HEAD: "sha completo del candidato"
   AUDITED_HEAD: "sha completo"
+  MERGED_PR_HEAD: "head.sha completo del PR | NOT_CAPTURED; no es el merge commit"
   AUDITED_PR_HEAD: "sha completo igual a AUDITED_HEAD"
   INDEPENDENT_REVIEW_HEAD: "sha completo igual a AUDITED_HEAD"
   OPEN_MATERIAL_FINDINGS: "entero >= 0 | UNKNOWN"
@@ -249,11 +305,22 @@ CONCLUSION:
     V014_STATE: "PASS | estado honesto"
     HUMAN_GATE_AUTHORIZATION: "NOT_RUN | PASS | BLOCKED"
     HUMAN_GATE_AUTHORIZED_HEAD: "sha | NOT_CAPTURED"
+    HUMAN_GATE_AUTHORIZATION_ACTOR: "actor humano | NOT_CAPTURED"
+    HUMAN_GATE_AUTHORIZED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    HUMAN_GATE_AUTHORIZATION_EVIDENCE: "ref humana comprobable | NONE"
     MERGE_AUTHORIZATION: "NOT_GRANTED | GRANTED"
     MERGE_AUTHORIZED_HEAD: "sha | NOT_CAPTURED"
+    MERGE_AUTHORIZATION_ACTOR: "actor humano | NOT_CAPTURED"
+    MERGE_AUTHORIZED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    MERGE_AUTHORIZATION_EVIDENCE: "ref humana comprobable | NONE"
+    MERGED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
     INTEGRATED_SHA: "sha de implementación | NOT_CAPTURED"
     POST_MERGE_ACCEPTANCE_SHA: "sha igual a INTEGRATED_SHA | NOT_RUN"
+    TRUTH_RECONCILIATION_MODE: "NO_DIFF | MERGED_PR | NOT_RUN"
     TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA: "sha igual a INTEGRATED_SHA | NOT_RUN"
+    TRUTH_RECONCILIATION_STATE: "PASS | NOT_RUN | BLOCKED"
+    TRUTH_RECONCILIATION_PASSED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    TRUTH_RECONCILIATION_EVIDENCE: "ref comprobable | NONE"
   RECONCILIATION_PR_AUDIT:
     RECONCILIATION_PR: "N | NOT_RUN"
     RECONCILIATION_PR_MERGED: "true | false"
@@ -265,10 +332,41 @@ CONCLUSION:
     RECONCILIATION_REVIEW_EXECUTION_STATE: "PASS | NOT_RUN | AUTH_BLOCKED | CAPABILITY_GAP | BLOCKED"
     RECONCILIATION_AUDIT_VERDICT: "PASS | CHANGES_REQUIRED | BLOCKED | NOT_ISSUED"
     RECONCILIATION_AUDITED_HEAD: "sha completo | NOT_REVIEWED"
+    RECONCILIATION_AUDITED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
     RECONCILIATION_OPEN_MATERIAL_FINDINGS: "entero >= 0 | UNKNOWN"
+    RECONCILIATION_HUMAN_GATE_AUTHORIZATION: "PASS | NOT_RUN | BLOCKED"
+    RECONCILIATION_HUMAN_GATE_AUTHORIZED_HEAD: "sha completo | NOT_CAPTURED"
+    RECONCILIATION_HUMAN_GATE_AUTHORIZATION_ACTOR: "actor humano | NOT_CAPTURED"
+    RECONCILIATION_HUMAN_GATE_AUTHORIZED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    RECONCILIATION_HUMAN_GATE_AUTHORIZATION_EVIDENCE: "ref humana comprobable | NONE"
+    RECONCILIATION_READY_TRANSITION_STATE: "PASS | NOT_RUN | BLOCKED"
+    RECONCILIATION_READY_TRANSITION_OCCURRED: "true | false"
+    RECONCILIATION_READY_TRANSITION_HEAD: "sha completo | NOT_CAPTURED"
+    RECONCILIATION_READY_TRANSITION_ACTOR: "actor observado | NOT_CAPTURED"
+    RECONCILIATION_READY_TRANSITION_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    RECONCILIATION_READY_TRANSITION_MECHANISM: "mecanismo observado | NOT_CAPTURED"
+    RECONCILIATION_READY_TRANSITION_EVIDENCE: "ref comprobable del primer evento | NONE"
+    RECONCILIATION_MERGE_AUTHORIZATION: "GRANTED | NOT_GRANTED"
+    RECONCILIATION_MERGE_AUTHORIZED_HEAD: "sha completo | NOT_CAPTURED"
+    RECONCILIATION_MERGE_AUTHORIZATION_ACTOR: "actor humano | NOT_CAPTURED"
+    RECONCILIATION_MERGE_AUTHORIZED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    RECONCILIATION_MERGE_AUTHORIZATION_EVIDENCE: "ref humana comprobable | NONE"
+    RECONCILIATION_PR_MERGED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    RECONCILIATION_PR_MERGE_EVIDENCE: "ref del resultado del mismo PR | NONE"
     RECONCILIATION_INTEGRATED_SHA_SOURCE: "MERGED_PR | NOT_CAPTURED"
     RECONCILIATION_INTEGRATED_SHA: "sha real | NOT_CAPTURED"
     RECONCILIATION_SHA_REACHABLE_FROM_MAIN: "YES | NO | NOT_RUN"
+  ISSUE_CLOSE_AUDIT:
+    EXPLICIT_ISSUE_CLOSE_AUTHORIZATION: "GRANTED | NOT_GRANTED"
+    EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_ACTOR: "actor humano | NOT_CAPTURED"
+    EXPLICIT_ISSUE_CLOSE_AUTHORIZED_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_EVIDENCE: "ref humana comprobable | NONE"
+    EXPLICIT_ISSUE_CLOSE_STATE: "NOT_RUN | PASS | BLOCKED"
+    ISSUE_CLOSED: false
+    EXPLICIT_ISSUE_CLOSE_ACTOR: "actor observado | NOT_CAPTURED"
+    EXPLICIT_ISSUE_CLOSE_AT_UTC: "YYYY-MM-DDTHH:MM:SSZ | NOT_CAPTURED"
+    EXPLICIT_ISSUE_CLOSE_MECHANISM: "mecanismo observado | NOT_CAPTURED"
+    EXPLICIT_ISSUE_CLOSE_EVIDENCE: "ref comprobable | NONE"
   SUMMARY: "conclusión breve sustentada"
   FINDING_COUNT:
     CRITICAL: 0
@@ -282,15 +380,28 @@ CONCLUSION:
   HUMAN_DECISION_REQUIRED: true
   READY_RECOMMENDATION: "ELIGIBLE_FOR_HUMAN_REVIEW | DO_NOT_MARK_READY | BLOCKED"
   MERGE_PERFORMED: false
-  ISSUE_CLOSED: false
   EXTERNAL_MUTATIONS_PERFORMED: false
 ```
 
+Los campos Ready sólo admiten `PASS` para el primer evento observado del exact
+HEAD, con la autorización humana canónica —incluidos actor, instante y
+evidencia— anterior al evento. La relación mínima es
+`V011_OBSERVED_AT_UTC < INDEPENDENT_AUDITED_AT_UTC < HUMAN_GATE_AUTHORIZED_AT_UTC < READY_TRANSITION_AT_UTC`;
+un evento prematuro permanece `BLOCKED`. No existe un alias de autorización
+Ready separado de `HUMAN_GATE_*`.
+
+V-015 sólo pasa con
+`MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD=HEAD=AUDITED_HEAD=HUMAN_GATE_AUTHORIZED_HEAD=MERGE_AUTHORIZED_HEAD`.
+La autorización de merge es posterior al gate humano, incorpora actor, instante
+y evidencia, y prueba
+`INDEPENDENT_AUDITED_AT_UTC < HUMAN_GATE_AUTHORIZED_AT_UTC < MERGE_AUTHORIZED_AT_UTC < MERGED_AT_UTC`.
+
 Cuando el objeto auditado es un PR de reconciliación, el bloque
 `RECONCILIATION_PR_AUDIT` proyecta el dictamen exact-head sin anticipar merge ni
-integración; se omite para otros PRs. Antes de ejecutar cada fase, sus valores
-copian literalmente los `PRE_MERGE_DEFAULTS` del manifiesto. Un handoff favorable
-de auditoría exige request `true`/`PASS`,
+integración. Antes de ejecutar cada fase —y siempre en modo `NO_DIFF`— sus
+campos PR-only conservan literalmente los defaults honestos del manifiesto; no
+se inventan hechos ni un PR. Un handoff favorable de auditoría exige request
+`true`/`PASS`,
 `RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_PR_HEAD`, execution `PASS`,
 audit verdict `PASS`,
 `RECONCILIATION_AUDITED_HEAD=RECONCILIATION_PR_HEAD` y cero findings materiales.
@@ -299,7 +410,14 @@ Aun con ese handoff,
 `TRUTH_RECONCILIATION_SOURCE_INTEGRATED_SHA=INTEGRATED_SHA`,
 `RECONCILIATION_PR_MERGED=true`, se capture el HEAD efectivamente mergeado y se
 pruebe
-`RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD`.
+`RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD=RECONCILIATION_HUMAN_GATE_AUTHORIZED_HEAD=RECONCILIATION_READY_TRANSITION_HEAD=RECONCILIATION_MERGE_AUTHORIZED_HEAD`.
+Antes del merge, la autorización específica del gate humano, el primer evento
+Ready y la autorización separada de merge deben corresponder a
+`RECONCILIATION_PR_HEAD`, incluir actor/instante/evidencia y cumplir
+`RECONCILIATION_AUDITED_AT_UTC < RECONCILIATION_HUMAN_GATE_AUTHORIZED_AT_UTC < RECONCILIATION_READY_TRANSITION_AT_UTC < RECONCILIATION_MERGE_AUTHORIZED_AT_UTC < RECONCILIATION_PR_MERGED_AT_UTC`;
+un Ready prematuro queda `RECONCILIATION_READY_TRANSITION_STATE=BLOCKED` y no se
+sana retroactivamente.
+`RECONCILIATION_PR_MERGE_EVIDENCE` identifica el resultado de ese mismo PR.
 El source debe ser `MERGED_PR`; el integrated SHA debe ser el
 `mergeCommit.oid`/`merge_commit_sha` observado en ese mismo
 `RECONCILIATION_PR` y su reachability desde `main` debe ser `YES`. Cualquier
@@ -311,6 +429,18 @@ justificación/evidencia comprobable no vacías; no inventa un PR. El source
 identifica la implementación; `RECONCILIATION_INTEGRATED_SHA` identifica el
 resultado del PR posterior. Sin cualquiera de esas condiciones también es
 no-PASS.
+
+Un cierre explícito sólo usa `EXPLICIT_ISSUE_CLOSE_STATE=PASS` e
+`ISSUE_CLOSED=true` si registra primero
+`TRUTH_RECONCILIATION_PASSED_AT_UTC`, luego autorización humana con
+actor/instante/evidencia y finalmente el evento con actor/instante/mecanismo y
+evidencia, con
+`EXPLICIT_ISSUE_CLOSE_ACTOR=EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_ACTOR`, cumpliendo
+`TRUTH_RECONCILIATION_PASSED_AT_UTC < EXPLICIT_ISSUE_CLOSE_AUTHORIZED_AT_UTC < EXPLICIT_ISSUE_CLOSE_AT_UTC`.
+Los defaults o eventos prematuros permanecen no-PASS. Las conjunciones completas
+y sus owners están en
+[DEVELOPMENT_WORKFLOW.md](../truth/DEVELOPMENT_WORKFLOW.md) y
+[QUALITY_GATES.md](../truth/QUALITY_GATES.md).
 
 El auditor entrega el dictamen sin ejecutar correcciones. Ready, merge,
 aceptación post-merge, reconciliación de truth y cierre explícito permanecen

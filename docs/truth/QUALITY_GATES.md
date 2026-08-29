@@ -26,7 +26,7 @@ Toda tarea sigue este orden:
 5. EXACT_STAGE
 6. STAGED_SCOPE_SECRET_RECHECK
 7. FOCAL_TESTS
-8. SURFACE_GATES
+8. SURFACE_GATES y POST_GATE_CANDIDATE_RECHECK
 9. COMMIT_CANDIDATE y CAPTURE_CANDIDATE_HEAD
 10. PUSH_CANDIDATE
 11. DRAFT_PR_CREATE_OR_UPDATE
@@ -53,7 +53,7 @@ REPAIR_EDIT
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
-→ POST_GATE_WORKTREE_INDEX_RECHECK
+→ POST_GATE_CANDIDATE_RECHECK
 → COMMIT_CANDIDATE
 → CAPTURE_NEW_HEAD
 → VERIFY_COMMIT_TREE_MATCH
@@ -64,36 +64,51 @@ REPAIR_EDIT
 → INDEPENDENT_AUDIT
 ```
 
-`REPAIR_EDIT` todavía no es `NEW_HEAD`.
-`STAGED_SCOPE_SECRET_RECHECK` ejecuta `git diff --quiet`, inventaría untracked,
-repite cached diff/scope/secrets y sólo con
-`PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS` captura `PRE_GATE_STAGED_TREE_SHA`.
-La allowlist limita scope, pero no incorpora un untracked al candidato. Los
-gates se ejecutan con una fuente explícita:
+`REPAIR_EDIT` todavía no es `NEW_HEAD`. Para todo candidato,
+`STAGED_SCOPE_SECRET_RECHECK` ejecuta `git diff --quiet`, repite cached
+diff/scope/secrets e inventaría por separado
+`git ls-files --others --exclude-standard` y
+`git ls-files --others --ignored --exclude-standard`. Registra
+`PRE_GATE_UNTRACKED_NON_IGNORED_FILES`, `PRE_GATE_IGNORED_FILES` y
+`PRE_GATE_CANDIDATE_TREE_SHA`; la allowlist no incorpora ningún archivo no
+trackeado o ignorado al candidato. Para un inventario no vacío, la evidencia
+publicable usa conteo y SHA-256 estable de la lista ordenada; los paths crudos se
+mantienen en evidencia local privada y nunca en logs sin sanitizar.
 
-- `INDEXED_CANDIDATE_IN_WORKTREE`, que exige `UNTRACKED_FILES=NONE`; o
-- `ISOLATED_VALIDATED_TREE`, una copia efímera fuera del repo creada sólo desde
-  `PRE_GATE_STAGED_TREE_SHA`, con
-  `ISOLATED_VALIDATION_TREE_SHA=PRE_GATE_STAGED_TREE_SHA`.
+V-C01 es material para candidatos iniciales y reparaciones. Registra
+`GATE_EXECUTION_SOURCE`, `ISOLATED_VALIDATION_TREE_SHA`,
+`PRE_GATE_EXECUTION_TREE_SHA` y, después de los gates,
+`POST_GATE_EXECUTION_TREE_SHA`, `POST_GATE_CANDIDATE_TREE_SHA`,
+`POST_GATE_UNTRACKED_NON_IGNORED_FILES` y `POST_GATE_IGNORED_FILES`:
+
+- un candidato `INITIAL` usa siempre `ISOLATED_VALIDATED_TREE`, una copia
+  efímera fuera del repo creada sólo desde `PRE_GATE_CANDIDATE_TREE_SHA`, sin
+  que los gates lean el worktree original;
+- `INDEXED_CANDIDATE_IN_WORKTREE`, disponible sólo cuando el contrato lo
+  permite, exige los cuatro inventarios pre/post en `NONE`;
+- `ISOLATED_VALIDATED_TREE` exige inventarios pre/post idénticos y
+  cero lectura del worktree original, además de
+  `ISOLATED_VALIDATION_TREE_SHA=PRE_GATE_CANDIDATE_TREE_SHA=PRE_GATE_EXECUTION_TREE_SHA=POST_GATE_EXECUTION_TREE_SHA=POST_GATE_CANDIDATE_TREE_SHA`.
 
 Todo validador efímero y su evidencia o artefactos se crean fuera del
-repositorio, cualquiera sea la fuente de ejecución, y el recheck confirma que
-no dejaron archivos tracked, staged ni untracked dentro de él.
-
-No se agrega ni elimina automáticamente un archivo ajeno. Un untracked que
-pueda afectar el resultado bloquea la ejecución sobre worktree aunque esté en
-la allowlist. Después de los gates, `POST_GATE_WORKTREE_INDEX_RECHECK` repite
-los controles, captura `POST_GATE_CURRENT_INDEX_TREE_SHA` y exige cero drift y
-la identidad del mismo objetivo probado. Sólo su `PASS` registra ese tree como
-`VALIDATED_STAGED_TREE_SHA` antes de `COMMIT_CANDIDATE`. Un recheck omitido o
+repositorio. `POST_GATE_CANDIDATE_RECHECK=PASS` exige repetir diff, cached
+diff/scope/secrets, ambos inventarios y la identidad del tree efectivamente
+probado. Sólo entonces registra
+`VALIDATED_CANDIDATE_TREE_SHA=POST_GATE_CANDIDATE_TREE_SHA`. Un recheck omitido o
 `FAIL` bloquea commit, push y auditoría y devuelve el ciclo a `DIFF_CHECK`,
-staging y gates. El commit crea el SHA; `CAPTURE_NEW_HEAD` lo registra y
-`VERIFY_COMMIT_TREE_MATCH` exige que `NEW_HEAD_TREE_SHA` sea igual al staged tree
-validado. Una diferencia produce `TREE_MATCH=FAIL` y prohíbe push y auditoría;
-sólo `TREE_MATCH=PASS` permite continuar. Toda evidencia del HEAD anterior queda
-obsoleta. Los gates no afectados sólo pueden usar `NOT_APPLICABLE` con
-justificación concreta; un cambio de contrato transversal repite la matriz
-contractual completa aplicable. Omitir un paso bloquea el ciclo.
+staging y gates. No se agrega ni elimina automáticamente contenido ajeno.
+
+El commit crea el SHA y registra `CANDIDATE_HEAD_TREE_SHA`.
+`CANDIDATE_TREE_MATCH=PASS` exige
+`CANDIDATE_HEAD_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA`; una diferencia produce
+`FAIL` y prohíbe push y auditoría. En reparación, V-R01 proyecta la evidencia
+universal: `VALIDATED_STAGED_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA`,
+`NEW_HEAD_TREE_SHA=CANDIDATE_HEAD_TREE_SHA` y
+`TREE_MATCH=CANDIDATE_TREE_MATCH`. `PREVIOUS_HEAD`, V-R01 y `TREE_MATCH` siguen
+siendo repair-only y no se inventan para un candidato inicial. Toda evidencia
+del HEAD anterior queda obsoleta. Los gates no afectados sólo usan
+`NOT_APPLICABLE` con justificación concreta; un cambio transversal repite la
+matriz contractual completa. Omitir un paso bloquea el ciclo.
 
 ## Niveles de riesgo
 
@@ -184,6 +199,7 @@ Reglas de interpretación:
 | --- | --- | --- | --- | --- |
 | Preflight y TASK_CONTRACT | Obligatorio | Obligatorio | Obligatorio | Obligatorio |
 | Diff, scope y secretos antes/después de stage | Obligatorio | Obligatorio | Obligatorio | Obligatorio |
+| V-C01: fuente, recheck e identidad del candidato | Obligatorio | Obligatorio | Obligatorio | Obligatorio |
 | Pruebas focales | Obligatorio | Obligatorio | Obligatorio | Obligatorio |
 | Regresión | Contratos vecinos | Matriz material | Amplia por superficie | Completa y explícita |
 | Surface gates | Según matriz | Según matriz | Todos los materiales | Todos más revisión humana especializada |
@@ -219,38 +235,42 @@ explícitos. Quedan prohibidos git add . y git add -A.
 
 Repite diff, scope y scan de secretos/privacidad sobre el índice exacto. El
 contenido staged es el candidato evaluado; un archivo correcto fuera del índice
-no lo compensa. En una reparación también exige `git diff --quiet`, inventaría
-todos los paths con `git ls-files --others --exclude-standard` y sólo con
-`PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS` captura
-`PRE_GATE_STAGED_TREE_SHA`. Si los gates leen el worktree, el inventario debe ser
-vacío. Si existe untracked ajeno que no se debe incorporar ni eliminar, los
-gates se ejecutan sobre una copia aislada del tree staged y registran su SHA.
+no lo compensa. Para todo candidato exige `git diff --quiet`, inventaría
+untracked no ignorados e ignorados con los dos comandos canónicos y captura
+`PRE_GATE_CANDIDATE_TREE_SHA`. Un candidato inicial siempre ejecuta gates sobre
+la copia aislada de ese tree. Un candidato de reparación sólo puede usar el
+worktree si los cuatro inventarios pre/post son `NONE`; si no puede probar esa
+pureza, también usa la copia aislada.
 
 ### FOCAL_TESTS y SURFACE_GATES
 
 Usan [TESTING_MATRIX.md](TESTING_MATRIX.md) y
 [INTERDISCIPLINARY_REVIEW_MATRIX.md](INTERDISCIPLINARY_REVIEW_MATRIX.md).
 Cada contrato material tiene criterio y resultado. Después,
-`POST_GATE_WORKTREE_INDEX_RECHECK` debe probar que los gates no cambiaron
-worktree, índice, untracked, scope ni secrets y que
-`POST_GATE_CURRENT_INDEX_TREE_SHA=PRE_GATE_STAGED_TREE_SHA`; sólo entonces
-puede declarar el mismo tree como `VALIDATED_STAGED_TREE_SHA`. También debe
-probar que la fuente ejecutada fue el worktree sin untracked o la copia aislada
-del mismo staged tree; la mera estabilidad del índice no demuestra eso.
+V-C01 ejecuta `POST_GATE_CANDIDATE_RECHECK` y prueba que los gates no cambiaron
+worktree, índice, inventarios, scope, secrets ni el tree ejecutado. El modo
+worktree exige los cuatro inventarios en `NONE`; el modo aislado exige
+inventarios pre/post idénticos. En ambos casos,
+`PRE_GATE_CANDIDATE_TREE_SHA=PRE_GATE_EXECUTION_TREE_SHA=POST_GATE_EXECUTION_TREE_SHA=POST_GATE_CANDIDATE_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA`.
+La mera estabilidad del índice no demuestra la identidad del objetivo probado.
 
 ### COMMIT_CANDIDATE, CAPTURE_CANDIDATE_HEAD, PUSH y DRAFT_PR
 
 Todo candidato requiere `COMMIT_CANDIDATE`, captura inmediata del SHA completo,
 push normal y creación o actualización del Draft PR. Esos pasos son materiales
-y no admiten `NOT_APPLICABLE`.
+y no admiten `NOT_APPLICABLE`. Antes del push, V-C01 debe estar en `PASS` y el
+tree del commit se captura como `CANDIDATE_HEAD_TREE_SHA`;
+`CANDIDATE_TREE_MATCH=PASS` exige su igualdad con
+`VALIDATED_CANDIDATE_TREE_SHA` para candidatos iniciales y reparaciones.
 
-En una reparación, además, sólo un staged set con
-`POST_GATE_WORKTREE_INDEX_RECHECK=PASS` se convierte en commit. Después se
-captura `NEW_HEAD`, se obtiene su tree y se exige `TREE_MATCH=PASS` antes del
-push. Fuera de reparación, V-R01 y los campos `PREVIOUS_HEAD`,
-`VALIDATED_STAGED_TREE_SHA`, `NEW_HEAD_TREE_SHA` y `TREE_MATCH` son
-`NOT_APPLICABLE` con justificación; no se inventan ni se vuelven `PASS`, y no
-forman parte del predicado del candidato inicial.
+En una reparación, además, V-R01 proyecta V-C01 sin crear una segunda identidad:
+`VALIDATED_STAGED_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA`,
+`NEW_HEAD_TREE_SHA=CANDIDATE_HEAD_TREE_SHA` y
+`TREE_MATCH=CANDIDATE_TREE_MATCH=PASS`. Fuera de reparación, la fila V-R01 queda
+`NOT_APPLICABLE` con justificación; los campos repair-only `PREVIOUS_HEAD`,
+`VALIDATED_STAGED_TREE_SHA`, `NEW_HEAD_TREE_SHA` y `TREE_MATCH` se omiten y no se
+inventan. Los campos universales V-C01 y `CANDIDATE_TREE_MATCH` sí forman parte
+del predicado del candidato inicial.
 
 Antes de CI, el HEAD local, el remote head y el head del PR deben coincidir. Un
 índice sin commit, un commit sólo local o, en reparación, `TREE_MATCH=FAIL` no
@@ -261,8 +281,9 @@ independiente se hereda del HEAD anterior.
 V-011 sólo pasa si una lectura de GitHub registra PR abierto,
 `PR_IS_DRAFT=true`, HEAD igual al candidato, instante y evidencia antes de
 `HUMAN_GATE`. `DRAFT_PR_HEAD` no prueba por su nombre el estado Draft. La fila es
-un registro histórico: una transición posterior a Ready, autorizada para el
-mismo HEAD, se registra como estado actual separado y no invalida V-011.
+un registro histórico. Una transición posterior a Ready se registra como evento
+separado y no invalida V-011, pero su estado actual por sí solo no prueba que la
+transición haya sido autorizada ni que ocurriera en el orden permitido.
 
 ### CI_EXACT_HEAD
 
@@ -286,7 +307,8 @@ sin reparación dentro del dictamen. Se registran por separado:
   `INDEPENDENT_REVIEW_REQUEST_STATE`;
 - `INDEPENDENT_REVIEW_EXECUTION_STATE`;
 - `INDEPENDENT_AUDIT_VERDICT=PASS|CHANGES_REQUIRED|BLOCKED|NOT_ISSUED`;
-- `AUDITED_HEAD` y `OPEN_MATERIAL_FINDINGS`.
+- `AUDITED_HEAD`, `INDEPENDENT_AUDITED_AT_UTC` y
+  `OPEN_MATERIAL_FINDINGS`.
 
 Request `PASS` sólo acredita una solicitud válida, evidenciada y dirigida al
 HEAD. Execution `PASS` sólo acredita que la auditoría se completó y emitió un
@@ -322,21 +344,52 @@ Una combinación `INDEPENDENT_AUDIT_VERDICT=PASS` con findings materiales
 abiertos es inválida y falla cerradamente.
 
 La decisión humana favorable registra `HUMAN_GATE_AUTHORIZATION=PASS`,
-`HUMAN_GATE_AUTHORIZED_HEAD=HEAD` y evidencia comprobable. Sin los tres datos,
-o con V-014 fuera de `PASS`, el gate permanece bloqueado. Observar un merge
+`HUMAN_GATE_AUTHORIZED_HEAD=HEAD`, `HUMAN_GATE_AUTHORIZATION_ACTOR`,
+`HUMAN_GATE_AUTHORIZED_AT_UTC` y evidencia comprobable. Sin todos esos datos, o
+con V-014 fuera de `PASS`, el gate permanece bloqueado. Observar un merge
 posterior no cambia el dictamen ni crea retroactivamente esa autorización.
+
+Ready es un evento separado. Registra el primer evento para ese HEAD mediante
+`READY_TRANSITION_STATE`,
+`READY_TRANSITION_OCCURRED`, `READY_TRANSITION_HEAD`, `READY_TRANSITION_ACTOR`,
+`READY_TRANSITION_AT_UTC`, `READY_TRANSITION_MECHANISM` y
+`READY_TRANSITION_EVIDENCE`. Sólo admite `PASS` con esta secuencia:
+
+```text
+V011_OBSERVED_AT_UTC
+< INDEPENDENT_AUDITED_AT_UTC
+< HUMAN_GATE_AUTHORIZED_AT_UTC
+< READY_TRANSITION_AT_UTC
+```
+
+Además exige `READY_TRANSITION_OCCURRED=true`,
+`READY_TRANSITION_HEAD=HUMAN_GATE_AUTHORIZED_HEAD=HEAD`, actor, mecanismo y
+evidencia comprobables. Un Ready anterior a la autorización queda `BLOCKED`; una
+autorización posterior, volver a Draft o conservar el mismo HEAD no lo sana.
 Este gate no concede merge: esa acción requiere además
-`MERGE_AUTHORIZATION=GRANTED`, `MERGE_AUTHORIZED_HEAD=HEAD` y evidencia humana.
+`MERGE_AUTHORIZATION=GRANTED`, `MERGE_AUTHORIZED_HEAD=HEAD`,
+`MERGE_AUTHORIZATION_ACTOR`, `MERGE_AUTHORIZED_AT_UTC` y evidencia humana.
 
 ### HUMAN_MERGE y CAPTURE_INTEGRATED_SHA
 
 Después de la decisión humana, leer el PR en GitHub y registrar `PR_NUMBER`,
-`PR_MERGED=YES`, `MERGED_PR_HEAD`, `AUDITED_PR_HEAD` e
+`PR_MERGED=YES`, `MERGED_PR_HEAD` desde el `head.sha` del PR —no desde el merge
+commit—, `AUDITED_PR_HEAD` e
 `INDEPENDENT_REVIEW_HEAD`. `HUMAN_MERGE=PASS` exige V-014 favorable,
 `HUMAN_GATE_AUTHORIZATION=PASS` y `MERGE_AUTHORIZATION=GRANTED` para el mismo
-HEAD, además de igualdad entre esos tres HEADs. Cualquier diferencia o gate
-previo fallido mantiene V-015 bloqueado y prohíbe capturar el SHA integrado,
-aunque GitHub muestre `PR_MERGED=YES`.
+HEAD, `READY_TRANSITION_STATE=PASS`, `MERGED_AT_UTC` observado y estas dos
+igualdades:
+
+```text
+MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD=HEAD=AUDITED_HEAD=HUMAN_GATE_AUTHORIZED_HEAD=MERGE_AUTHORIZED_HEAD
+INDEPENDENT_AUDITED_AT_UTC < HUMAN_GATE_AUTHORIZED_AT_UTC
+HUMAN_GATE_AUTHORIZED_AT_UTC < MERGE_AUTHORIZED_AT_UTC < MERGED_AT_UTC
+HUMAN_GATE_AUTHORIZED_AT_UTC < READY_TRANSITION_AT_UTC < MERGED_AT_UTC
+```
+
+Cualquier diferencia, autorización retroactiva o gate previo fallido mantiene
+V-015 bloqueado y prohíbe capturar el SHA integrado, aunque GitHub muestre
+`PR_MERGED=YES`.
 
 Con la identidad aprobada, obtener `INTEGRATED_SHA` del resultado del PR
 mergeado, registrar `INTEGRATED_SHA_SOURCE=MERGED_PR`, el método observable y su
@@ -367,21 +420,70 @@ AND RECONCILIATION_REVIEW_REQUEST_STATE=PASS
 AND RECONCILIATION_REVIEW_EXECUTION_STATE=PASS
 AND RECONCILIATION_AUDIT_VERDICT=PASS
 AND RECONCILIATION_OPEN_MATERIAL_FINDINGS=0
+AND RECONCILIATION_AUDITED_AT_UTC=<instante comprobable>
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZATION=PASS
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZED_HEAD=RECONCILIATION_PR_HEAD
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZATION_ACTOR=<actor humano>
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZED_AT_UTC=<instante comprobable>
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZATION_EVIDENCE=<ref comprobable>
+AND RECONCILIATION_READY_TRANSITION_STATE=PASS
+AND RECONCILIATION_READY_TRANSITION_OCCURRED=true
+AND RECONCILIATION_READY_TRANSITION_HEAD=RECONCILIATION_HUMAN_GATE_AUTHORIZED_HEAD=RECONCILIATION_PR_HEAD
+AND RECONCILIATION_READY_TRANSITION_ACTOR=<actor observado>
+AND RECONCILIATION_READY_TRANSITION_AT_UTC=<instante comprobable>
+AND RECONCILIATION_READY_TRANSITION_MECHANISM=<mecanismo observado>
+AND RECONCILIATION_READY_TRANSITION_EVIDENCE=<ref del primer evento>
+AND RECONCILIATION_MERGE_AUTHORIZATION=GRANTED
+AND RECONCILIATION_MERGE_AUTHORIZED_HEAD=RECONCILIATION_PR_HEAD
+AND RECONCILIATION_MERGE_AUTHORIZATION_ACTOR=<actor humano>
+AND RECONCILIATION_MERGE_AUTHORIZED_AT_UTC=<instante comprobable>
+AND RECONCILIATION_MERGE_AUTHORIZATION_EVIDENCE=<ref comprobable>
 AND RECONCILIATION_PR_MERGED=true
+AND RECONCILIATION_PR_MERGED_AT_UTC=<instante observado>
+AND RECONCILIATION_PR_MERGE_EVIDENCE=<ref del resultado del mismo PR>
 AND RECONCILIATION_MERGED_PR_HEAD=<sha real observado del PR mergeado>
-AND RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD
+AND RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD=RECONCILIATION_HUMAN_GATE_AUTHORIZED_HEAD=RECONCILIATION_READY_TRANSITION_HEAD=RECONCILIATION_MERGE_AUTHORIZED_HEAD
+AND RECONCILIATION_AUDITED_AT_UTC < RECONCILIATION_HUMAN_GATE_AUTHORIZED_AT_UTC
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZED_AT_UTC < RECONCILIATION_READY_TRANSITION_AT_UTC
+AND RECONCILIATION_READY_TRANSITION_AT_UTC < RECONCILIATION_MERGE_AUTHORIZED_AT_UTC
+AND RECONCILIATION_MERGE_AUTHORIZED_AT_UTC < RECONCILIATION_PR_MERGED_AT_UTC
 AND RECONCILIATION_INTEGRATED_SHA_SOURCE=MERGED_PR
 AND RECONCILIATION_INTEGRATED_SHA=<mergeCommit.oid/merge_commit_sha real observado en RECONCILIATION_PR>
 AND RECONCILIATION_SHA_REACHABLE_FROM_MAIN=YES
 ```
 
 Toda otra combinación mantiene la reconciliación fuera de `PASS`. `NO_DIFF` no
-requiere un PR ficticio. Draft, Ready y cerrado sin merge no satisfacen
+requiere un PR, autorizaciones ni evento Ready ficticios y conserva esos campos
+en defaults honestos. Draft, meramente Ready y cerrado sin merge no satisfacen
 `MERGED_PR`; tampoco un HEAD mergeado no capturado o distinto, ni un integrated
-SHA que no provenga del resultado del mismo `RECONCILIATION_PR`. Sólo después
-de aceptación y una de esas dos rutas completas una
-persona autorizada cierra la issue explícitamente. Los PRs usan `Refs #N`; las
-closing keywords no son compatibles con esta secuencia.
+SHA que no provenga del resultado del mismo `RECONCILIATION_PR`. Una
+autorización o transición Ready ausente, retroactiva, sin actor/evidencia o
+ligada a otro HEAD también bloquea. `V-018=PASS` captura
+`TRUTH_RECONCILIATION_PASSED_AT_UTC`; ningún default o estado no-PASS puede
+capturar ese instante.
+
+Sólo después una persona autorizada cierra la issue explícitamente. V-019
+registra `EXPLICIT_ISSUE_CLOSE_STATE=PASS`,
+`EXPLICIT_ISSUE_CLOSE_AUTHORIZATION=GRANTED`,
+`EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_ACTOR`,
+`EXPLICIT_ISSUE_CLOSE_AUTHORIZED_AT_UTC`,
+`EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_EVIDENCE`,
+`EXPLICIT_ISSUE_CLOSE_ACTOR`, `EXPLICIT_ISSUE_CLOSE_AT_UTC`,
+`EXPLICIT_ISSUE_CLOSE_MECHANISM` y `EXPLICIT_ISSUE_CLOSE_EVIDENCE`. Su `PASS`
+exige
+`EXPLICIT_ISSUE_CLOSE_ACTOR=EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_ACTOR`, actor
+humano autorizado, mecanismo explícito distinto de una closing keyword,
+evidencia comprobable y:
+
+```text
+TRUTH_RECONCILIATION_PASSED_AT_UTC
+< EXPLICIT_ISSUE_CLOSE_AUTHORIZED_AT_UTC
+< EXPLICIT_ISSUE_CLOSE_AT_UTC
+```
+
+Los PRs usan `Refs #N`; las closing keywords no son compatibles con esta
+secuencia. Un `ISSUE_CLOSED=true` observado antes de V-018 no se sana al completar
+fases posteriores.
 
 El primer SHA identifica la implementación que se cierra.
 `RECONCILIATION_INTEGRATED_SHA` identifica el resultado del PR posterior de
@@ -430,9 +532,12 @@ Detenerse ante:
 - FAIL bloquea el criterio.
 - BLOCKED y los estados de ausencia se presentan al humano; no se ocultan.
 - Sólo todos los gates obligatorios satisfechos permiten recomendar avance.
+- V-C01 y `CANDIDATE_TREE_MATCH=PASS` son obligatorios para todo candidato;
+  V-R01 y `TREE_MATCH=PASS` se agregan sólo en reparación.
 - Sólo solicitud `true`/`PASS`, ejecución `PASS`, dictamen `PASS`,
-  `AUDITED_HEAD=HEAD` y cero findings materiales abiertos permiten la transición
-  regular a HUMAN_GATE; cualquier otra combinación falla cerradamente.
+  `AUDITED_HEAD=HEAD`, `INDEPENDENT_AUDITED_AT_UTC` y cero findings materiales
+  abiertos permiten la transición regular a HUMAN_GATE; cualquier otra
+  combinación falla cerradamente.
 - El writer termina en SELF_VALIDATED_ONLY.
 - Ready, merge y publicación continúan siendo humanos incluso con
   INDEPENDENTLY_VALIDATED.

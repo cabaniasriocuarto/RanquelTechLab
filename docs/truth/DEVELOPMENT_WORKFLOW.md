@@ -35,6 +35,7 @@ PREFLIGHT
 → STAGED_SCOPE_SECRET_RECHECK
 → FOCAL_TESTS
 → SURFACE_GATES
+→ POST_GATE_CANDIDATE_RECHECK
 → COMMIT_CANDIDATE
 → CAPTURE_CANDIDATE_HEAD
 → PUSH_CANDIDATE
@@ -60,7 +61,7 @@ REPAIR_EDIT
 → STAGED_SCOPE_SECRET_RECHECK
 → AFFECTED_FOCAL_TESTS
 → AFFECTED_SURFACE_GATES
-→ POST_GATE_WORKTREE_INDEX_RECHECK
+→ POST_GATE_CANDIDATE_RECHECK
 → COMMIT_CANDIDATE
 → CAPTURE_NEW_HEAD
 → VERIFY_COMMIT_TREE_MATCH
@@ -72,44 +73,80 @@ REPAIR_EDIT
 ```
 
 `REPAIR_EDIT` significa que existe un cambio candidato en worktree, todavía sin
-commit ni `NEW_HEAD`. `STAGED_SCOPE_SECRET_RECHECK` ejecuta
-`git diff --quiet`, inventaría `git ls-files --others --exclude-standard`,
-repite cached diff, scope y secrets y sólo declara
-`PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS` si el worktree está alineado con el
-índice. Entonces captura `PRE_GATE_STAGED_TREE_SHA`. La allowlist no convierte
-un archivo untracked en parte del candidato: antes de los gates se inventarían
-**todos** los untracked y se elige una de estas dos fuentes de ejecución:
+commit ni `NEW_HEAD`. Para todo candidato, `STAGED_SCOPE_SECRET_RECHECK`
+inventaría por separado `git ls-files --others --exclude-standard` como
+`PRE_GATE_UNTRACKED_NON_IGNORED_FILES` y
+`git ls-files --others --ignored --exclude-standard` como
+`PRE_GATE_IGNORED_FILES`,
+repite cached diff, scope y secrets, y captura
+`PRE_GATE_CANDIDATE_TREE_SHA`. La allowlist no convierte un archivo no
+trackeado o ignorado en parte del candidato. Un inventario no vacío se compara
+mediante conteo y SHA-256 estable de su lista ordenada; el registro publicable no
+expone los paths crudos, que permanecen en evidencia local privada.
+
+Los gates de un candidato inicial se ejecutan obligatoriamente con
+`GATE_EXECUTION_SOURCE=ISOLATED_VALIDATED_TREE`, en una exportación fuera del
+repositorio creada sólo desde el índice exacto. Registra
+`PRE_GATE_EXECUTION_TREE_SHA=PRE_GATE_CANDIDATE_TREE_SHA`. Después de los gates,
+`POST_GATE_CANDIDATE_RECHECK` repite staged diff, scope, secrets y ambos
+inventarios, vuelve a obtener el tree de la fuente ejecutada y del índice, y
+sólo pasa si
+`PRE_GATE_CANDIDATE_TREE_SHA=PRE_GATE_EXECUTION_TREE_SHA=POST_GATE_EXECUTION_TREE_SHA=POST_GATE_CANDIDATE_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA`.
+Tras el commit exige además
+`CANDIDATE_HEAD_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA` y recién entonces declara
+`CANDIDATE_TREE_MATCH=PASS`. Así el flujo inicial no inventa V-R01,
+`PREVIOUS_HEAD` ni el `TREE_MATCH` de reparación, pero tampoco permite que un
+gate/autofix lea o produzca contenido distinto del candidato.
+
+En una reparación también se registra
+`PRE_GATE_WORKTREE_INDEX_ALIGNMENT=PASS` y los campos V-R01 se proyectan sin
+crear una segunda fuente editable:
+`PRE_GATE_STAGED_TREE_SHA=PRE_GATE_CANDIDATE_TREE_SHA`,
+`POST_GATE_CURRENT_INDEX_TREE_SHA=POST_GATE_CANDIDATE_TREE_SHA`,
+`VALIDATED_STAGED_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA` y, después del commit,
+`NEW_HEAD_TREE_SHA=CANDIDATE_HEAD_TREE_SHA`; sólo entonces `TREE_MATCH` puede
+proyectar `CANDIDATE_TREE_MATCH`. Se elige una de estas dos fuentes de ejecución:
 
 - `GATE_EXECUTION_SOURCE=INDEXED_CANDIDATE_IN_WORKTREE` exige
-  `UNTRACKED_FILES=NONE`; todo archivo relevante ya está incorporado al índice.
+  `PRE_GATE_UNTRACKED_NON_IGNORED_FILES=NONE` y
+  `PRE_GATE_IGNORED_FILES=NONE`; todo contenido visible a los gates ya está
+  incorporado al índice.
 - `GATE_EXECUTION_SOURCE=ISOLATED_VALIDATED_TREE` exige exportar fuera del repo
-  una copia creada exclusivamente desde `PRE_GATE_STAGED_TREE_SHA` y registrar
-  `ISOLATED_VALIDATION_TREE_SHA=PRE_GATE_STAGED_TREE_SHA`; ningún untracked del
-  worktree original puede entrar en pruebas o gates.
+  una copia creada exclusivamente desde `PRE_GATE_CANDIDATE_TREE_SHA` y
+  registrar `ISOLATED_VALIDATION_TREE_SHA=PRE_GATE_CANDIDATE_TREE_SHA`; ningún
+  archivo no trackeado o ignorado del worktree original puede entrar en pruebas
+  o gates.
 
 Los validadores efímeros y toda su evidencia o artefactos se crean fuera del
 repositorio en ambos modos. El recheck posterior confirma que no dejaron
 archivos tracked, staged ni untracked dentro de él.
 
-Un untracked relevante, aunque su path esté permitido, bloquea los gates hasta
-que una persona lo incorpore de forma explícita al candidato o se use la copia
-aislada. El protocolo no agrega ni elimina automáticamente archivos ajenos. Los
-focal tests y surface gates afectados se ejecutan sobre la fuente registrada.
+Un archivo no trackeado o ignorado, aunque su path esté permitido, bloquea los
+gates sobre worktree hasta que una persona lo incorpore de forma explícita al
+candidato o se use la copia aislada. Si no puede probarse la pureza del
+worktree, la copia aislada es obligatoria. El protocolo no agrega ni elimina
+automáticamente archivos ajenos. Los focal tests y surface gates se ejecutan
+sobre la fuente registrada.
 
-Después de los gates y antes del commit,
-`POST_GATE_WORKTREE_INDEX_RECHECK` repite `git diff --quiet`, el inventario
-untracked, staged diff, scope y secret/privacy scan; captura
-`POST_GATE_CURRENT_INDEX_TREE_SHA` y exige que siga igual a
-`PRE_GATE_STAGED_TREE_SHA`. En modo worktree vuelve a exigir
-`UNTRACKED_FILES=NONE`; en modo aislado comprueba que el tree ejecutado y el
-staged tree siguen siendo el mismo. Sólo un recheck `PASS` registra ese tree
-como `VALIDATED_STAGED_TREE_SHA`. Un recheck
-omitido o `FAIL` bloquea commit, push y auditoría y obliga a volver a
+Después de los gates y antes del commit, el recheck universal repite
+`git diff --quiet`, los inventarios no ignorado e ignorado, staged diff, scope y
+secret/privacy scan, y exige que los inventarios posteriores sean idénticos a
+los previos y que ningún artefacto nuevo haya quedado dentro del repo. En modo
+worktree exige además `POST_GATE_UNTRACKED_NON_IGNORED_FILES=NONE` y
+`POST_GATE_IGNORED_FILES=NONE`; en modo aislado exige que ambos inventarios
+post-gate sean idénticos a sus valores pre-gate. En los dos modos comprueba que
+el tree ejecutado antes y después y el staged tree siguen siendo el mismo. En
+reparación, V-R01 registra
+este mismo resultado como `POST_GATE_WORKTREE_INDEX_RECHECK`; no lo reemplaza.
+Un recheck omitido o `FAIL` bloquea commit, push y auditoría y obliga a volver a
 `DIFF_CHECK`, repetir staging y volver a ejecutar los gates.
 `COMMIT_CANDIDATE` crea el commit; inmediatamente después,
-`CAPTURE_NEW_HEAD` registra su SHA completo y `VERIFY_COMMIT_TREE_MATCH` obtiene
-`NEW_HEAD_TREE_SHA`. Sólo `NEW_HEAD_TREE_SHA=VALIDATED_STAGED_TREE_SHA` permite
-`TREE_MATCH=PASS`. Cualquier diferencia produce `TREE_MATCH=FAIL`, impide push y
+`CAPTURE_CANDIDATE_HEAD` registra su SHA completo y obtiene
+`CANDIDATE_HEAD_TREE_SHA`. Todo candidato exige
+`CANDIDATE_HEAD_TREE_SHA=VALIDATED_CANDIDATE_TREE_SHA` para declarar
+`CANDIDATE_TREE_MATCH=PASS`. En reparación, `CAPTURE_NEW_HEAD` y
+`VERIFY_COMMIT_TREE_MATCH` registran las proyecciones repair-only y sólo esa
+misma igualdad permite `TREE_MATCH=PASS`. Cualquier diferencia impide push y
 auditoría y obliga a volver a `DIFF_CHECK`.
 
 Desde `CAPTURE_NEW_HEAD`, CI, preview, solicitud, ejecución, dictamen y toda
@@ -125,10 +162,10 @@ candidato nuevo.
 | Fase | Vehículo permitido | Owner y límite |
 | --- | --- | --- |
 | Implementación | Una rama, un commit candidato publicado y un Draft PR activo con `Refs #N` | Writer de la issue; scope implementable original |
-| `HUMAN_MERGE` | Acción humana en GitHub sobre el PR revisado | Humano autorizado; registra número, merge y `MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD` |
+| `HUMAN_MERGE` | Acción humana en GitHub sobre el PR revisado | Humano autorizado; aplica el predicado V-015 completo: `MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD=HEAD=AUDITED_HEAD=HUMAN_GATE_AUTHORIZED_HEAD=MERGE_AUTHORIZED_HEAD` |
 | `CAPTURE_INTEGRATED_SHA` | Inspección read-only del resultado del PR mergeado y reachability desde `main` | Sesión de aceptación; toma `INTEGRATED_SHA` del PR, registra método observable y `MAIN_HEAD_AT_ACCEPTANCE` por separado |
 | `POST_MERGE_ACCEPTANCE` | Inspección read-only de `main` y del `INTEGRATED_SHA`; evidencia en la issue/manifest | Humano o sesión de aceptación autorizada; exige merge y captura previos, sin promoción automática |
-| `TRUTH_RECONCILIATION` | `NO_DIFF` con source igual al integrated SHA y justificación/evidencia no vacías, o un único PR state-only secuencial desde `main`, por ejemplo `reconcile/issue-N-truth`, con `Refs #N`, request/ejecución/verdict `PASS`, cero findings, HEAD efectivamente mergeado igual al auditado y SHA integrado obtenido de ese mismo PR | Writer de closeout autorizado por la misma issue todavía OPEN; sólo estados, owners, referencias y changelog afectados |
+| `TRUTH_RECONCILIATION` | `NO_DIFF` con source igual al integrated SHA y justificación/evidencia no vacías, o un único PR state-only secuencial desde `main`, por ejemplo `reconcile/issue-N-truth`, con `Refs #N`, request/ejecución/verdict `PASS`, cero findings, gate humano, primer Ready y autorización de merge ordenados, HEAD efectivamente mergeado igual al auditado/autorizado y SHA integrado obtenido de ese mismo PR | Writer de closeout autorizado por la misma issue todavía OPEN; sólo estados, owners, referencias y changelog afectados |
 | `EXPLICIT_ISSUE_CLOSE` | Acción humana en GitHub después de confirmar el PR de reconciliación integrado o la evidencia `NO_DIFF` | Humano autorizado; sin closing keyword |
 
 Cuando existe un delta, la rama/PR de reconciliación es la única continuación
@@ -205,26 +242,32 @@ Aplicar riesgo y gates de [QUALITY_GATES.md](QUALITY_GATES.md), más las
 disciplinas requeridas por
 [INTERDISCIPLINARY_REVIEW_MATRIX.md](INTERDISCIPLINARY_REVIEW_MATRIX.md).
 `NOT_APPLICABLE` necesita justificación por gate; no se usa como atajo.
-En una reparación, `AFFECTED_SURFACE_GATES` no habilita el commit hasta que
-`POST_GATE_WORKTREE_INDEX_RECHECK=PASS` pruebe que el mismo staged tree
-inspeccionado antes de los gates permanece intacto y que no existe drift.
+En un candidato inicial, los gates aislados no habilitan el commit hasta que
+`POST_GATE_CANDIDATE_RECHECK=PASS` pruebe la igualdad completa entre el staged
+tree, la fuente ejecutada antes/después y el candidato validado, además de
+repetir staged diff, scope, secrets e inventarios. En una reparación,
+`AFFECTED_SURFACE_GATES` tampoco habilita el commit hasta que ese recheck y su
+proyección `POST_GATE_WORKTREE_INDEX_RECHECK=PASS` prueben que el mismo staged
+tree inspeccionado antes de los gates permanece intacto y que no existe drift.
 
 ### 9. COMMIT_CANDIDATE
 
 Crear el commit que convierte el contenido staged validado en un `HEAD` real.
-`CAPTURE_CANDIDATE_HEAD` registra siempre ese SHA completo. Commit, captura y
-push son pasos materiales tanto para el candidato inicial como para una
-reparación; nunca se reemplazan por `NOT_APPLICABLE`.
+`CAPTURE_CANDIDATE_HEAD` registra siempre ese SHA completo y
+`CANDIDATE_HEAD_TREE_SHA`; `CANDIDATE_TREE_MATCH=PASS` exige igualdad con
+`VALIDATED_CANDIDATE_TREE_SHA`. Commit, captura, comparación y push son pasos
+materiales tanto para el candidato inicial como para una reparación; nunca se
+reemplazan por `NOT_APPLICABLE`.
 
-Sólo en una reparación, `VALIDATED_STAGED_TREE_SHA` ya debe estar registrado
-después de `POST_GATE_WORKTREE_INDEX_RECHECK=PASS` y antes del commit, y debe ser
-igual a `PRE_GATE_STAGED_TREE_SHA`. Inmediatamente después de crear ese commit,
-`CAPTURE_NEW_HEAD` registra el SHA completo y `VERIFY_COMMIT_TREE_MATCH` obtiene
-`NEW_HEAD_TREE_SHA`. Sólo `TREE_MATCH=PASS`, que exige igualdad exacta entre
-ambos trees, habilita el push de una reparación. En un candidato inicial no se
-inventan `PREVIOUS_HEAD`, V-R01, `VALIDATED_STAGED_TREE_SHA` ni `TREE_MATCH`; su
-no materialidad se registra sin convertirla en `PASS`. Un worktree o índice sin
-commit no es un candidato para CI o auditoría.
+Sólo en una reparación, `VALIDATED_STAGED_TREE_SHA` proyecta el valor universal
+después de `POST_GATE_WORKTREE_INDEX_RECHECK=PASS` y antes del commit.
+Inmediatamente después, `CAPTURE_NEW_HEAD` registra el SHA completo y
+`VERIFY_COMMIT_TREE_MATCH` proyecta `NEW_HEAD_TREE_SHA=CANDIDATE_HEAD_TREE_SHA`.
+Sólo `TREE_MATCH=CANDIDATE_TREE_MATCH=PASS` habilita el push de una reparación.
+En un candidato inicial no se inventan `PREVIOUS_HEAD`, V-R01 ni el
+`TREE_MATCH` de reparación; su no materialidad se registra sin convertirla en
+`PASS`. Los campos universales del candidato sí son obligatorios. Un worktree o
+índice sin commit no es un candidato para CI o auditoría.
 
 ### 10. PUSH_CANDIDATE
 
@@ -240,10 +283,20 @@ número del PR, `PR_IS_OPEN=true`, `PR_IS_DRAFT=true`, el HEAD, instante y
 evidencia. Esos valores deben ser favorables antes de `HUMAN_GATE`; el nombre
 `DRAFT_PR_HEAD` por sí solo no demuestra el estado.
 
-V-011 conserva un hecho histórico de esa fase. Si después una autorización
-humana exact-head permite una transición legítima a Ready, el estado actual se
-registra por separado y no invalida retroactivamente V-011 ni exige volver a
-Draft para completar fases posteriores. Si una reparación llega a
+V-011 conserva un hecho histórico de esa fase. Si después el gate humano
+exact-head permite una transición legítima a Ready, se registran
+`HUMAN_GATE_AUTHORIZATION=PASS`, `HUMAN_GATE_AUTHORIZED_HEAD=HEAD`, actor,
+instante y evidencia. El primer evento Ready para ese HEAD registra
+`READY_TRANSITION_STATE=PASS`, `READY_TRANSITION_OCCURRED=true`,
+`READY_TRANSITION_HEAD=HEAD`, `READY_TRANSITION_ACTOR`,
+`READY_TRANSITION_MECHANISM`, `READY_TRANSITION_AT_UTC` y
+`READY_TRANSITION_EVIDENCE`; se exige
+`V011_OBSERVED_AT_UTC < INDEPENDENT_AUDITED_AT_UTC < HUMAN_GATE_AUTHORIZED_AT_UTC < READY_TRANSITION_AT_UTC`.
+Sólo entonces el estado actual puede pasar a `OPEN_READY` sin invalidar
+retroactivamente V-011 ni exigir volver a Draft. Una autorización posterior al
+evento no sana un Ready prematuro: éste queda
+`READY_TRANSITION_STATE=BLOCKED` aunque luego cambie el estado visible. Si una
+reparación llega a
 `DRAFT_PR_UPDATE`, debe haber
 completado antes el ciclo de reparación definido en "Secuencia obligatoria",
 incluidos `CAPTURE_NEW_HEAD`, `VERIFY_COMMIT_TREE_MATCH` y `TREE_MATCH=PASS`; la
@@ -281,7 +334,8 @@ distinto mediante la
 [plantilla de auditoría](../harness/INDEPENDENT_AUDIT_TEMPLATE.md). El auditor
 enumera todos los findings dentro del alcance y no los repara en la misma
 sesión. Registrar por separado `INDEPENDENT_REVIEW_EXECUTION_STATE`,
-`INDEPENDENT_AUDIT_VERDICT`, `AUDITED_HEAD` y `OPEN_MATERIAL_FINDINGS`. Un
+`INDEPENDENT_AUDIT_VERDICT`, `AUDITED_HEAD`, `INDEPENDENT_AUDITED_AT_UTC` y
+`OPEN_MATERIAL_FINDINGS`. Un
 execution `PASS` sólo demuestra que el auditor completó el trabajo y emitió
 dictamen; no sustituye `INDEPENDENT_AUDIT_VERDICT=PASS`.
 
@@ -305,7 +359,9 @@ Ready, merge, deploy, publicación/indexación, cambios de configuración, uso d
 secretos o gasto. La recomendación regular requiere la conjunción exacta de
 solicitud, ejecución, dictamen, HEAD y findings definida en la fase anterior.
 Una decisión favorable registra `HUMAN_GATE_AUTHORIZATION=PASS`,
-`HUMAN_GATE_AUTHORIZED_HEAD=HEAD` y evidencia humana comprobable. Un dictamen
+`HUMAN_GATE_AUTHORIZED_HEAD=HEAD`, actor, instante y evidencia humana
+comprobable, y exige
+`INDEPENDENT_AUDITED_AT_UTC < HUMAN_GATE_AUTHORIZED_AT_UTC`. Un dictamen
 `CHANGES_REQUIRED`, un HEAD distinto o la ausencia de autorización mantienen el
 gate fuera de `PASS`; un merge posterior no sana ninguna de esas condiciones.
 `HUMAN_GATE_AUTHORIZATION=PASS` documenta el gate o una decisión Ready, pero no
@@ -315,11 +371,17 @@ equivale a autorización de merge.
 
 El merge es un evento explícito posterior al gate humano. Antes de continuar se
 lee el PR en GitHub y se registran `PR_NUMBER`, `PR_MERGED=YES`,
-`MERGED_PR_HEAD`, `AUDITED_PR_HEAD` e `INDEPENDENT_REVIEW_HEAD`. Sólo puede pasar
+`MERGED_PR_HEAD` desde el `head.sha` del PR —no desde el merge commit—,
+`AUDITED_PR_HEAD` e `INDEPENDENT_REVIEW_HEAD`. Sólo puede pasar
 si V-014 fue favorable, `HUMAN_GATE_AUTHORIZATION=PASS` corresponde al mismo
-HEAD, `MERGE_AUTHORIZATION=GRANTED`, `MERGE_AUTHORIZED_HEAD=HEAD` y existe
-evidencia humana comprobable. También exige
-`MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD`. Una diferencia,
+HEAD, `READY_TRANSITION_STATE=PASS` conserva el evento exact-head anterior al
+merge, `MERGE_AUTHORIZATION=GRANTED`, `MERGE_AUTHORIZED_HEAD=HEAD` y se registran
+actor, instante y evidencia humana comprobable de la autorización de merge, más
+`MERGED_AT_UTC` para el evento observado. También exige
+`MERGED_PR_HEAD=AUDITED_PR_HEAD=INDEPENDENT_REVIEW_HEAD=HEAD=AUDITED_HEAD=HUMAN_GATE_AUTHORIZED_HEAD=MERGE_AUTHORIZED_HEAD`.
+El orden debe ser
+`HUMAN_GATE_AUTHORIZED_AT_UTC < MERGE_AUTHORIZED_AT_UTC < MERGED_AT_UTC` y
+`HUMAN_GATE_AUTHORIZED_AT_UTC < READY_TRANSITION_AT_UTC < MERGED_AT_UTC`. Una diferencia,
 incluido un push posterior a la auditoría, produce estado `BLOCKED` con
 `MERGE_ACCEPTANCE=BLOCKED_HEAD_DRIFT`; en ese caso no se captura el SHA
 integrado. Una recomendación Ready, CI verde o dictamen independiente no
@@ -381,19 +443,42 @@ AND RECONCILIATION_REVIEW_REQUEST_STATE=PASS
 AND RECONCILIATION_REVIEW_EXECUTION_STATE=PASS
 AND RECONCILIATION_AUDIT_VERDICT=PASS
 AND RECONCILIATION_OPEN_MATERIAL_FINDINGS=0
+AND RECONCILIATION_AUDITED_AT_UTC=<instante del dictamen favorable>
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZATION=PASS
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZED_HEAD=RECONCILIATION_PR_HEAD
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZATION_ACTOR=<humano autorizado>
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZATION_EVIDENCE=<ref humana comprobable>
+AND RECONCILIATION_READY_TRANSITION_STATE=PASS
+AND RECONCILIATION_READY_TRANSITION_OCCURRED=true
+AND RECONCILIATION_READY_TRANSITION_HEAD=RECONCILIATION_HUMAN_GATE_AUTHORIZED_HEAD=RECONCILIATION_PR_HEAD
+AND RECONCILIATION_READY_TRANSITION_ACTOR=<actor observado>
+AND RECONCILIATION_READY_TRANSITION_MECHANISM=<mecanismo observado>
+AND RECONCILIATION_READY_TRANSITION_EVIDENCE=<ref comprobable del primer evento>
+AND RECONCILIATION_MERGE_AUTHORIZATION=GRANTED
+AND RECONCILIATION_MERGE_AUTHORIZED_HEAD=RECONCILIATION_PR_HEAD
+AND RECONCILIATION_MERGE_AUTHORIZATION_ACTOR=<humano autorizado>
+AND RECONCILIATION_MERGE_AUTHORIZATION_EVIDENCE=<ref humana comprobable>
+AND RECONCILIATION_AUDITED_AT_UTC < RECONCILIATION_HUMAN_GATE_AUTHORIZED_AT_UTC
+AND RECONCILIATION_HUMAN_GATE_AUTHORIZED_AT_UTC < RECONCILIATION_READY_TRANSITION_AT_UTC
+AND RECONCILIATION_READY_TRANSITION_AT_UTC < RECONCILIATION_MERGE_AUTHORIZED_AT_UTC
+AND RECONCILIATION_MERGE_AUTHORIZED_AT_UTC < RECONCILIATION_PR_MERGED_AT_UTC
 AND RECONCILIATION_PR_MERGED=true
+AND RECONCILIATION_PR_MERGED_AT_UTC=<instante observado>
+AND RECONCILIATION_PR_MERGE_EVIDENCE=<ref del resultado del mismo PR>
 AND RECONCILIATION_MERGED_PR_HEAD=<sha real observado del PR mergeado>
-AND RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD
+AND RECONCILIATION_MERGED_PR_HEAD=RECONCILIATION_PR_HEAD=RECONCILIATION_REVIEW_REQUEST_HEAD=RECONCILIATION_AUDITED_HEAD=RECONCILIATION_HUMAN_GATE_AUTHORIZED_HEAD=RECONCILIATION_READY_TRANSITION_HEAD=RECONCILIATION_MERGE_AUTHORIZED_HEAD
 AND RECONCILIATION_INTEGRATED_SHA_SOURCE=MERGED_PR
 AND RECONCILIATION_INTEGRATED_SHA=<mergeCommit.oid/merge_commit_sha real observado en RECONCILIATION_PR>
 AND RECONCILIATION_SHA_REACHABLE_FROM_MAIN=YES
 ```
 
-`NO_DIFF` no crea ni exige un PR ficticio. Un PR Draft, Ready o cerrado sin
+`NO_DIFF` no crea ni exige un PR, autorizaciones o evento Ready ficticios y
+conserva esos campos en defaults honestos. Un PR Draft, meramente Ready o cerrado sin
 merge no satisface `MERGED_PR`. Tampoco lo satisfacen un request o execution no
 `PASS`, un verdict distinto de `PASS`, cualquier HEAD diferente o no
 capturado, findings materiales abiertos, ni un SHA no real, no alcanzable o
-obtenido de otro PR. La evidencia debe identificar la lectura del resultado de
+obtenido de otro PR. Una autorización o transición Ready ausente, retroactiva o
+ligada a otro HEAD también bloquea. La evidencia debe identificar la lectura del resultado de
 merge del mismo `RECONCILIATION_PR`; la mera creación, revisión o clausura
 administrativa del PR no alcanza. Toda combinación distinta de la conjunción
 anterior mantiene `TRUTH_RECONCILIATION_STATE` fuera de `PASS`.
@@ -410,6 +495,19 @@ reconciliación —o la evidencia `NO_DIFF` cuando no hubo delta—, una persona
 autorizada puede cerrar la issue explícitamente y declarar el closeout. Los PRs
 usan `Refs #N`; una closing keyword, commit, push, CI o Draft PR aislados no
 equivalen a `DONE` ni pueden anticipar el cierre.
+
+V-018 registra `TRUTH_RECONCILIATION_PASSED_AT_UTC`. V-019 registra además
+`EXPLICIT_ISSUE_CLOSE_AUTHORIZATION=GRANTED`,
+`EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_ACTOR`,
+`EXPLICIT_ISSUE_CLOSE_AUTHORIZED_AT_UTC` y
+`EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_EVIDENCE`; luego registra
+`EXPLICIT_ISSUE_CLOSE_STATE=PASS`, `EXPLICIT_ISSUE_CLOSE_ACTOR`,
+`EXPLICIT_ISSUE_CLOSE_AT_UTC`, `EXPLICIT_ISSUE_CLOSE_MECHANISM` y
+`EXPLICIT_ISSUE_CLOSE_EVIDENCE`. Sólo puede pasar con `ISSUE_CLOSED=true`,
+`EXPLICIT_ISSUE_CLOSE_ACTOR=EXPLICIT_ISSUE_CLOSE_AUTHORIZATION_ACTOR` y
+`TRUTH_RECONCILIATION_PASSED_AT_UTC < EXPLICIT_ISSUE_CLOSE_AUTHORIZED_AT_UTC < EXPLICIT_ISSUE_CLOSE_AT_UTC`;
+un cierre o una autorización prematuros no se sanan al completar fases
+posteriores.
 
 El cierre exige conservar toda la cadena favorable del mismo candidato: V-014,
 gate humano y autorización de merge exact-head, merge aceptado, captura del SHA

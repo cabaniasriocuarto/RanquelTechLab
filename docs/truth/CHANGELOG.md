@@ -66,34 +66,45 @@ Status: `CURRENT_IN_PROGRESS`
   y conservan causas específicas de ausencia o bloqueo.
 - El lifecycle define un único Draft PR state-only de reconciliación después del
   merge/aceptación, sin push directo ni nuevo scope de implementación.
-- El lifecycle de reparación parte de `REPAIR_EDIT`, valida y stagea el cambio,
-  conserva el tree pre-gate y ejecuta los gates sobre el worktree sin untracked o
-  una copia aislada de ese tree. Validadores, evidencia y artefactos efímeros
-  permanecen fuera del repo. Después revalida diff, índice, scope, secrets y el
-  mismo objetivo probado; sólo entonces crea el commit, captura `NEW_HEAD` y
-  verifica el tree antes de push y auditoría, sin heredar evidencia anterior.
-- Commit, captura del HEAD y push siguen siendo materiales para el candidato
-  inicial; `PREVIOUS_HEAD`, V-R01 y `TREE_MATCH` sólo se exigen en reparación y
-  su `NOT_APPLICABLE` justificado no se presenta como `PASS`.
+- V-C01 aplica a todo candidato: inventaría por separado untracked no ignorados e
+  ignorados antes y después de los gates, conserva la identidad del tree
+  candidato y del tree ejecutado, y revalida diff/índice/scope/secrets antes del
+  commit. Luego V-009 captura y compara el tree del commit antes del push. Un
+  candidato inicial siempre usa copia aislada; el worktree sólo es admisible con
+  los cuatro inventarios en `NONE`, y el modo aislado exige inventarios pre/post
+  idénticos e igualdad de trees.
+- El lifecycle de reparación parte de `REPAIR_EDIT`, repite la matriz material y
+  proyecta V-C01 en V-R01 sin una segunda identidad editable. `PREVIOUS_HEAD`,
+  V-R01 y `TREE_MATCH` siguen siendo repair-only; el candidato inicial usa
+  `CANDIDATE_TREE_MATCH` y no inventa evidencia de reparación.
 - Todo Draft PR implementable solicita auditoría independiente. La intensidad
   es proporcional al riesgo y `INDEPENDENTLY_VALIDATED` exige exactamente
   `MATERIAL`/`PASS` o `NOT_APPLICABLE`/`NOT_APPLICABLE` justificado por fila;
   una pareja inválida nunca eleva la madurez.
 - El manifiesto separa solicitud, ejecución y dictamen independiente. El gate
   humano regular exige request/ejecución/veredicto en `PASS`, exact HEAD y cero
-  findings materiales abiertos. V-011 registra el PR abierto/Draft y el HEAD
-  exacto del candidato antes de ese gate, y conserva el historial tras un Ready
-  autorizado. La CI sólo compara SHA cuando existe un run real; sin harness
-  mantiene `CAPABILITY_GAP`, separa Vercel y limita la excepción bootstrap a #3
-  y al HEAD autorizado.
-- La aceptación compara HEAD mergeado, auditado y revisado, obtiene el SHA
-  integrado del resultado del PR y registra el tip de `main` por separado. La
-  cadena conserva V-014, el gate humano y una autorización de merge exact-head
-  separada; un merge no sana un dictamen fallido. V-017 usa sólo
-  `POST_MERGE_ACCEPTANCE_SHA`. Ambos modos de truth reconciliation exigen V-017
-  favorable y enlazan el source a `INTEGRATED_SHA`; el SHA integrado del PR
-  posterior de reconciliación queda separado y debe provenir de ese mismo PR
-  aprobado, mergeado y alcanzable antes del cierre explícito.
+  findings materiales abiertos. V-011 conserva la observación histórica
+  abierto/Draft; Ready registra actor, HEAD, instante, mecanismo y evidencia, y
+  sólo pasa con el orden V-011, auditoría, autorización humana y evento. Una
+  autorización retroactiva no sana una transición prematura.
+- La CI sólo compara SHA cuando existe un run real; sin harness mantiene
+  `CAPABILITY_GAP`, separa Vercel y limita la excepción bootstrap a #3 y al HEAD
+  autorizado.
+- La aceptación liga los HEADs mergeado, auditado y revisado al `HEAD`,
+  `AUDITED_HEAD` y los HEADs de autorización canónicos. El gate humano precede a
+  la autorización de merge y ésta al evento observado; un push o autorización
+  retroactiva bloquea V-015. El SHA integrado sigue proviniendo del resultado del
+  PR y V-017 usa sólo `POST_MERGE_ACCEPTANCE_SHA`.
+- El modo `MERGED_PR` de truth reconciliation exige auditoría favorable, gate
+  humano, primer evento Ready y autorización de merge exact-head, con actor,
+  instante y evidencia, en ese orden antes del merge observado del PR state-only.
+  Ambos modos conservan V-017 favorable y
+  enlazan el source a `INTEGRATED_SHA`; el SHA integrado del PR posterior sigue
+  separado y debe provenir de ese mismo PR aprobado, mergeado y alcanzable.
+- V-019 registra la autorización y el evento de cierre con actor, instante,
+  mecanismo y evidencia. La reconciliación favorable debe preceder a la
+  autorización y ésta al cierre humano explícito; un booleano heredado, closing
+  keyword o evento prematuro no puede completar el lifecycle.
 - El formulario de tarea implementable presenta en español todo texto humano y
   conserva sin traducir sólo IDs, enums, paths y labels GitHub contractuales.
 - El router común aplica procedencia y gates de medios tanto a `media/**` como a
