@@ -173,13 +173,14 @@ parte de `main`; la evidencia de ejecución permanece en issues, PRs o manifests
 ## D-013 — Límite bootstrap y transferencia del hardening a #24
 
 - Fecha: 2026-08-29.
-- Status: `CURRENT_IMPLEMENTED_TRUTH`.
+- Status: `CURRENT_IN_PROGRESS`.
 - Contexto: el PR #29 intentó convertir el scaffold de #3 en una state machine
   documental completa. Las revisiones demostraron que el enforcement exact-head,
   previews, actores, cronología y fixtures semánticos necesitan implementación y
   pruebas ejecutables, no más microparches de documentación.
-- Decisión: cerrar PR #29 sin merge y conservar su rama, commits, reviews y
-  findings como corpus histórico para #24. El closeout limpio de #3 sólo
+- Decisión: cerrar PR #29 sin merge y tratar la rama observada, commits, reviews
+  y findings como corpus histórico para #24, sin presumir la retención futura
+  de esa rama externa. El closeout limpio de #3 sólo
   reconcilia el scaffold realmente integrado por PR #27, registra
   `RANQUEL-HARNESS-BOOTSTRAP-001` y mantiene el enforcement como
   `PLANNED_NOT_IMPLEMENTED`.

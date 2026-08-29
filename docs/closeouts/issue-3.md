@@ -1,6 +1,6 @@
 # Closeout de la issue #3 — scaffold de gobierno
 
-Status: `CURRENT_IMPLEMENTED_TRUTH`
+Status: `CURRENT_IN_PROGRESS`
 
 Tipo: registro de closeout y evidencia durable; no crea un nuevo truth owner.
 
@@ -66,12 +66,15 @@ cierre automático.
 
 ## Disposición del PR #29
 
-El PR #29 fue cerrado sin merge. Su rama, commits, reviews, threads y evidencia
-se conservan como corpus histórico para #24.
+El PR #29 fue cerrado sin merge. En la observación autorizada de GitHub del
+`2026-08-29T04:36:01Z`, la rama
+`fix/issue-3-post-merge-governance-findings` estaba retenida y apuntaba a
+`f54d1101555897ff0f759a24fe21b45260d85b8b`. Su retención posterior es un
+estado externo mutable y permanece `External verification: UNKNOWN`. Los
+commits, reviews, threads y findings se tratan como corpus histórico para #24.
 
 ```text
 PR_29_DISPOSITION=CLOSED_UNMERGED
-PR_29_BRANCH=RETAINED
 PR_29_CONTENT_IN_MAIN=NO
 PR_29_ROLE=HISTORICAL_INPUT_FOR_ISSUE_24
 ```
