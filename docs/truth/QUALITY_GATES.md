@@ -1,6 +1,6 @@
 # Gates de calidad, riesgo y evidencia
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: docs/truth/QUALITY_GATES.md (niveles de riesgo, secuencia de gates y
 semántica de evidencia)

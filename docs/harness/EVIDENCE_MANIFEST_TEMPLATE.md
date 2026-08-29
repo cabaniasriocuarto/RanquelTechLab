@@ -1,6 +1,6 @@
 # Plantilla de EVIDENCE_MANIFEST
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/harness/EVIDENCE_MANIFEST_TEMPLATE.md` (estructura canónica de evidencia)
 

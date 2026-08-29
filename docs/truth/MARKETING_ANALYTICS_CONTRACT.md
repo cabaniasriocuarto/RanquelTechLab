@@ -1,6 +1,6 @@
 # Contrato de marketing, analítica y publicidad
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: docs/truth/MARKETING_ANALYTICS_CONTRACT.md (CRO, eventos, atribución,
 conversiones, GA4, GTM y Google Ads)
@@ -11,9 +11,9 @@ Este archivo fija límites de gobierno y medición. No acredita que GA4, GTM,
 Google Ads, conversiones, dimensiones, consentimientos o dashboards externos
 estén configurados o funcionando.
 
-Mientras el owner esté `CURRENT_IN_PROGRESS`, esos límites son la propuesta de
-la issue #3 y no gobierno vigente de `main`; sólo serán aplicables tras merge
-humano, aceptación y reconciliación versionada.
+Este owner y sus límites documentales iniciales forman parte del scaffold
+integrado en `main`. Esa vigencia no acredita configuración, recepción ni
+funcionamiento en plataformas externas.
 
 Hasta completar el baseline autorizado de #4, las condiciones externas usan
 External verification: UNKNOWN y el trabajo que depende de comprobarlas
@@ -22,7 +22,7 @@ y las landings y convenciones de campañas a #12; ambos son
 PLANNED_NOT_IMPLEMENTED. La activación de campañas, gasto y cambios en cuentas
 siempre son decisiones humanas.
 
-## Principios propuestos
+## Principios documentales vigentes
 
 - Medir sólo lo necesario para una decisión definida.
 - Una acción de negocio tiene una única fuente canónica de conversión y no se
@@ -46,7 +46,7 @@ siempre son decisiones humanas.
 | Presencia de etiquetas y hooks de eventos en código | CURRENT_IMPLEMENTED_TRUTH | FEATURE_MAP inventaría la capacidad observable |
 | Baseline exhaustivo y recepción externa de eventos | PENDING_TO_VALIDATE | #4 registra código, configuración y observación por separado |
 | Doble emisión Ads en `gracias-videollamada.html` | PENDING_TO_VALIDATE | #4 captura baseline; #11 resuelve fuente, clasificación y deduplicación |
-| Contrato de cero PII y deduplicación | CURRENT_IN_PROGRESS | Este documento y SECURITY_PRIVACY_MODEL dentro del Draft de #3 |
+| Contrato de cero PII y deduplicación | CURRENT_IMPLEMENTED_TRUTH | Owners documentales integrados; instrumentación, recepción y validación ejecutable siguen en sus issues owner |
 | Taxonomía por ciudad, provincia, servicio y CTA | PLANNED_NOT_IMPLEMENTED | #11 |
 | Dimensiones y key events en GA4 | PLANNED_NOT_IMPLEMENTED | #11 con aprobación humana externa |
 | Conversiones importadas o nativas de Ads | PLANNED_NOT_IMPLEMENTED | #11/#12 con aprobación humana |

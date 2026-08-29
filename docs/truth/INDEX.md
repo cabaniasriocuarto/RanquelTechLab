@@ -1,6 +1,6 @@
 # Truth owner registry
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/INDEX.md` (owner registry and discovery only)
 
@@ -36,6 +36,10 @@ detail. If two files claim the same type, stop and resolve ownership explicitly.
 - [Task contract template](../harness/TASK_CONTRACT_TEMPLATE.md)
 - [Evidence manifest template](../harness/EVIDENCE_MANIFEST_TEMPLATE.md)
 - [Independent audit template](../harness/INDEPENDENT_AUDIT_TEMPLATE.md)
+
+Executable enforcement and semantic fixtures remain owned by issue #24.
+Execution evidence and temporary exceptions live in the active issue/PR rather
+than creating another truth owner.
 
 ## Routing rules
 

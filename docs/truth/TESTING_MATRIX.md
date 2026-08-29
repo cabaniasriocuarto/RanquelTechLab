@@ -1,6 +1,6 @@
 # Matriz de pruebas
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: docs/truth/TESTING_MATRIX.md (selección de pruebas por superficie)
 

@@ -1,6 +1,6 @@
 # Contrato SEO y de búsqueda local
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: docs/truth/SEO_CONTRACT.md (reglas SEO, indexación y búsqueda local)
 
@@ -10,10 +10,9 @@ Este archivo es el owner de las reglas generales de SEO, indexación y búsqueda
 local. El Golden SEO Baseline y su lineage pertenecen a
 [SEO_GOLDEN_BASELINE.md](SEO_GOLDEN_BASELINE.md); la comparación de paridad y
 regresión de Home pertenece a [SEO_PARITY_CONTRACT.md](SEO_PARITY_CONTRACT.md).
-Mientras su estado sea `CURRENT_IN_PROGRESS`, estas reglas son la propuesta de
-la issue #3 y no gobierno vigente de `main`; sólo pasan a ser aplicables después
-del merge humano, la aceptación y la reconciliación versionada. Tampoco afirman
-que la plataforma Geo-SEO, sus rutas, un generador, un sitemap ni integraciones
+Este owner y sus reglas documentales iniciales forman parte del scaffold
+integrado en `main`. Esa vigencia documental no afirma que la plataforma
+Geo-SEO, sus rutas, un generador, un sitemap, sus validadores ni integraciones
 externas ya estén implementados.
 
 La arquitectura Geo-SEO nacional continúa como PLANNED_NOT_IMPLEMENTED. Las
@@ -38,7 +37,7 @@ usan External verification: UNKNOWN hasta observarse con acceso autorizado. Si
 esa observación es requisito de una tarea, su estado documental permanece
 PENDING_TO_VALIDATE.
 
-## Hechos actuales e invariantes propuestas
+## Hechos actuales e invariantes documentales
 
 - El dominio canónico del producto es `https://www.ranquel.com.ar/`.
 - La Home representa a Río Cuarto y conserva el contrato de canonical en /.
@@ -63,8 +62,8 @@ PENDING_TO_VALIDATE.
 | Superficie | Estado documental | Interpretación |
 | --- | --- | --- |
 | Markup de Home de Río Cuarto y canonical / en el repo | CURRENT_IMPLEMENTED_TRUTH | Hecho observado en la base inspeccionada; la respuesta live se valida por separado |
-| Protección de gobierno para Home/canonical | CURRENT_IN_PROGRESS | Contrato propuesto por #3; se promueve sólo tras aceptación y reconciliación post-merge |
-| Archivos de rutas existentes en el repo | CURRENT_IMPLEMENTED_TRUTH | Hecho inspeccionado e inventariado por ROUTE_AND_PAGE_MAP, cuyo owner sigue CURRENT_IN_PROGRESS |
+| Protección de gobierno para Home/canonical | CURRENT_IMPLEMENTED_TRUTH | Regla documental integrada por #3; su enforcement automático continúa `PLANNED_NOT_IMPLEMENTED` bajo sus issues owner |
+| Archivos de rutas existentes en el repo | CURRENT_IMPLEMENTED_TRUTH | Hecho inspeccionado e inventariado por ROUTE_AND_PAGE_MAP, cuyo owner forma parte de `main` |
 | Respuestas, canonical e indexación live | PENDING_TO_VALIDATE | Requiere baseline y evidencia externa autorizada de #4/#20 |
 | Golden SEO Baseline versionado | PLANNED_NOT_IMPLEMENTED | #26 lo define después del baseline bruto de #4 |
 | Gate de paridad y regresión de Home | PLANNED_NOT_IMPLEMENTED | #26 define semántica y #7 implementa validación ejecutable |

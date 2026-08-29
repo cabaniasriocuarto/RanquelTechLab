@@ -1,6 +1,6 @@
 # Runbook de release y rollback
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/RELEASE_ROLLBACK_RUNBOOK.md` (preparación, publicación y recuperación)
 

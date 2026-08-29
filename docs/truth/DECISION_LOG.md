@@ -1,19 +1,19 @@
 # Registro de decisiones
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/DECISION_LOG.md` (decisiones durables de ingeniería y gobierno)
 
 Este registro conserva decisiones que cambian autoridad, ownership, secuencia o
 límites del repositorio. No almacena SHAs, IDs/URLs de preview ni resultados
 transitorios; sí puede registrar una decisión durable sobre un side effect
-acotado sin duplicar sus detalles volátiles. En una rama o Draft PR, una entrada
-describe la decisión propuesta hasta que el cambio se integra a `main`.
+acotado sin duplicar sus detalles volátiles. Una entrada gobierna cuando forma
+parte de `main`; la evidencia de ejecución permanece en issues, PRs o manifests.
 
 ## D-001 — Fuente de verdad y routers jerárquicos
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: agentes y humanos necesitan el mismo punto de entrada sin depender
   de memoria de chats ni repetir contratos mutables.
 - Decisión: la autoridad sigue el orden instrucción humana vigente, issue y
@@ -26,7 +26,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-002 — Un owner por tipo de verdad
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: duplicar inventarios y contratos favorece contradicciones.
 - Decisión: [INDEX.md](INDEX.md) registra exactamente un owner por tipo de
   verdad. Los índices y documentos de apoyo enlazan al owner en vez de copiar su
@@ -37,7 +37,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-003 — Estados honestos y separación de roles
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: commit, CI parcial o Draft PR no prueban aceptación independiente ni
   funcionamiento externo.
 - Decisión: los estados documentales y de evidencia se usan literalmente. El
@@ -49,7 +49,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-004 — Hitos administrativos y ubicación de la épica
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: la épica #2 atraviesa M0–M4, pero GitHub permite asociar una issue a
   un solo milestone.
 - Decisión: asignar #2 a `M0 — Gobierno, harness y baseline`, donde nace y se
@@ -62,7 +62,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-005 — Jerarquía nativa de la épica
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: las checklists textuales no ofrecen por sí solas parenthood nativo ni
   progreso agregado.
 - Decisión: #2 tiene como hijos directos, en este orden,
@@ -75,7 +75,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-006 — Compatibilidad de instrucciones sin segunda autoridad
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: distintas herramientas descubren instrucciones mediante archivos
   diferentes.
 - Decisión: adoptar `.github/copilot-instructions.md` como router de
@@ -88,7 +88,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-007 — Separación entre gobierno documental y harness ejecutable
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: #3 define el mapa estable; implementar automatización aquí mezclaría
   scope y adelantaría decisiones de seguridad de CI.
 - Decisión: scripts, schemas ejecutables, fixtures, gates automáticos y workflows
@@ -100,7 +100,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-008 — Producto y sistemas externos fuera de #3
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: gobierno documental no debe alterar SEO, producto o producción.
 - Decisión: #3 no modifica HTML, CSS, JavaScript, APIs de producto, Vercel, DNS,
   Search Console, GA4, GTM, Google Ads ni `feat/bilingual-site`.
@@ -110,7 +110,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-009 — Golden SEO y paridad como owners separados
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: la decisión humana de #26 exige proteger la configuración ganadora
   de Río Cuarto sin confundir código presente, estado live y causalidad SEO.
 - Decisión: reservar [SEO_GOLDEN_BASELINE.md](SEO_GOLDEN_BASELINE.md) para
@@ -126,7 +126,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-010 — Topología Vercel separada de #3
 
 - Fecha: 2026-08-27.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: la integración preexistente generó múltiples previews automáticos
   inventariados en la evidencia volátil de PR #27 y originó `F-PR-001`; la
   decisión humana vigente creó #28 para aislar esa topología antes del harness
@@ -142,7 +142,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-011 — Owner canónico de procedencia y derechos de medios
 
 - Fecha: 2026-08-28.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: `media/AGENTS.md` exigía fuente, licencia y responsable, pero ningún
   truth owner alojaba el registro mutable por asset.
 - Decisión: [MEDIA_PROVENANCE.md](MEDIA_PROVENANCE.md) es el owner de
@@ -157,7 +157,7 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
 ## D-012 — Vehículo secuencial de reconciliación post-merge
 
 - Fecha: 2026-08-28.
-- Status: `CURRENT_IN_PROGRESS`.
+- Status: `CURRENT_IMPLEMENTED_TRUTH`.
 - Contexto: el PR que crea owners no puede promoverlos dentro del mismo Draft,
   pero un push directo a `main` y un segundo PR de implementación concurrente
   están prohibidos. Sin un vehículo explícito, #3 no podría reconciliar estados
@@ -167,9 +167,9 @@ describe la decisión propuesta hasta que el cambio se integra a `main`.
   desde `main` para la misma issue todavía abierta. Usa `Refs #N`, no agrega
   producto ni verdad sustantiva y conserva gate humano para merge y cierre.
 - Consecuencia: la regla se interpreta como una rama/PR activa por fase, nunca
-  como permiso para PRs paralelos o push directo. #3 requiere ese closeout para
-  promover sus owners aceptados y actualizar el changelog antes del cierre
-  explícito.
+  como permiso para PRs paralelos o push directo. Cuando hay delta de truth, la
+  reconciliación state-only debe integrarse antes del cierre explícito de la
+  issue.
 
 ## Cómo agregar una decisión
 

@@ -1,17 +1,16 @@
 # Estándar de contenido, comunicación y marca
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: docs/truth/CONTENT_COMMUNICATION_STANDARD.md (afirmaciones, fuentes, tono,
 marca y calidad editorial)
 
 ## Alcance
 
-Este owner propone cómo Ranquel Tech Lab comunicará hechos, capacidades y
-contexto local. Mientras permanezca `CURRENT_IN_PROGRESS`, no es gobierno
-vigente de `main`; sólo será aplicable después del merge humano, la aceptación y
-la reconciliación versionada. No declara que el contenido Geo-SEO futuro ya
-exista ni reemplaza investigación, aprobación humana o gates ejecutables.
+Este owner y sus reglas documentales iniciales sobre hechos, capacidades y
+contexto local forman parte del scaffold integrado en `main`. Esa vigencia no
+declara que el contenido Geo-SEO futuro ya exista ni reemplaza investigación,
+aprobación humana o gates ejecutables.
 
 Los criterios automáticos anti-doorway pertenecen a #9 y continúan como
 PLANNED_NOT_IMPLEMENTED. Los assets territoriales pertenecen a #10. Las reglas
@@ -30,13 +29,13 @@ de indexación se consultan en [SEO_CONTRACT.md](SEO_CONTRACT.md).
 - Privacidad por defecto: no publicar datos personales sin base, necesidad y
   autorización.
 
-## Contratos propuestos y planes
+## Contratos documentales vigentes y planes
 
 | Tema | Estado | Regla |
 | --- | --- | --- |
-| Prohibición de afirmaciones inventadas | CURRENT_IN_PROGRESS | Aplica a todo contenido y evidencia cuando el gobierno de #3 sea aceptado |
-| Protección de la identidad de Río Cuarto | CURRENT_IN_PROGRESS | No se diluye ni sustituye por expansión geográfica |
-| Voz y claridad editorial | CURRENT_IN_PROGRESS | Aplica a copy, documentación, formularios y mensajes después de aceptación |
+| Prohibición de afirmaciones inventadas | CURRENT_IMPLEMENTED_TRUTH | Aplica a todo contenido y evidencia; los gates automáticos de #9 siguen `PLANNED_NOT_IMPLEMENTED` |
+| Protección de la identidad de Río Cuarto | CURRENT_IMPLEMENTED_TRUTH | No se diluye ni sustituye por expansión geográfica |
+| Voz y claridad editorial | CURRENT_IMPLEMENTED_TRUTH | Aplica a copy, documentación, formularios y mensajes; el enforcement automático sigue separado |
 | Estándar editorial local automatizado | PLANNED_NOT_IMPLEMENTED | #9 debe implementar gates y fixtures |
 | Investigación de las cinco ciudades | PLANNED_NOT_IMPLEMENTED | #13–#18 producen fuentes y briefs aprobados |
 | Imágenes territoriales | PLANNED_NOT_IMPLEMENTED | #10 define origen, licencia, composición y optimización |
@@ -125,8 +124,8 @@ evaluar utilidad e intención, no sólo coincidencia léxica.
 - Un experimento no altera afirmaciones materiales sin nueva revisión.
 
 El owner de producto define qué capacidades están implementadas en
-[FEATURE_MAP.md](FEATURE_MAP.md). Una vez aceptado y reconciliado, este documento
-gobierna cómo se comunican.
+[FEATURE_MAP.md](FEATURE_MAP.md). Este documento gobierna cómo se comunican sin
+convertir capacidades planificadas en implementadas.
 
 ## Accesibilidad editorial y medios
 

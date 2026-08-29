@@ -1,6 +1,6 @@
 # Plantilla de INDEPENDENT_AUDIT
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/harness/INDEPENDENT_AUDIT_TEMPLATE.md` (dictamen independiente exact-head)
 

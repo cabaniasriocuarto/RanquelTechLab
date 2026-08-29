@@ -1,6 +1,6 @@
 # Golden SEO baseline and lineage
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/SEO_GOLDEN_BASELINE.md` (golden SEO evidence, lineage and signal classification)
 
@@ -28,7 +28,7 @@ implementation stay owned by [ROUTE_AND_PAGE_MAP.md](ROUTE_AND_PAGE_MAP.md),
 | Production-to-commit lineage | `PENDING_TO_VALIDATE` | `UNKNOWN` | No deployment or production configuration was inspected in #3 |
 | Search performance evidence | `PENDING_TO_VALIDATE` | `UNKNOWN` | Requires authorized, sanitized evidence; repository tags are not proof |
 | Río Cuarto Home canonical markup in `main` | `CURRENT_IMPLEMENTED_TRUTH` | `UNVERIFIED` | Canonical `/` is present in the inspected repository; live behavior is separate |
-| Río Cuarto Home governance protection | `CURRENT_IN_PROGRESS` | `NOT_APPLICABLE` | The #3 contract exists only in this Draft until post-merge reconciliation |
+| Río Cuarto Home governance protection | `CURRENT_IMPLEMENTED_TRUTH` | `NOT_APPLICABLE` | The documentary protection is integrated; the #26 evidence, thresholds and parity gate remain unimplemented |
 | Client-side ES/EN implementation in `main` | `CURRENT_IMPLEMENTED_TRUTH` | `UNKNOWN` | Code exists, but #26 must classify its production and SEO significance |
 
 No row above is a `PROVEN_WINNING_SIGNAL`. Presence in `main`, a public ID, a

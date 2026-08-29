@@ -1,6 +1,6 @@
 # Matriz de revisión interdisciplinaria
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: docs/truth/INTERDISCIPLINARY_REVIEW_MATRIX.md (selección de disciplinas
 materiales por changed surface)

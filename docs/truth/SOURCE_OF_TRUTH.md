@@ -1,6 +1,6 @@
 # Fuente de verdad, estados documentales y evidencia
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/SOURCE_OF_TRUTH.md` (autoridad y semántica de estados)
 
