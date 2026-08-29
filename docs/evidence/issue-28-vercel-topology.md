@@ -4,14 +4,26 @@ Status: `CURRENT_IN_PROGRESS`
 
 Owner: GitHub issue #28 (execution evidence; not a stable truth owner)
 
-This document is the exact-branch evidence manifest for issue #28. It records
-sanitized observations, the independently reviewed mutation plan and the four
-human-executed Git disconnects. It contains no secret values.
+This document records sanitized evidence for issue #28. It preserves the history
+of the Vercel topology audit, the four human-executed Git disconnects, the
+controlled topology tests, and the gates that still prevent merge/closeout.
+It contains no secret values.
 
-Volatile post-trigger HEADs, Vercel deployment IDs and final exact-head results
-are recorded in PR #33 / issue #28 after the controlled trigger commit. Keeping
-those values in the PR avoids a self-mutating evidence loop where recording a
-preview result would itself create another preview.
+## Exact-head binding rule
+
+A Git commit cannot reliably embed its own not-yet-created commit SHA without a
+self-reference problem. Therefore this manifest uses the following binding:
+
+```text
+MANIFEST_HEAD_BINDING=COMMIT_CONTAINING_THIS_MANIFEST
+CONCRETE_HEAD_VALUE=PR_33_METADATA_OR_TOP_LEVEL_EVIDENCE_COMMENT_AFTER_COMMIT
+EXACT_HEAD_VALIDATION_FOR_A_NEW_MANIFEST_COMMIT=PENDING_UNTIL_THAT_SHA_EXISTS
+```
+
+Concrete SHAs, deployment IDs and final exact-head audit results are recorded in
+PR #33 / issue #28 after each commit is created. They are not back-written into
+this file, because doing so would create another commit and invalidate the SHA
+being recorded.
 
 ## TASK_CONTRACT
 
@@ -19,42 +31,50 @@ preview result would itself create another preview.
 TASK_CONTRACT:
   ISSUE: "#28"
   PARENT: "#2"
-  OBJECTIVE: "Consolidate five Vercel Git integrations to one proven canonical project without changing production, domains, DNS, env values or product code."
-  BASE_SHA: "3a6aac9ebaa434721d997b712434a8f03a2a4514"
+  OBJECTIVE: "Consolidate five Vercel Git integrations to one proven canonical project, preserve production/domain/API behavior, and prove the resulting topology without deleting projects or deployments."
+  INITIAL_BASE_SHA: "3a6aac9ebaa434721d997b712434a8f03a2a4514"
+  CURRENT_BASE_SHA_BEFORE_THIS_REPAIR: "6629b573d4ac0faaa7bf66368ae1587acabd06a3"
   BRANCH: "ops/issue-28-vercel-topology-consolidation"
-  RISK: HIGH
+  RISK: CRITICAL
+  RISK_REASON: "Repository TESTING_MATRIX classifies external configuration/deploy mutation as CRITICAL."
   ALLOWED_PATHS:
     - "docs/evidence/issue-28-vercel-topology.md"
   ALLOWED_EXTERNAL_SYSTEMS:
-    - "Vercel read-only inventory"
-    - "After independent audit PASS only: disconnect Git integration on four proven noncanonical projects"
+    - "Vercel read-only inventory and validation"
+    - "Human-executed Vercel Git disconnects already authorized by issue #28"
+    - "Google Apps Script read-only inspection of SITE_URL only"
   FORBIDDEN:
     - "delete or pause Vercel projects"
     - "delete deployments"
     - "move or edit domains/DNS"
     - "edit environment-variable names or values"
-    - "promote or redeploy production"
     - "change framework/build settings"
-    - "change public HTML/CSS/JS/API code"
-    - "execute issue #24"
+    - "change public HTML/CSS/JS/API code under this issue"
+    - "execute issue #24 without a new human authorization/dependency decision"
+    - "merge PR #33 without explicit human authorization of the expected production deployment"
   PRESERVED_CONTRACTS:
-    - "www.ranquel.com.ar and ranquel.com.ar remain on the canonical project"
-    - "production content remains unchanged by the Git disconnects"
+    - "www.ranquel.com.ar and ranquel.com.ar remain on canonical project ranquel-tech-lab-571s"
     - "historical deployments remain intact"
-    - "rollback is reconnecting the same Git repository on an affected noncanonical project"
+    - "four noncanonical projects remain available for rollback"
+    - "Google Apps Script continues targeting the canonical backend"
   STOP_CONDITIONS:
     - "canonical ownership becomes ambiguous"
     - "a noncanonical project contains unique required configuration"
-    - "domain or production deployment changes"
+    - "domain/DNS changes unexpectedly"
     - "Home or safe API smoke check regresses"
-    - "mutation would require deleting, moving secrets, changing DNS or redeploying production"
-    - "independent plan audit is not PASS"
+    - "more than one project creates a new deployment for a controlled branch HEAD"
+    - "rollback cannot be demonstrated safely"
+    - "required CRITICAL CI gate remains unavailable"
+    - "independent audit reports a material finding"
   DEFINITION_OF_DONE:
-    - "exactly one Vercel project creates a preview for the controlled validation HEAD"
-    - "four disconnected projects create zero new deployments"
-    - "public domains and production content are unchanged"
-    - "Home and safe API smoke checks pass"
-    - "independent post-change audit passes"
+    - "one canonical Vercel Git integration remains"
+    - "controlled exact-head produces one canonical preview and zero duplicate deployments"
+    - "Apps Script SITE_URL is proven to target canonical 571s"
+    - "CRITICAL validation matrix is complete with honest non-PASS states"
+    - "rollback is tested and human-authorized"
+    - "required exact-head CI exists and passes"
+    - "independent exact-head audit passes"
+    - "merge is separately authorized together with its expected production deployment"
 ```
 
 ## EVIDENCE_MANIFEST
@@ -67,213 +87,246 @@ EVIDENCE_MANIFEST:
   PR: "#33"
   PR_ISSUE_REFERENCE: "Refs #28"
   REPOSITORY: "cabaniasriocuarto/RanquelTechLab"
-  BASE_SHA: "3a6aac9ebaa434721d997b712434a8f03a2a4514"
-  HEAD: "RESOLVED_IN_PR_33_FOR_CONTROLLED_TRIGGER"
+  INITIAL_BASE_SHA: "3a6aac9ebaa434721d997b712434a8f03a2a4514"
+  CURRENT_BASE_SHA_BEFORE_THIS_REPAIR: "6629b573d4ac0faaa7bf66368ae1587acabd06a3"
+  HEAD_BINDING: "COMMIT_CONTAINING_THIS_MANIFEST; exact SHA recorded in PR #33 after commit creation"
   BRANCH: "ops/issue-28-vercel-topology-consolidation"
   WRITER: "ChatGPT / Vercel+GitHub connected session"
   RECORDED_AT_UTC: "2026-08-29"
   VALIDATION_RESULT_OWNER: "docs/truth/SOURCE_OF_TRUTH.md"
-  OVERALL_VALIDATION_RESULT: PARTIAL
+  OVERALL_VALIDATION_RESULT: BLOCKED
   EVIDENCE_MATURITY: SELF_VALIDATED_ONLY
 ```
 
-`OVERALL_VALIDATION_RESULT=PARTIAL` is intentional. The plan audit passed and
-all four authorized Git disconnects have been executed and individually checked.
-The remaining gates are the controlled one-preview trigger and independent
-post-change audit.
+`OVERALL_VALIDATION_RESULT=BLOCKED` is intentional. The topology mutation is
+working as intended, but CRITICAL gates are not all PASS: exact-head GitHub
+Actions CI is currently unavailable, rollback has not yet been exercised, the
+new manifest commit needs its own exact-head preview/audit, and merge still
+requires explicit authorization of the production deployment it will trigger.
 
-## Baseline and preflight
+## Baseline and branch reconciliation
 
 ```yaml
 BASELINE:
   DEFAULT_BRANCH: main
-  ORIGIN_MAIN_SHA: "3a6aac9ebaa434721d997b712434a8f03a2a4514"
-  BRANCH_HEAD_BEFORE_EVIDENCE_WORK: "3a6aac9ebaa434721d997b712434a8f03a2a4514"
-  RELATION_TO_ORIGIN_MAIN_AT_START: "ahead 0 / behind 0"
-  ACTIVE_GIT_OPERATIONS: NONE_OBSERVED_BY_GITHUB_BRANCH_STATE
-  ISSUE_3: CLOSED_COMPLETED
+  INITIAL_ORIGIN_MAIN_SHA: "3a6aac9ebaa434721d997b712434a8f03a2a4514"
+  MAIN_ADVANCED_DURING_PR_TO: "6629b573d4ac0faaa7bf66368ae1587acabd06a3"
+  MAIN_ADVANCE_DESCRIPTION: "Update index.html; unrelated Facebook domain verification change"
+  BRANCH_UPDATE_MERGE_HEAD: "27ef0487bf33d6b1cac214af53d65038ad0f9162"
+  RELATION_AFTER_UPDATE_BRANCH: "ahead 3 / behind 0"
+  ACTIVE_GIT_OPERATIONS: NONE_OBSERVED_BY_GITHUB_PR_STATE
+  PR_STATE_BEFORE_THIS_REPAIR: "OPEN_DRAFT"
   ISSUE_24_EXECUTION: NOT_RUN
 ```
 
-## Changed surfaces and interdisciplinary review
+The `Update branch` operation merged `main` into the issue branch. It did not
+merge PR #33 into `main`. The PR diff against the updated base remained one
+file: `docs/evidence/issue-28-vercel-topology.md`.
 
-- `S01 — documentation/evidence`: this manifest only; D02, D06, D11 and D12 are
-  material for the repository diff.
-- `S02 — external deploy/configuration`: Vercel Git integration was changed only
-  on four proven noncanonical projects; D01, D02, D03, D04, D05, D08, D10, D11
-  and D12 are material under the deploy/publication row of the review matrix.
-- D07 and D09 are `NOT_APPLICABLE`: no public message/CTA, campaign, Ads setting,
-  spend or conversion definition changed.
+## Changed surfaces and review matrix
 
-## Read-only Vercel inventory
+- `S01 — documentation/evidence`: this manifest only.
+- `S02 — external configuration`: four Vercel Git integrations were disconnected
+  by the human operator under issue #28 authorization.
+- `S03 — external consumer relationship`: Google Apps Script `SITE_URL` was
+  inspected read-only because it determines which Vercel backend receives
+  `/api/access/create` requests.
+- `S04 — deployment lifecycle`: a future merge to `main` is expected to trigger
+  a production deployment from canonical `571s`; merge and deployment approval
+  are therefore coupled at the human gate.
+- Public product code is not changed by this PR. The unrelated `main` change was
+  incorporated through the branch update and is not attributed to issue #28.
 
-Five Vercel projects were linked to GitHub repo
-`cabaniasriocuarto/RanquelTechLab` before Phase B. The canonical public project
-was proven before mutation.
+## Vercel topology inventory
 
-| Project | Project ID | Public custom domain | Production branch | App env key names observed | Automation bypass | Classification |
-| --- | --- | --- | --- | --- | --- | --- |
-| `ranquel-tech-lab-571s` | `prj_tKwBi0KEzVG18kqYPjUupVmUgNry` | `ranquel.com.ar`, `www.ranquel.com.ar` | `main` | `DAILY_API_KEY`, `ACCESS_TOKEN_SECRET`, `ACCESS_ADMIN_KEY` | present/masked | CANONICAL |
-| `ranquel-tech-lab` | `prj_tAsnytLpt5720qnbl7IcMsCUApA5` | none | `main` | `DAILY_API_KEY`, `ACCESS_TOKEN_SECRET`, `ACCESS_ADMIN_KEY` | absent | NONCANONICAL |
-| `ranquel-tech-lab-vfiu` | `prj_WxzsWmVhMoBvrxm1u81hHuASEtcG` | none | `main` | `DAILY_API_KEY`, `ACCESS_TOKEN_SECRET`, `ACCESS_ADMIN_KEY`, `SITE_URL` | absent | NONCANONICAL |
-| `ranquel-tech-lab-teol` | `prj_gGzQXKs3qUoO23tM103VjCog0d9q` | none | `main` | none | absent | NONCANONICAL |
-| `ranquel-tech-lab-j56r` | `prj_MbREFjWvS7QmCAupqvuD9PuB5ERm` | none | `main` | `DAILY_API_KEY`, `ACCESS_TOKEN_SECRET`, `ACCESS_ADMIN_KEY`, `SITE_URL` | absent | NONCANONICAL |
+Five Vercel projects were connected to GitHub repo
+`cabaniasriocuarto/RanquelTechLab` before Phase B.
 
-No secret value was read or recorded. `SITE_URL` is optional in
-`api/access/create.js`; when absent, that endpoint falls back to the request
-host. Therefore its presence in `vfiu` and `j56r` was not required unique
-configuration.
+| Project | Project ID | Public custom domain | Production branch | App env key names observed | Classification |
+| --- | --- | --- | --- | --- | --- |
+| `ranquel-tech-lab-571s` | `prj_tKwBi0KEzVG18kqYPjUupVmUgNry` | `ranquel.com.ar`, `www.ranquel.com.ar` | `main` | `DAILY_API_KEY`, `ACCESS_TOKEN_SECRET`, `ACCESS_ADMIN_KEY` | CANONICAL |
+| `ranquel-tech-lab` | `prj_tAsnytLpt5720qnbl7IcMsCUApA5` | none | `main` | `DAILY_API_KEY`, `ACCESS_TOKEN_SECRET`, `ACCESS_ADMIN_KEY` | NONCANONICAL |
+| `ranquel-tech-lab-vfiu` | `prj_WxzsWmVhMoBvrxm1u81hHuASEtcG` | none | `main` | `DAILY_API_KEY`, `ACCESS_TOKEN_SECRET`, `ACCESS_ADMIN_KEY`, `SITE_URL` | NONCANONICAL |
+| `ranquel-tech-lab-teol` | `prj_gGzQXKs3qUoO23tM103VjCog0d9q` | none | `main` | none | NONCANONICAL |
+| `ranquel-tech-lab-j56r` | `prj_MbREFjWvS7QmCAupqvuD9PuB5ERm` | none | `main` | `DAILY_API_KEY`, `ACCESS_TOKEN_SECRET`, `ACCESS_ADMIN_KEY`, `SITE_URL` | NONCANONICAL |
 
-### Common project settings observed
+No secret value is recorded here. `SITE_URL` in `api/access/create.js` is
+optional for the Vercel function itself because the function can fall back to
+the request host. That statement is separate from the Google Apps Script
+consumer configuration documented below.
 
-Across the audited projects, the relevant common settings were:
+## Google Apps Script consumer verification
 
-- Git repository: `cabaniasriocuarto/RanquelTechLab`;
-- Production branch: `main`;
-- Preview branch tracking: all unassigned Git branches;
-- framework preset: `Other`;
-- root directory: `./`;
-- custom build/install/output/development command overrides: disabled;
-- Ignored Build Step: `Automatic`;
-- Node.js: `24.x`;
-- build machine: Basic;
-- Deployment Checks: none configured;
-- Rolling Releases: disabled;
-- Prioritize Production Builds: enabled;
-- deployment retention observed: 30 days;
-- Vercel Authentication: Standard Protection;
-- Password Protection: disabled;
-- Trusted IPs: disabled;
-- OPTIONS allowlist: disabled;
-- Protected Sourcemaps: disabled.
+Repository code `apps-script/Ranquel_Turnos_Videollamada.gs` requires a Script
+Property named `SITE_URL` and calls `<SITE_URL>/api/access/create`.
 
-Only the canonical project was observed with a configured
-`Protection Bypass for Automation` secret; its value was never exposed.
-
-## Safe runtime observations
-
-Before mutation:
-
-- public Home on `https://www.ranquel.com.ar/`: HTTP 200;
-- canonical `/api/daily/token` without an `access` parameter: HTTP 401 with
-  `Missing access`;
-- `ranquel-tech-lab-teol` `/api/daily/token` without access: HTTP 500 with
-  `Missing DAILY_API_KEY env var`, consistent with its empty project env inventory.
-
-During Phase B, after each disconnect, the canonical project remained present,
-its public custom domains remained attached, the public Home continued to return
-HTTP 200 and the safe API negative path remained HTTP 401 when checked.
-
-No state-changing application API request was used for smoke checks.
-
-## Plan audit gate
-
-Codex reviewed PR #33 exact HEAD
-`4a69e7614abf2e212f52fb33b21a4a8981682c9b` read-only and reported no material
-issues. No review threads were opened.
+On 2026-08-29, the human operator opened the live Apps Script project settings
+and read only the `SITE_URL` Script Property. Its value was:
 
 ```text
-CANONICAL_PROJECT_PROVEN=YES
-CUSTOM_DOMAIN_OWNER_UNAMBIGUOUS=YES
-PRODUCTION_SHA_AND_DEPLOYMENT_CAPTURED=YES
-API_ENV_KEY_NAMES_INVENTORIED=YES
-NON_CANONICAL_UNIQUE_REQUIRED_CONFIG=NO_REQUIRED_UNIQUE_CONFIG_OBSERVED
-ROLLBACK_PLAN=PASS_DOCUMENTED_NOT_TESTED
-INDEPENDENT_AUDIT_OF_PLAN=PASS_EXACT_HEAD
-
-MUTATION_GATE=PASS_FOR_HUMAN_CONTROLLED_PHASE_B
+https://ranquel-tech-lab-571s.vercel.app
 ```
 
-## Phase B mutation executed
+No other Script Property value is recorded in evidence.
+
+```text
+APPS_SCRIPT_SITE_URL_PRESENT=YES
+APPS_SCRIPT_SITE_URL_TARGET=CANONICAL_571S
+APPS_SCRIPT_POINTS_TO_DISCONNECTED_PROJECT=NO
+CONSUMER_BACKEND_RELATION=PASS
+```
+
+This resolves the prior ambiguity about whether the deployed Apps Script could
+be pinned to `vfiu`, `teol`, `j56r` or the unsuffixed duplicate.
+
+## Phase B mutation ledger
 
 The human operator used Vercel **Settings → Git → Disconnect / Remove
 Connection** one project at a time, with verification between steps.
 
-Executed order:
-
-1. `ranquel-tech-lab`;
-2. `ranquel-tech-lab-vfiu`;
-3. `ranquel-tech-lab-teol`;
-4. `ranquel-tech-lab-j56r`.
-
-The canonical `ranquel-tech-lab-571s` Git connection was not changed.
-
-No project was deleted or paused. No deployment was deleted. No domain/DNS,
-environment variable, framework/build setting, production promotion or manual
-redeploy was performed.
-
-## External mutation ledger
-
-| System | Resource | State before | Authorized operation | Result | State after | Reversible |
-| --- | --- | --- | --- | --- | --- | --- |
-| Vercel | canonical `571s` Git integration | connected | keep connected | PASS | connected/unchanged | N/A |
-| Vercel | `ranquel-tech-lab` Git integration | connected | disconnect | PASS | disconnected; project/deployment retained | yes, reconnect |
-| Vercel | `vfiu` Git integration | connected | disconnect | PASS | disconnected; project/deployment retained | yes, reconnect |
-| Vercel | `teol` Git integration | connected | disconnect | PASS | disconnected; project/deployment retained | yes, reconnect |
-| Vercel | `j56r` Git integration | connected | disconnect | PASS | disconnected; project/deployment retained | yes, reconnect |
+| Resource | State before | Operation | State after | Historical project/deployment preserved | Reversible |
+| --- | --- | --- | --- | --- | --- |
+| canonical `571s` | connected | keep connected | connected | yes | N/A |
+| `ranquel-tech-lab` | connected | disconnect Git | disconnected | yes | yes |
+| `vfiu` | connected | disconnect Git | disconnected | yes | yes |
+| `teol` | connected | disconnect Git | disconnected | yes | yes |
+| `j56r` | connected | disconnect Git | disconnected | yes | yes |
 
 ```yaml
 EXTERNAL_PRODUCT_OR_PLATFORM_MUTATIONS: FOUR_VERCEL_GIT_DISCONNECTS_ONLY
-VERCEL_MUTATIONS: FOUR_AUTHORIZED_GIT_DISCONNECTS
 DNS_MUTATIONS: ZERO
 ENV_MUTATIONS: ZERO
 PROJECT_OR_DEPLOYMENT_DELETIONS: ZERO
-PRODUCTION_PROMOTIONS_OR_REDEPLOYS: ZERO
-SEARCH_CONSOLE_MUTATIONS: ZERO
-GA4_GTM_ADS_MUTATIONS: ZERO
+MANUAL_PRODUCTION_PROMOTIONS_OR_REDEPLOYS: ZERO
+ISSUE_24_EXECUTION: NOT_RUN
 ```
+
+## Controlled topology evidence
+
+The controlled post-disconnect trigger at
+`1dc11bf73121047271a6c6145ae30eb758baaf7b` created one Vercel status/preview
+on canonical `571s` and zero new deployments on the four disconnected projects.
+Codex independently reviewed that state before the later Ready review.
+
+After `main` advanced, GitHub `Update branch` created merge HEAD
+`27ef0487bf33d6b1cac214af53d65038ad0f9162`. That HEAD again produced exactly
+one Vercel status context in `success`, pointing to canonical `571s`, with
+preview deployment `dpl_7zvaJAsdqQ6TUz8YDJsPKEeqaRdF` in `READY`,
+`target=null`. Queries for deployments created after that trigger returned zero
+new deployments for all four disconnected projects.
+
+The canonical project still owns `ranquel.com.ar` and `www.ranquel.com.ar`.
+After the branch update, public Home returned HTTP 200 and the safe negative
+path `GET /api/daily/token` returned HTTP 401 `Missing access` as expected.
+
+## Required validation matrix
+
+Connector-backed inspections have no shell process exit code; those rows use
+`N/A` rather than inventing `0`. `NOT_APPLICABLE`, `CAPABILITY_GAP`, `NOT_RUN`
+and `PENDING` are not PASS.
+
+| ID | Gate | Command / inspection sanitized | Exit code | State | Observed result | Limitation |
+| --- | --- | --- | ---: | --- | --- | --- |
+| V-001 | Preflight | GitHub PR metadata | N/A | PASS | PR #33 open, Draft, mergeable; pre-repair HEAD `27ef0487...` | Connector inspection, not local git |
+| V-002 | Diff | GitHub compare `main...ops/issue-28-vercel-topology-consolidation` | N/A | PASS | ahead 3 / behind 0; one changed file | No shell `git diff --check` available in this connected session |
+| V-003 | Staged diff | Git index inspection | N/A | NOT_APPLICABLE | GitHub Contents API writes do not expose a local staging index | Does not substitute V-002/V-004 |
+| V-004 | Scope | PR changed-file comparison | N/A | PASS | only `docs/evidence/issue-28-vercel-topology.md` | Re-evaluate after every commit |
+| V-005 | Secrets/privacy | Evidence-content inspection | N/A | PASS | no secret values recorded; Apps Script evidence records only public `SITE_URL` | Does not claim external secrets were rotated |
+| V-006 | Focal topology | Vercel deployment/status inspection at `27ef0487...` | N/A | PASS | one canonical preview/status; zero duplicate deployments | Historical after the next manifest commit |
+| V-007 | Surface regression | canonical domains + public Home + safe API negative path | N/A | PASS | domains on `571s`; Home 200; `/api/daily/token` 401 Missing access | Non-destructive paths only |
+| V-008 | Preview exact-head | Vercel deployment `dpl_7zvaJAsdqQ6TUz8YDJsPKEeqaRdF` | N/A | PASS | READY, target=null, PR #33, HEAD `27ef0487...` | Must be repeated for the commit containing this repair |
+| V-009 | CI exact-head | GitHub Actions workflow runs for `27ef0487...` | N/A | CAPABILITY_GAP | zero workflow runs returned | CRITICAL gate requires CI; Vercel status is not a documentary substitute |
+| V-010 | External consumer | live Apps Script Script Property `SITE_URL` read-only inspection | N/A | PASS | targets `https://ranquel-tech-lab-571s.vercel.app` | Human-observed; no other property values recorded |
+| V-011 | Rollback | reconnect one affected noncanonical Git integration and restore disconnected state | N/A | NOT_RUN | rollback procedure documented only | CRITICAL rollback gate requires a safe human-authorized test |
+| V-012 | Merge/deploy authorization | human merge gate | N/A | BLOCKED | merge not authorized; expected production deployment not authorized | Must be explicit before merge |
+| V-013 | Independent audit | Codex exact-head read-only review | N/A | PENDING | prior reviews are historical after this repair commit | Request only after new HEAD/previews are verified |
+
+## CRITICAL gates and blockers
+
+Repository `docs/truth/TESTING_MATRIX.md` classifies external configuration or
+deploy mutation as `CRITICAL`. `docs/truth/QUALITY_GATES.md` therefore requires
+all CRITICAL gates, including exact-head CI and tested/authorized rollback.
+
+Current state:
+
+```text
+RISK=CRITICAL
+TOPOLOGY_REGRESSION_FOR_AFFECTED_SURFACES=PASS
+HUMAN_EXTERNAL_MUTATION_AUTHORIZATION=PASS_HISTORICAL
+APPS_SCRIPT_CONSUMER_VERIFICATION=PASS
+PREVIEW_TOPOLOGY=PASS_HISTORICAL_27ef0487
+CI_EXACT_HEAD=CAPABILITY_GAP
+ROLLBACK_TEST=NOT_RUN
+NEW_REPAIR_HEAD_PREVIEW=PENDING
+NEW_REPAIR_HEAD_INDEPENDENT_AUDIT=PENDING
+OVERALL_VALIDATION_RESULT=BLOCKED
+```
+
+The CI gap is especially important: issue #24 owns executable harness/CI and is
+still explicitly out of scope/not authorized in this issue. This manifest does
+not convert that missing capability into PASS. A human dependency decision is
+required before #28 can satisfy the CRITICAL CI gate.
 
 ## Rollback
 
-If post-change validation finds an unexpected regression attributable to a Git
-disconnect, reconnect the same GitHub repository only on the affected project,
-then stop and re-audit. Domain movement, secret movement and production
-promotion are not part of rollback.
+Authorized rollback design remains least-destructive: reconnect the same GitHub
+repository only on an affected noncanonical project, verify the project/domain
+state, then stop and re-audit. No domain movement, secret movement, project
+deletion or production promotion belongs to rollback.
 
 ```yaml
 ROLLBACK:
-  PLAN: "Reconnect the same Git repository on the affected project only."
-  VERIFIED: false
+  PLAN: "Reconnect the same GitHub repository on the affected noncanonical project only."
+  HUMAN_AUTHORIZATION_IN_ISSUE: true
+  TESTED: false
   VERIFICATION_STATE: NOT_RUN
+  CURRENT_GATE: BLOCKED_PENDING_SAFE_ROLLBACK_TEST
 ```
 
-Rollback was not executed because no regression was observed during the four
-stepwise disconnect checks.
+No regression required rollback during the four disconnects; that is not the
+same as a tested rollback and is not represented as PASS.
 
-## Controlled post-change trigger
+## Merge-induced production deployment gate
 
-The commit containing this updated manifest is the planned documentation-only
-trigger. Resolve its exact SHA from PR #33 and verify in the PR/issue evidence:
+The canonical project keeps Git connected, uses `main` as its Production Branch,
+and uses automatic build behavior. Therefore merging PR #33 to `main` is
+expected to create a new Git-triggered **production deployment** on
+`ranquel-tech-lab-571s` even though this PR changes only evidence documentation.
 
-- exactly one new Vercel preview/status for `ranquel-tech-lab-571s`;
-- zero new deployments on the four disconnected projects;
-- public custom domains remain on `571s`;
-- public Home remains HTTP 200;
-- canonical `/api/daily/token` safe negative path remains HTTP 401 `Missing access`;
-- no project/deployment/domain/env value was deleted or changed.
+This is an expected platform side effect, not a manual promotion, but it must be
+explicitly authorized because humans own merge/deploy decisions.
 
-The volatile deployment IDs and exact trigger HEAD belong in PR #33 / issue #28,
-not in a follow-up repository edit.
+```text
+MERGE_EXPECTED_TO_TRIGGER_PRODUCTION_DEPLOYMENT=YES
+MERGE_AUTHORIZED=NO
+EXPECTED_PRODUCTION_DEPLOYMENT_AUTHORIZED=NO
+MERGE_GATE=BLOCKED_PENDING_EXPLICIT_HUMAN_AUTHORIZATION
+POST_MERGE_REQUIRED=verify production deployment SHA + domains + Home 200 + safe API 401
+```
 
-After those checks, request a second independent read-only audit of the exact
-post-change HEAD and topology.
+A later merge authorization must explicitly acknowledge both the merge and this
+expected Vercel production deployment. Until then, do not merge.
 
 ## Writer declaration
 
 ```yaml
 WRITER_DECLARATION:
   CONTRACT_SATISFIED: partial
-  ZERO_PRODUCT_CHANGES: true
+  ZERO_PRODUCT_CHANGES_IN_PR_DIFF: true
   ZERO_UNAUTHORIZED_EXTERNAL_MUTATIONS: true
-  FINAL_VALIDATION_RESULT: PARTIAL
+  FINAL_VALIDATION_RESULT: BLOCKED
   EVIDENCE_MATURITY: SELF_VALIDATED_ONLY
-  AUDIT_REQUESTED: true
   READY_DECISION_OWNER: human
+  MERGE_DECISION_OWNER: human
+  PRODUCTION_DEPLOY_DECISION_OWNER: human
   AUTO_CLOSE_KEYWORD_PRESENT: false
-  ISSUE_CLOSE_OWNER: human after post-change acceptance
+  ISSUE_CLOSE_OWNER: human after post-merge acceptance
   MERGE_PERFORMED: false
   ISSUE_CLOSED: false
 ```
 
-Remaining gates: controlled one-preview validation and independent exact-head
-post-change audit.
+Remaining hard gates after this repair commit is created: verify its exact-head
+single-preview topology, obtain required exact-head CI capability/PASS, safely
+test rollback under human control, request a fresh independent audit, and only
+then ask the human for Ready/merge plus explicit production-deployment
+authorization.
