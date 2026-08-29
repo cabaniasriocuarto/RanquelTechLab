@@ -1,6 +1,6 @@
 # Changelog de documentación canónica
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 Owner: `docs/truth/CHANGELOG.md` (historial de cambios en truth e instrucciones)
 
@@ -9,9 +9,9 @@ el historial Git ni almacena SHAs, IDs/URLs de preview, conteos de tests o
 resultados volátiles. Puede registrar una decisión humana durable sobre un side
 effect acotado sin copiar sus detalles operativos.
 
-## Unreleased — issue #3
+## Issue #3 — scaffold de gobierno integrado
 
-Status: `CURRENT_IN_PROGRESS`
+Status: `CURRENT_IMPLEMENTED_TRUTH`
 
 ### Added
 
@@ -23,23 +23,25 @@ Status: `CURRENT_IN_PROGRESS`
 - Owner canónico de procedencia y derechos de medios, con el inventario heredado
   honestamente `PENDING_TO_VALIDATE`.
 - Owners reservados para el Golden SEO Baseline y el contrato de paridad de
-  #26; los owners están `CURRENT_IN_PROGRESS` en este Draft y las capacidades
-  que reservan siguen `PLANNED_NOT_IMPLEMENTED`.
-- Plantillas canónicas de `TASK_CONTRACT`, manifiesto de evidencia y auditoría
+  #26; los archivos owner existen en `main`, mientras las capacidades que
+  reservan siguen `PLANNED_NOT_IMPLEMENTED`.
+- Plantillas iniciales de `TASK_CONTRACT`, manifiesto de evidencia y auditoría
   independiente.
 - Frontera de planeamiento Geo-SEO, marcada `PLANNED_NOT_IMPLEMENTED`.
 - Gobierno inicial de GitHub: instrucciones compatibles, issue forms, PR
   template, milestones, labels y jerarquía nativa cuando la API lo permite.
 - Lifecycle no autocerrante: `Refs #N`, aceptación post-merge, reconciliación de
   truth y cierre humano explícito como eventos separados.
+- Registro de closeout de #3 con límite bootstrap y handoff de enforcement a
+  #24.
 
 ### Decisions
 
 - #28 es el siguiente bloque obligatorio después de #3 y antes de #24; conserva
   todos los previews inventariados en la evidencia volátil de PR #27 y es el
   owner de la topología Vercel.
-- #24 sigue después de #28 y antes de #4, con ownership de scripts, gates
-  ejecutables y workflows.
+- #24 sigue después de #28 y antes de #4, con ownership de scripts, schemas,
+  fixtures, gates ejecutables, CI, preview exact-head y closeout validator.
 - #2 se asigna a M0 por la limitación de un milestone por issue; #25 pertenece a
   M4.
 - `.github/copilot-instructions.md` actúa como router; no se agregan por ahora
@@ -48,6 +50,10 @@ Status: `CURRENT_IN_PROGRESS`
   #14–#18 bajo #13.
 - #26 pertenece a M0 y bloquea #5, #7, #19 y #20; templates y formularios
   capturan contexto SEO/paridad sin implementar ni aprobar el gate.
+- `RANQUEL-HARNESS-BOOTSTRAP-001` reconoce que #3 precede al CI de #24; la
+  ausencia de CI permanece `CAPABILITY_GAP` y Vercel no cuenta como CI.
+- PR #29 queda cerrado sin merge y preservado como evidencia histórica para
+  #24; ninguno de sus commits gobierna `main`.
 
 ### Changed
 
@@ -64,14 +70,23 @@ Status: `CURRENT_IN_PROGRESS`
   `MEDIA_PROVENANCE.md`.
 - Los resultados globales del manifest derivan del vocabulario canónico completo
   y conservan causas específicas de ausencia o bloqueo.
-- El lifecycle define un único Draft PR state-only de reconciliación después del
-  merge/aceptación, sin push directo ni nuevo scope de implementación.
+- El lifecycle mantiene un único vehículo state-only de reconciliación después
+  del merge/aceptación, sin push directo ni nuevo scope de implementación.
 - El router común aplica procedencia y gates de medios tanto a `media/**` como a
   `images/**` sin crear un router hermano fuera de la allowlist de #3.
-- Los owners `CURRENT_IN_PROGRESS` se describen como propuestas del Draft, no
-  como gobierno vigente de `main`.
+- Los documentos owner distinguen su existencia en `main` de las capacidades
+  futuras que siguen `PLANNED_NOT_IMPLEMENTED`.
 - El formulario de nueva ciudad exige inventario `Sxx` separado y clasificación
   D01–D12 completa, incluida la decisión explícita sobre D09.
+
+### Superseded and transferred
+
+- El intento de hardening puramente documental del PR #29 fue cerrado sin merge
+  para evitar que #3 creciera como state machine no ejecutable.
+- Findings, fixtures y requisitos de exact-head, preview, actor/mecanismo,
+  cronología e identidad de SHA pasan como intake a #24.
+- Hasta que #24 implemente esos controles, las plantillas de #3 son scaffold
+  manual y cualquier capacidad ausente conserva su estado honesto.
 
 ### Explicitly unchanged
 
@@ -82,11 +97,9 @@ Status: `CURRENT_IN_PROGRESS`
   limpian ni promueven dentro de #3.
 - Scripts, schemas, CI o workflows ejecutables del harness.
 
-Este bloque pasa a una entrada integrada sólo después del merge humano, la
-aceptación y la reconciliación post-merge. Mientras el cambio sea Draft PR, sus
-documentos y decisiones permanecen `CURRENT_IN_PROGRESS`; la promoción de
-estados se prepara, pero no se ejecuta aquí. El cierre de #3 es posterior,
-explícito y humano.
+El scaffold documental queda integrado; la issue #3 permanece abierta sólo
+hasta revisar, mergear y aceptar su PR limpio de closeout y realizar el cierre
+humano explícito. #28 y #24 no se ejecutan en ese vehículo.
 
 ## Política de actualización
 
